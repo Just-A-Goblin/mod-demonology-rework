@@ -421,6 +421,21 @@ void CommandPool::Update(uint32 diff)
         PetScaling::ReapplyAll(owner);          // a respec changed fc/vp/si/fa — re-scale demons
     }
 
+    // Cross-map teleport: legionnaires are map-local summons, so changing maps orphans
+    // them on the old map (only the core anchor pet follows). Detect the map change and
+    // requeue the last known roster so they resummon on the new map via the restore path.
+    uint32 const mapId = owner->GetMapId();
+    if (_lastMapId != 0 && mapId != _lastMapId && !_lastRoster.empty())
+    {
+        _legionnaires.clear();                  // stale guids (creatures are on the old map)
+        _restore = _lastRoster;                 // resummon this composition on the new map
+        _restoreTimer = 0;
+        _lastMapId = mapId;
+        OnPoolChanged();
+        return;                                 // let the restore block below resummon them
+    }
+    _lastMapId = mapId;
+
     // Free the greater demon's reserved command slots once it's gone (timed despawn,
     // death, or dismiss). Our permanent greater demon is ES-gated, so also dismiss it if
     // the owner respecs OUT of Eternal Servitude — it shouldn't linger without the talent.
@@ -581,6 +596,8 @@ void CommandPool::Mirror(Player* owner)
 
     std::vector<ObjectGuid> alive;
     alive.reserve(_legionnaires.size());
+    std::vector<PendingDemon> roster;       // live composition, for cross-map resummon
+    roster.reserve(_legionnaires.size());
     uint32 slot = 0;
 
     for (ObjectGuid guid : _legionnaires)
@@ -589,6 +606,10 @@ void CommandPool::Mirror(Player* owner)
         if (!c || !c->IsAlive())
             continue;                       // prune despawned/dead
         alive.push_back(guid);
+        {
+            float const hp = c->GetMaxHealth() ? float(c->GetHealth()) / float(c->GetMaxHealth()) : 1.0f;
+            roster.push_back({ c->GetEntry(), hp });
+        }
 
         if (resync)
             PetScaling::ApplyInheritance(owner, c);
@@ -627,6 +648,7 @@ void CommandPool::Mirror(Player* owner)
         OnPoolChanged();
     }
     _lastFormationCount = _legionnaires.size();
+    _lastRoster.swap(roster);               // remember the live roster for a cross-map resummon
 }
 
 void CommandPool::OnPoolChanged()

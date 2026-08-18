@@ -111,6 +111,12 @@ namespace Demonology
         std::vector<PendingDemon> _restore;                                // queued login restore
         uint32 _restoreTimer = 0;
 
+        // Cross-map teleport handling: legionnaires are map-local summons, so a map change
+        // orphans them. We keep the live roster (entry + health%) and the last map id, and
+        // on a map change requeue the roster to resummon on the new map (via _restore).
+        uint32 _lastMapId = 0;
+        std::vector<PendingDemon> _lastRoster;
+
         // Bound by Blood survivor buff (transient; getMSTime-based expiry) + its cooldown.
         float _legionBuffDmg = 0.0f;
         float _legionBuffHaste = 0.0f;
