@@ -305,8 +305,8 @@ Chance not to consume brand; expiry-splash; detonation heals demons (pairs with 
 | Legion Standard (if built, §12.1) | 2 |
 | Legionnaire resummon | 1 |
 
-- Cap 5 (full opener poolable: Imps 2 + Command 1 + Doombrand 1 [+ Standard 2 if built
-  → raise cap to 6 in that world]).
+- **No shard cap** (cut 2026-08-18 — a hard cap fights vanilla WoW flavor; shards are
+  normal bag items and stay uncapped). Actives just spend them; hoarding is fine.
 - Generation target: ~1 shard / 8–12s sustained with 2–3 demons (existing ICD is the
   lever). cm accelerates via crits.
 - **Feel metric:** "wanted to press Command Demon / Doombrand but couldn't afford it"
@@ -356,7 +356,7 @@ ICD state, op stacks matching pool count; killing a legionnaire procs dr/bbb; pf
 appear flagged in logs at talent rate ±1%.
 
 **Phase 2 — Path B economy:**
-Shard costs on `290001` (imps) + resummons; cap 5; generation retune; il rework; cm.
+Shard costs on `290001` (imps) + resummons; generation retune; il rework; cm.
 *Accept:* costs deducted; feel-metric session logged (§7).
 
 **Phase 3 — Command Demon (§5):**

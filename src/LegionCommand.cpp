@@ -298,6 +298,13 @@ public:
         handler->PSendSysMessage("[legion] Pactbound Fury: {:.0f}% crit — melee = REAL crits (visible), spell tally {}/{} ({:.1f}% realised)",
             Demonology::PactboundFuryCritChance(player) * 100.0f,
             pfCrits, pfHits, pfHits ? 100.0f * float(pfCrits) / float(pfHits) : 0.0f);
+
+        // Phase 2 shard economy (Path B): what actives cost right now.
+        handler->PSendSysMessage("[legion] shard costs: Summon Wild Imps {} (Improved Legion: {}), legionnaire (re)summon {}  [you hold {}]",
+            Demonology::WildImpShardCost(player),
+            Demonology::TalentRank(player, Demonology::SPELL_TALENT_IMPROVED_LEGION, 2) ? "trained" : "untrained",
+            Demonology::gConfig.SummonLegionnaireShardCost,
+            player->GetItemCount(SOUL_SHARD_ITEM));
         return true;
     }
 };

@@ -41,6 +41,9 @@ Demonology.SavageInstincts.HastePct = 4, 8, 12
 Demonology.WildImp.Count = 3
 Demonology.WildImp.DurationMs = 20000
 Demonology.WildImp.SPCoefficient = 0.28
+# Path B: Summon Wild Imps costs this many Soul Shards; Improved Legion trims it.
+Demonology.WildImp.ShardCost = 2
+Demonology.ImprovedLegion.WildImpShardReduction = 1
 
 # --- Greater demons (Infernal / Doomguard): temporary cooldown guardians ---
 # How long each fights before despawning, in ms. Cooldown is on the spell (180s).

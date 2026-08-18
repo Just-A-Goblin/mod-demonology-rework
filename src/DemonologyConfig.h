@@ -37,6 +37,8 @@ namespace Demonology
         uint32 WildImpCount              = 3;
         uint32 WildImpDurationMs         = 20000;
         float  WildImpSPCoefficient      = 0.28f;
+        uint32 WildImpShardCost          = 2;   // Path B: Summon Wild Imps costs 2 Soul Shards
+        uint32 ImprovedLegionWildImpShardReduction = 1;  // il trims that cost (2 -> 1)
 
         // Greater demons (Infernal / Doomguard) — temporary cooldown guardians
         uint32 InfernalDurationMs        = 60000;

@@ -146,6 +146,16 @@ namespace Demonology
         return 0.0f;
     }
 
+    // Effective Soul Shard cost of Summon Wild Imps (Path B), trimmed by Improved Legion.
+    inline uint32 WildImpShardCost(Player* owner)
+    {
+        uint32 cost = gConfig.WildImpShardCost;
+        if (owner && TalentRank(owner, SPELL_TALENT_IMPROVED_LEGION, 2) >= 1)
+            cost = (cost > gConfig.ImprovedLegionWildImpShardReduction)
+                 ? cost - gConfig.ImprovedLegionWildImpShardReduction : 0;
+        return cost;
+    }
+
     // Pactbound Fury diagnostics (defined in ShardEconomy.cpp): a per-owner rolling
     // (hits, crits) tally so `.legion dumpstats` can show the realised crit rate.
     void RecordPfHit(ObjectGuid owner, bool crit);

@@ -43,6 +43,7 @@ namespace Demonology
 
     // Demon-scaling talent markers (rank-1 spell; a node's ranks are CONSECUTIVE ids, so
     // TalentRank(owner, rank1, maxRank) reads the trained rank). All read via HasTalent.
+    constexpr uint32 SPELL_TALENT_IMPROVED_LEGION  = 290902;  // il legionnaire summons faster (Ph6) + Wild Imps cost -1 (Ph2)
     constexpr uint32 SPELL_TALENT_FEL_CONDITIONING = 290904;  // fc [5,10,15]% demon health
     constexpr uint32 SPELL_TALENT_CURSED_VITALITY  = 290907;  // cv demons +[6,12]% stamina (~health); owner part TODO
     constexpr uint32 SPELL_TALENT_FEL_ARMORY       = 290912;  // fa [5,10,15]% demon damage while Fel Armor up

@@ -31,6 +31,18 @@ class spell_demonology_summon_wild_imps : public SpellScript
 {
     PrepareSpellScript(spell_demonology_summon_wild_imps);
 
+    // Path B: Summon Wild Imps costs Soul Shards (Improved Legion trims the cost).
+    // Block the cast up-front if the player can't afford it, so no shard is wasted.
+    SpellCastResult CheckCast()
+    {
+        Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
+        if (!caster)
+            return SPELL_FAILED_ERROR;
+        if (caster->GetItemCount(ITEM_SOUL_SHARD) < Demonology::WildImpShardCost(caster))
+            return SPELL_FAILED_REAGENTS;
+        return SPELL_CAST_OK;
+    }
+
     void HandleDummy(SpellEffIndex /*effIndex*/)
     {
         Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
@@ -46,6 +58,11 @@ class spell_demonology_summon_wild_imps : public SpellScript
         // Engage the target so the whole legion responds (anchor + legionnaires
         // mirror the owner's victim) and a neutral target flips hostile.
         caster->Attack(target, true);
+
+        // Charge the shards now that the summon is going through (CheckCast already
+        // verified affordability; deduct once, here, not per imp).
+        if (uint32 const cost = Demonology::WildImpShardCost(caster))
+            caster->DestroyItemCount(ITEM_SOUL_SHARD, cost, true);
 
         uint32 const count = gConfig.WildImpCount;
 
@@ -85,6 +102,7 @@ class spell_demonology_summon_wild_imps : public SpellScript
 
     void Register() override
     {
+        OnCheckCast += SpellCheckCastFn(spell_demonology_summon_wild_imps::CheckCast);
         OnEffectHitTarget += SpellEffectFn(spell_demonology_summon_wild_imps::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };

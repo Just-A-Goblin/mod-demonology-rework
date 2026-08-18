@@ -61,6 +61,8 @@ public:
         gConfig.WildImpCount                 = sConfigMgr->GetOption<uint32>("Demonology.WildImp.Count", 3);
         gConfig.WildImpDurationMs            = sConfigMgr->GetOption<uint32>("Demonology.WildImp.DurationMs", 20000);
         gConfig.WildImpSPCoefficient         = sConfigMgr->GetOption<float>("Demonology.WildImp.SPCoefficient", 0.28f);
+        gConfig.WildImpShardCost             = sConfigMgr->GetOption<uint32>("Demonology.WildImp.ShardCost", 2);
+        gConfig.ImprovedLegionWildImpShardReduction = sConfigMgr->GetOption<uint32>("Demonology.ImprovedLegion.WildImpShardReduction", 1);
         gConfig.InfernalDurationMs           = sConfigMgr->GetOption<uint32>("Demonology.Infernal.DurationMs", 60000);
         gConfig.DoomguardDurationMs          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DurationMs", 60000);
         gConfig.DoomBoltSPCoefficient        = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBoltSPCoefficient", 0.64f);
