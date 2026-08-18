@@ -83,9 +83,10 @@ namespace Demonology
         float BeaconDemonDamagePct           = 0.50f;
 
         // --- Phase 1 talents ---
-        // Pactbound Fury (pf, T3) — demons roll a crit at hit time in the damage hook.
+        // Pactbound Fury (pf, T3) — demon crit chance per rank. Applied as a REAL crit:
+        // melee via the core melee-outcome roll, spell via the demon's base spell crit
+        // (PetScaling). The crit damage multiplier is the core's (2x melee / 1.5x spell).
         float PactboundFuryCritChancePct[3] = { 0.02f, 0.04f, 0.06f };  // per rank
-        float PactboundFuryCritMultiplier   = 2.0f;                     // crit damage x
 
         // Demonic Rebirth (dr, T6) — chance to instantly resummon a dying legionnaire.
         float  DemonicRebirthChancePct[2]   = { 0.50f, 1.00f };         // per rank

@@ -102,9 +102,9 @@ Demonology.LegionAura.HastePct = 0.05
 Demonology.Beacon.DemonDamagePct = 0.50
 
 # --- Phase 1 talents ---
-# Pactbound Fury (pf, T3): demons roll a crit at hit time (per-rank chance), damage x mult.
+# Pactbound Fury (pf, T3): demon crit chance per rank. Applied as REAL crits (melee via the
+# core melee roll, spell via the demon's base spell crit); crit damage is the core's 2x/1.5x.
 Demonology.PactboundFury.CritChancePct = 0.02, 0.04, 0.06
-Demonology.PactboundFury.CritMultiplier = 2.0
 # Demonic Rebirth (dr, T6): chance to instantly resummon a dying legionnaire; shared ICD.
 Demonology.DemonicRebirth.ChancePct = 0.50, 1.00
 Demonology.DemonicRebirth.IcdMs = 60000

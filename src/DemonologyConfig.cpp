@@ -89,7 +89,6 @@ public:
         gConfig.BeaconDemonDamagePct         = sConfigMgr->GetOption<float>("Demonology.Beacon.DemonDamagePct", 0.50f);
         // --- Phase 1 talents ---
         LoadFloatList("Demonology.PactboundFury.CritChancePct", gConfig.PactboundFuryCritChancePct, 3);
-        gConfig.PactboundFuryCritMultiplier  = sConfigMgr->GetOption<float>("Demonology.PactboundFury.CritMultiplier", 2.0f);
         LoadFloatList("Demonology.DemonicRebirth.ChancePct", gConfig.DemonicRebirthChancePct, 2);
         gConfig.DemonicRebirthIcdMs          = sConfigMgr->GetOption<uint32>("Demonology.DemonicRebirth.IcdMs", 60000);
         LoadFloatList("Demonology.BoundByBlood.DamagePct", gConfig.BoundByBloodDamagePct, 2);

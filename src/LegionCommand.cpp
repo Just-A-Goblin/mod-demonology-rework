@@ -49,7 +49,6 @@ public:
             { "summon",    HandleSummonCommand,    SEC_GAMEMASTER, Console::No },
             { "shards",    HandleShardsCommand,    SEC_GAMEMASTER, Console::No },
             { "dumpstats", HandleDumpStatsCommand, SEC_GAMEMASTER, Console::No },
-            { "resetcrits", HandleResetCritsCommand, SEC_GAMEMASTER, Console::No },
         };
 
         static ChatCommandTable commandTable =
@@ -174,17 +173,6 @@ public:
         return true;
     }
 
-    static bool HandleResetCritsCommand(ChatHandler* handler)
-    {
-        Player* player = handler->GetSession()->GetPlayer();
-        if (!player)
-            return false;
-
-        Demonology::ClearPfStats(player->GetGUID());
-        handler->PSendSysMessage("[legion] Pactbound Fury crit tally reset.");
-        return true;
-    }
-
     static bool HandleDumpStatsCommand(ChatHandler* handler)
     {
         Player* player = handler->GetSession()->GetPlayer();
@@ -293,11 +281,9 @@ public:
                     Demonology::gConfig.BoundByBloodRefundShard ? "1 shard" : "off");
         }
 
-        uint32 pfHits = 0, pfCrits = 0;
-        Demonology::GetPfStats(player->GetGUID(), pfHits, pfCrits);
-        handler->PSendSysMessage("[legion] Pactbound Fury: {:.0f}% crit — melee = REAL crits (visible), spell tally {}/{} ({:.1f}% realised)",
+        handler->PSendSysMessage("[legion] Pactbound Fury: +{:.0f}% crit — REAL crits on both melee (5%+) and spell (5% base +{:.0f}%), all visible",
             Demonology::PactboundFuryCritChance(player) * 100.0f,
-            pfCrits, pfHits, pfHits ? 100.0f * float(pfCrits) / float(pfHits) : 0.0f);
+            Demonology::PactboundFuryCritChance(player) * 100.0f);
 
         // Phase 2 shard economy (Path B): what actives cost right now.
         handler->PSendSysMessage("[legion] shard costs: Summon Wild Imps {} (Improved Legion: {}), legionnaire (re)summon {}  [you hold {}]",

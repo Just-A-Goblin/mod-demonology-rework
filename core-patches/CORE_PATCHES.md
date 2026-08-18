@@ -18,7 +18,9 @@ Target tree: AzerothCore **Playerbot** branch at `AC_SOURCE`
 
 ## Patch registry
 
-_(none yet — Phase 1 adds the first)_
+| Patch | File / function | Why | Breaks if dropped |
+|---|---|---|---|
+| `01-unit-base-spell-crit-setter.patch` | `Unit::SetBaseSpellCritChance` / `GetBaseSpellCritChance` (Unit.h) | expose the protected `m_baseSpellCritChance` seam so the module can grant owned demons (plain creatures, base 5%) real, visible spell crits — used by Pactbound Fury in `PetScaling::ApplyInheritance` | build fails (unresolved `SetBaseSpellCritChance`); demon spell crits would otherwise be stuck at the flat 5% base with no Pactbound Fury contribution |
 
 Planned seams (from PLAN §3.2 and §8), to be filled as each phase lands:
 

@@ -873,7 +873,6 @@ public:
         sCommandPoolMgr->Remove(player->GetGUID());     // clean up legionnaires on logout/disconnect
         Demonology::PetScaling::ForgetPet(player->GetGUID());
         Demonology::OwnerMods::Clear(player->GetGUID()); // owner unit-mods die with the unit; drop bookkeeping
-        Demonology::ClearPfStats(player->GetGUID());     // reset the Pactbound Fury crit tally
     }
 
     // Gear changes move the owner's spell power, so re-run inheritance on every

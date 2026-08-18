@@ -168,12 +168,6 @@ namespace Demonology
                  ? cost - gConfig.ImprovedLegionWildImpShardReduction : 0;
         return cost;
     }
-
-    // Pactbound Fury diagnostics (defined in ShardEconomy.cpp): a per-owner rolling
-    // (hits, crits) tally so `.legion dumpstats` can show the realised crit rate.
-    void RecordPfHit(ObjectGuid owner, bool crit);
-    void GetPfStats(ObjectGuid owner, uint32& hits, uint32& crits);
-    void ClearPfStats(ObjectGuid owner);
 }
 
 #endif // MOD_DEMONOLOGY_REWORK_TALENTS_H

@@ -31,15 +31,11 @@ namespace
     // Per-player last-proc timestamp (getMSTime) — the economy's throttle.
     std::unordered_map<ObjectGuid, uint32> g_lastProc;
 
-    // Pactbound Fury realised-crit tally (owner -> {hits, crits}), for dumpstats.
-    std::unordered_map<ObjectGuid, std::pair<uint32, uint32>> g_pfStats;
-
-    // The full demon-damage multiplier applied to any warlock-owned demon's hit: the
-    // scaling talents (Vicious Pact / Fel Armory) and the transient Bound by Blood survivor
-    // buff on the pool. Pactbound Fury is handled differently by side: MELEE gets REAL
-    // crits injected into the core's melee-outcome roll (visible yellow crits, see
-    // OnBeforeRollMeleeOutcomeAgainst below), so only the SPELL side rolls-and-multiplies
-    // here (no spell-crit hook yet — follow-up). The realised tally covers the spell side.
+    // The demon-damage multiplier applied to any warlock-owned demon's hit: the scaling
+    // talents (Vicious Pact / Fel Armory) and the transient Bound by Blood survivor buff.
+    // Pactbound Fury is NOT here anymore — it's a REAL crit on both sides now (melee via
+    // OnBeforeRollMeleeOutcomeAgainst, spell via the demon's base spell crit chance set in
+    // PetScaling), so it shows as genuine yellow crits instead of an invisible multiply.
     float DemonDamageMultFull(Player* owner, bool meleeSide)
     {
         float mult = Demonology::DemonDamageMult(owner, meleeSide);
@@ -47,14 +43,6 @@ namespace
         if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
             mult *= (1.0f + pool->LegionBuffDamage());
 
-        if (!meleeSide)
-            if (float const chance = Demonology::PactboundFuryCritChance(owner))
-            {
-                bool const crit = roll_chance_f(chance * 100.0f);
-                Demonology::RecordPfHit(owner->GetGUID(), crit);
-                if (crit)
-                    mult *= gConfig.PactboundFuryCritMultiplier;
-            }
         return mult;
     }
 
@@ -183,29 +171,6 @@ public:
             crit_chance += int32(Demonology::PactboundFuryCritChance(owner) * 10000.0f);
     }
 };
-
-namespace Demonology
-{
-    void RecordPfHit(ObjectGuid owner, bool crit)
-    {
-        auto& s = g_pfStats[owner];
-        ++s.first;
-        if (crit)
-            ++s.second;
-    }
-
-    void GetPfStats(ObjectGuid owner, uint32& hits, uint32& crits)
-    {
-        auto it = g_pfStats.find(owner);
-        hits  = (it != g_pfStats.end()) ? it->second.first  : 0;
-        crits = (it != g_pfStats.end()) ? it->second.second : 0;
-    }
-
-    void ClearPfStats(ObjectGuid owner)
-    {
-        g_pfStats.erase(owner);
-    }
-}
 
 void AddSC_demonology_shard_economy()
 {

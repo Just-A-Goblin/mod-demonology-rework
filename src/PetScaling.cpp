@@ -88,6 +88,12 @@ namespace Demonology::PetScaling
         // --- Attack speed: Savage Instincts (si) + transient Bound by Blood haste,
         // re-derived from the template base so it never compounds and resets when dropped. ---
         demon->SetAttackTime(BASE_ATTACK, DerivedAttackTime(owner, demon));
+
+        // --- Spell crit: the core creature base (5%, set in the Unit ctor) plus Pactbound
+        // Fury, so the demon's Firebolt / Doom Bolt land REAL, visible spell crits — the
+        // spell-side match to the melee crit hook. Absolute set (base + pf) so it never
+        // compounds; re-applied on summon / SP change / respec. (Needs core patch 01.) ---
+        demon->SetBaseSpellCritChance(5 + int32(PactboundFuryCritChance(owner) * 100.0f));
     }
 
     // ---- Anchor pet (core Pet) talent buffs ----
