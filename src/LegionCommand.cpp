@@ -295,9 +295,9 @@ public:
 
         uint32 pfHits = 0, pfCrits = 0;
         Demonology::GetPfStats(player->GetGUID(), pfHits, pfCrits);
-        handler->PSendSysMessage("[legion] Pactbound Fury crits: {}/{} hits ({:.1f}% realised, target {:.0f}%)",
-            pfCrits, pfHits, pfHits ? 100.0f * float(pfCrits) / float(pfHits) : 0.0f,
-            Demonology::PactboundFuryCritChance(player) * 100.0f);
+        handler->PSendSysMessage("[legion] Pactbound Fury: {:.0f}% crit — melee = REAL crits (visible), spell tally {}/{} ({:.1f}% realised)",
+            Demonology::PactboundFuryCritChance(player) * 100.0f,
+            pfCrits, pfHits, pfHits ? 100.0f * float(pfCrits) / float(pfHits) : 0.0f);
         return true;
     }
 };

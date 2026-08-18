@@ -35,8 +35,11 @@ namespace
     std::unordered_map<ObjectGuid, std::pair<uint32, uint32>> g_pfStats;
 
     // The full demon-damage multiplier applied to any warlock-owned demon's hit: the
-    // scaling talents (Vicious Pact / Fel Armory), the transient Bound by Blood survivor
-    // buff on the pool, and a Pactbound Fury crit roll (recorded for dumpstats).
+    // scaling talents (Vicious Pact / Fel Armory) and the transient Bound by Blood survivor
+    // buff on the pool. Pactbound Fury is handled differently by side: MELEE gets REAL
+    // crits injected into the core's melee-outcome roll (visible yellow crits, see
+    // OnBeforeRollMeleeOutcomeAgainst below), so only the SPELL side rolls-and-multiplies
+    // here (no spell-crit hook yet — follow-up). The realised tally covers the spell side.
     float DemonDamageMultFull(Player* owner, bool meleeSide)
     {
         float mult = Demonology::DemonDamageMult(owner, meleeSide);
@@ -44,13 +47,14 @@ namespace
         if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
             mult *= (1.0f + pool->LegionBuffDamage());
 
-        if (float const chance = Demonology::PactboundFuryCritChance(owner))
-        {
-            bool const crit = roll_chance_f(chance * 100.0f);
-            Demonology::RecordPfHit(owner->GetGUID(), crit);
-            if (crit)
-                mult *= gConfig.PactboundFuryCritMultiplier;
-        }
+        if (!meleeSide)
+            if (float const chance = Demonology::PactboundFuryCritChance(owner))
+            {
+                bool const crit = roll_chance_f(chance * 100.0f);
+                Demonology::RecordPfHit(owner->GetGUID(), crit);
+                if (crit)
+                    mult *= gConfig.PactboundFuryCritMultiplier;
+            }
         return mult;
     }
 
@@ -153,6 +157,18 @@ public:
     {
         if (Player* owner = Demonology::WarlockOwnerOfDemon(attacker))
             damage = int32(float(damage) * DemonDamageMultFull(owner, /*meleeSide=*/false));
+    }
+
+    // Pactbound Fury (melee): inject the talent crit chance into the core's melee-outcome
+    // roll so a warlock-owned demon throws a REAL crit (visible yellow hit, core's 2x). The
+    // crit_chance here is in 0.01% units (rolled against 0..10000), so fraction x 10000.
+    void OnBeforeRollMeleeOutcomeAgainst(Unit const* attacker, Unit const* /*victim*/, WeaponAttackType /*attType*/,
+        int32& /*attackerMaxSkillValueForLevel*/, int32& /*victimMaxSkillValueForLevel*/,
+        int32& /*attackerWeaponSkill*/, int32& /*victimDefenseSkill*/, int32& crit_chance,
+        int32& /*miss_chance*/, int32& /*dodge_chance*/, int32& /*parry_chance*/, int32& /*block_chance*/) override
+    {
+        if (Player* owner = Demonology::WarlockOwnerOfDemon(const_cast<Unit*>(attacker)))
+            crit_chance += int32(Demonology::PactboundFuryCritChance(owner) * 10000.0f);
     }
 };
 
