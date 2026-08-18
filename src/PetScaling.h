@@ -38,6 +38,11 @@ namespace Demonology::PetScaling
     // idempotent). Cheap; safe to call every mirror tick and on talent/gear change.
     void ApplyPetMods(Player* owner);
 
+    // Re-derive ONLY the demon's attack speed (Savage Instincts + the transient Bound by
+    // Blood haste window). Cheap and health-safe — used to refresh legionnaire haste each
+    // tick while a legion buff is active without re-running full inheritance.
+    void ReapplyAttackSpeed(Player* owner, Creature* demon);
+
     // Drop the per-owner pet-mod bookkeeping (call on logout).
     void ForgetPet(ObjectGuid owner);
 }

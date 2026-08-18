@@ -75,6 +75,33 @@ namespace Demonology
         float LegionAuraHastePct             = 0.05f;
         float BeaconDemonDamagePct           = 0.50f;
 
+        // --- Phase 1 talents ---
+        // Pactbound Fury (pf, T3) — demons roll a crit at hit time in the damage hook.
+        float PactboundFuryCritChancePct[3] = { 0.02f, 0.04f, 0.06f };  // per rank
+        float PactboundFuryCritMultiplier   = 2.0f;                     // crit damage x
+
+        // Demonic Rebirth (dr, T6) — chance to instantly resummon a dying legionnaire.
+        float  DemonicRebirthChancePct[2]   = { 0.50f, 1.00f };         // per rank
+        uint32 DemonicRebirthIcdMs          = 60000;
+
+        // Bound by Blood (bbb, T9) — on demon death, survivors gain a transient buff and
+        // the owner refunds a Soul Shard (Path B: "demon deaths fund your actives").
+        float  BoundByBloodDamagePct[2]     = { 0.15f, 0.30f };         // +demon damage (fraction)
+        float  BoundByBloodHastePct[2]      = { 0.25f, 0.45f };         // +demon attack speed (fraction)
+        uint32 BoundByBloodDurationMs       = 10000;
+        bool   BoundByBloodRefundShard      = true;
+
+        // Overlord's Presence (op, T8) — per commanded demon, buff the OWNER.
+        float OverlordsPresenceHealthPct[3] = { 0.02f, 0.04f, 0.06f };  // per rank, per demon
+        float OverlordsPresenceHastePct[3]  = { 0.015f, 0.03f, 0.045f };// per rank, per demon
+
+        // Cursed Vitality (cv, T1) — owner-stamina half (demon half is in DemonHealthMult).
+        float CursedVitalityOwnerStaminaPct[2] = { 0.03f, 0.06f };      // per rank
+
+        // Legion Aura (gwd groundwork) — party aura toggles on at this pool size
+        // (DESIGN_V2 §8.1: >=1 commanded demon). Amounts reuse LegionAura.DamagePct/HastePct.
+        uint32 LegionAuraMinDemons          = 1;
+
         bool  DebugLogShardIncome        = false;
     };
 

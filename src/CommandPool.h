@@ -30,6 +30,11 @@ namespace Demonology
     // used by both the legionnaire mirror and the auto-assist demon AI (DemonAI.h).
     Unit* FindLegionThreat(Player* owner);
 
+    // Fired from GuardianAttackerAI::JustDied — a REAL death of an owned demon (dismiss/
+    // stash/logout use DespawnOrUnsummon, which never calls JustDied). Routes to the
+    // owner's pool for the demon-death consumers (Demonic Rebirth + Bound by Blood).
+    void NotifyDemonDeath(Player* owner, Creature* dead);
+
     class CommandPool
     {
     public:
@@ -64,6 +69,21 @@ namespace Demonology
         void Update(uint32 diff);                                          // batched mirroring tick
         void QueueReconcile() { _reconcileTalents = true; }                // re-sync Felguard spells next tick (after a respec)
 
+        // Demon-death consumers (§8.2). OnDemonDeath handles Demonic Rebirth (queue an
+        // instant resummon, ICD-gated) + Bound by Blood (survivor buff + shard refund).
+        void OnDemonDeath(Player* owner, Creature* dead);
+
+        // Bound by Blood transient survivor buff, read by the damage hook (LegionBuffDamage)
+        // and by PetScaling attack-speed (LegionBuffHaste). Returns 0 once the window lapses.
+        void TriggerLegionBuff(float dmgFrac, float hasteFrac, uint32 durMs);
+        float LegionBuffDamage() const;
+        float LegionBuffHaste() const;
+
+        // Demons you actively command right now: anchor pet + legionnaires + greater demon.
+        uint8 CommandedDemonCount(Player* owner) const;
+
+        uint32 RebirthReadyInMs() const;        // ms until Demonic Rebirth can proc again (0 = ready)
+
         // Eternal Servitude REMOVES the vanilla Inferno/Ritual of Doom (which are quest-
         // learned) and REMEMBERS them, so a respec restores only what we took — never
         // granting them to a warlock who never had them.
@@ -89,6 +109,16 @@ namespace Demonology
         bool _esRemovedLoaded = false;                                     // _esRemoved lazy-loaded from DB yet?
         std::vector<PendingDemon> _restore;                                // queued login restore
         uint32 _restoreTimer = 0;
+
+        // Bound by Blood survivor buff (transient; getMSTime-based expiry).
+        float _legionBuffDmg = 0.0f;
+        float _legionBuffHaste = 0.0f;
+        uint32 _legionBuffUntilMs = 0;
+
+        // Demonic Rebirth: instant-resummon queue (entries) + shared ICD.
+        std::vector<uint32> _pendingRebirth;
+        uint32 _rebirthReadyAtMs = 0;
+        bool _lastLegionBuffActive = false;                                // for one refresh after a bbb window lapses
     };
 
     class CommandPoolMgr

@@ -91,6 +91,65 @@ namespace Demonology
             return gConfig.SiHastePct[si - 1];
         return 0.0f;
     }
+
+    // --- Phase 1 talent readers ---
+
+    // Pactbound Fury (pf): demon crit chance as a fraction (0 = untrained).
+    inline float PactboundFuryCritChance(Player* owner)
+    {
+        if (uint8 pf = TalentRank(owner, SPELL_TALENT_PACTBOUND_FURY, 3))
+            return gConfig.PactboundFuryCritChancePct[pf - 1];
+        return 0.0f;
+    }
+
+    // Demonic Rebirth (dr): instant-resummon chance as a fraction (0 = untrained).
+    inline float DemonicRebirthChance(Player* owner)
+    {
+        if (uint8 dr = TalentRank(owner, SPELL_TALENT_DEMONIC_REBIRTH, 2))
+            return gConfig.DemonicRebirthChancePct[dr - 1];
+        return 0.0f;
+    }
+
+    // Overlord's Presence (op): owner buff PER commanded demon (fractions; 0 = untrained).
+    inline float OverlordsPresenceHealthPerDemon(Player* owner)
+    {
+        if (uint8 op = TalentRank(owner, SPELL_TALENT_OVERLORDS_PRESENCE, 3))
+            return gConfig.OverlordsPresenceHealthPct[op - 1];
+        return 0.0f;
+    }
+    inline float OverlordsPresenceHastePerDemon(Player* owner)
+    {
+        if (uint8 op = TalentRank(owner, SPELL_TALENT_OVERLORDS_PRESENCE, 3))
+            return gConfig.OverlordsPresenceHastePct[op - 1];
+        return 0.0f;
+    }
+
+    // Cursed Vitality (cv): owner-stamina half as a fraction (0 = untrained).
+    inline float CursedVitalityOwnerStamina(Player* owner)
+    {
+        if (uint8 cv = TalentRank(owner, SPELL_TALENT_CURSED_VITALITY, 2))
+            return gConfig.CursedVitalityOwnerStaminaPct[cv - 1];
+        return 0.0f;
+    }
+
+    // Bound by Blood (bbb): survivor buff amounts as fractions (0 = untrained).
+    inline float BoundByBloodDamage(Player* owner)
+    {
+        if (uint8 bbb = TalentRank(owner, SPELL_TALENT_BOUND_BY_BLOOD, 2))
+            return gConfig.BoundByBloodDamagePct[bbb - 1];
+        return 0.0f;
+    }
+    inline float BoundByBloodHaste(Player* owner)
+    {
+        if (uint8 bbb = TalentRank(owner, SPELL_TALENT_BOUND_BY_BLOOD, 2))
+            return gConfig.BoundByBloodHastePct[bbb - 1];
+        return 0.0f;
+    }
+
+    // Pactbound Fury diagnostics (defined in ShardEconomy.cpp): a per-owner rolling
+    // (hits, crits) tally so `.legion dumpstats` can show the realised crit rate.
+    void RecordPfHit(ObjectGuid owner, bool crit);
+    void GetPfStats(ObjectGuid owner, uint32& hits, uint32& crits);
 }
 
 #endif // MOD_DEMONOLOGY_REWORK_TALENTS_H

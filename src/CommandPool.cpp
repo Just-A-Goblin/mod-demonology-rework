@@ -5,10 +5,14 @@
 #include "DemonAI.h"
 #include "DemonologyConfig.h"
 #include "DemonologyIds.h"
+#include "DemonologyTalents.h"
+#include "OwnerMods.h"
 #include "PetScaling.h"
 
 #include "Creature.h"
 #include "DatabaseEnv.h"
+#include "Item.h"
+#include "Log.h"
 #include "MotionMaster.h"
 #include "ObjectAccessor.h"
 #include "Pet.h"
@@ -17,6 +21,8 @@
 #include "ScriptMgr.h"
 #include "SpellAuraDefines.h"
 #include "TemporarySummon.h"
+#include "Timer.h"
+#include "Util.h"
 
 #include <algorithm>
 #include <cmath>
@@ -463,6 +469,21 @@ void CommandPool::Update(uint32 diff)
         return;
     }
 
+    // Demonic Rebirth (dr): resummon legionnaires queued by a death this tick. The owner
+    // is alive/unmounted/not-restoring here. Prune any dead entries first so the freed
+    // slot is actually available, then refill up to the cap (never evicting a survivor).
+    if (!_pendingRebirth.empty())
+    {
+        _legionnaires.erase(std::remove_if(_legionnaires.begin(), _legionnaires.end(),
+            [&](ObjectGuid g) { Creature* c = ObjectAccessor::GetCreature(*owner, g); return !c || !c->IsAlive(); }),
+            _legionnaires.end());
+        for (uint32 entry : _pendingRebirth)
+            if (_legionnaires.size() < LegionnaireCap())
+                Recruit(owner, entry);
+        _pendingRebirth.clear();
+        OnPoolChanged();
+    }
+
     // A respec that drops a Command talent lowers the cap; evict the oldest
     // legionnaire(s) until we're within it (you can't command past the cap).
     while (_legionnaires.size() > LegionnaireCap())
@@ -488,8 +509,19 @@ void CommandPool::Mirror(Player* owner)
     // so this also picks up a freshly (re)summoned pet within a tick. Runs even for a
     // warlock with only a pet (pool created on login); the rest is legionnaire-only.
     PetScaling::ApplyPetMods(owner);
+
+    // Owner auras from the current composition (op per-demon HP/haste, cv owner stamina,
+    // Legion Aura toggle). Runs even for a pet-only warlock, ahead of the empty-return.
+    OwnerMods::Apply(owner, CommandedDemonCount(owner));
+
     if (_legionnaires.empty())
         return;
+
+    // Bound by Blood haste is a transient window; refresh legionnaire attack speed each
+    // tick while it's active, plus one tick after it lapses so the haste cleanly reverts.
+    bool const buffActive = LegionBuffHaste() > 0.0f;
+    bool const refreshHaste = buffActive || _lastLegionBuffActive;
+    _lastLegionBuffActive = buffActive;
 
     // The anchor is the real Pet; legionnaires mirror its stance and target
     // (PLAN §3.1). Pet derives from Creature, so it has GetReactState().
@@ -560,6 +592,8 @@ void CommandPool::Mirror(Player* owner)
 
         if (resync)
             PetScaling::ApplyInheritance(owner, c);
+        else if (refreshHaste)
+            PetScaling::ReapplyAttackSpeed(owner, c);   // transient bbb haste on/off
 
         c->SetReactState(react);            // (1) mirror the anchor's stance
 
@@ -597,10 +631,97 @@ void CommandPool::Mirror(Player* owner)
 
 void CommandPool::OnPoolChanged()
 {
-    // Single source of truth for everything pool-size-dependent (PLAN §3.4):
-    // Legion Aura, Soul Link scaling, Grand Warlock's Design, threat auras.
-    // Those route through here in later phases.
-    if (gConfig.DebugLogShardIncome) { /* placeholder to keep the hook live */ }
+    // Single source of truth for everything pool-size-dependent (DESIGN_V2 §8.1).
+    // Recompute the owner auras from the new composition: Overlord's Presence
+    // (per-demon owner HP/haste), Cursed Vitality's owner-stamina half, and the
+    // Grand Warlock's Design Legion Aura toggle (groundwork; full rider in Phase 5).
+    if (Player* owner = ObjectAccessor::FindPlayer(_owner))
+        OwnerMods::Apply(owner, CommandedDemonCount(owner));
+}
+
+uint8 CommandPool::CommandedDemonCount(Player* owner) const
+{
+    if (!owner)
+        return 0;
+    uint8 count = uint8(_legionnaires.size());
+    if (owner->GetPet())
+        ++count;                            // the anchor
+    if (!_greaterDemonGuid.IsEmpty())
+        ++count;                            // active Infernal/Doomguard
+    return count;
+}
+
+void CommandPool::TriggerLegionBuff(float dmgFrac, float hasteFrac, uint32 durMs)
+{
+    _legionBuffDmg = dmgFrac;
+    _legionBuffHaste = hasteFrac;
+    _legionBuffUntilMs = getMSTime() + durMs;
+}
+
+float CommandPool::LegionBuffDamage() const
+{
+    return (_legionBuffUntilMs && getMSTime() < _legionBuffUntilMs) ? _legionBuffDmg : 0.0f;
+}
+
+float CommandPool::LegionBuffHaste() const
+{
+    return (_legionBuffUntilMs && getMSTime() < _legionBuffUntilMs) ? _legionBuffHaste : 0.0f;
+}
+
+void CommandPool::OnDemonDeath(Player* owner, Creature* dead)
+{
+    if (!owner || !dead)
+        return;
+
+    bool const wasLegionnaire =
+        std::find(_legionnaires.begin(), _legionnaires.end(), dead->GetGUID()) != _legionnaires.end();
+
+    // --- Bound by Blood (bbb): the survivors gain a transient damage/haste buff and the
+    // owner refunds a Soul Shard ("demon deaths fund your actives" under Path B). ---
+    if (float const dmg = Demonology::BoundByBloodDamage(owner))
+    {
+        TriggerLegionBuff(dmg, Demonology::BoundByBloodHaste(owner), gConfig.BoundByBloodDurationMs);
+
+        if (gConfig.BoundByBloodRefundShard)
+        {
+            ItemPosCountVec dest;
+            if (owner->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SOUL_SHARD, 1) == EQUIP_ERR_OK)
+                if (Item* shard = owner->StoreNewItem(dest, ITEM_SOUL_SHARD, /*update=*/true))
+                    owner->SendNewItem(shard, 1, true, false);
+        }
+    }
+
+    // --- Demonic Rebirth (dr): chance to instantly resummon a dying LEGIONNAIRE (the
+    // anchor pet / greater demon are re-summoned by their own spells, not here), on a
+    // shared ICD. Queue the entry; Update summons it next tick (summoning inside the
+    // death callback is unsafe). ---
+    if (wasLegionnaire)
+        if (float const chance = Demonology::DemonicRebirthChance(owner))
+        {
+            uint32 const now = getMSTime();
+            if (now >= _rebirthReadyAtMs && roll_chance_f(chance * 100.0f))
+            {
+                _pendingRebirth.push_back(dead->GetEntry());
+                _rebirthReadyAtMs = now + gConfig.DemonicRebirthIcdMs;
+            }
+        }
+
+    // The dead legionnaire is pruned from _legionnaires by the next Mirror tick (which
+    // also fires OnPoolChanged); nothing to erase here.
+}
+
+uint32 CommandPool::RebirthReadyInMs() const
+{
+    uint32 const now = getMSTime();
+    return now >= _rebirthReadyAtMs ? 0u : _rebirthReadyAtMs - now;
+}
+
+void NotifyDemonDeath(Player* owner, Creature* dead)
+{
+    if (!owner)
+        return;
+    if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
+        pool->OnDemonDeath(owner, dead);
 }
 
 // ------------------------------------------------------------ CommandPoolMgr
@@ -717,6 +838,7 @@ public:
             pool->Save();                               // persist before teardown
         sCommandPoolMgr->Remove(player->GetGUID());     // clean up legionnaires on logout/disconnect
         Demonology::PetScaling::ForgetPet(player->GetGUID());
+        Demonology::OwnerMods::Clear(player->GetGUID()); // owner unit-mods die with the unit; drop bookkeeping
     }
 
     // Gear changes move the owner's spell power, so re-run inheritance on every

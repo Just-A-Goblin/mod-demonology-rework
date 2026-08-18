@@ -9,6 +9,7 @@
  * Vertical slice: reads Soul Harvest rank from the player's known rank spells.
  * The full talent placement comes in Phase 5; the plumbing here is final.
  */
+#include "CommandPool.h"
 #include "DemonologyConfig.h"
 #include "DemonologyIds.h"
 #include "DemonologyTalents.h"
@@ -19,6 +20,7 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "Timer.h"
+#include "Util.h"
 
 #include <unordered_map>
 
@@ -28,6 +30,29 @@ namespace
 {
     // Per-player last-proc timestamp (getMSTime) — the economy's throttle.
     std::unordered_map<ObjectGuid, uint32> g_lastProc;
+
+    // Pactbound Fury realised-crit tally (owner -> {hits, crits}), for dumpstats.
+    std::unordered_map<ObjectGuid, std::pair<uint32, uint32>> g_pfStats;
+
+    // The full demon-damage multiplier applied to any warlock-owned demon's hit: the
+    // scaling talents (Vicious Pact / Fel Armory), the transient Bound by Blood survivor
+    // buff on the pool, and a Pactbound Fury crit roll (recorded for dumpstats).
+    float DemonDamageMultFull(Player* owner, bool meleeSide)
+    {
+        float mult = Demonology::DemonDamageMult(owner, meleeSide);
+
+        if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
+            mult *= (1.0f + pool->LegionBuffDamage());
+
+        if (float const chance = Demonology::PactboundFuryCritChance(owner))
+        {
+            bool const crit = roll_chance_f(chance * 100.0f);
+            Demonology::RecordPfHit(owner->GetGUID(), crit);
+            if (crit)
+                mult *= gConfig.PactboundFuryCritMultiplier;
+        }
+        return mult;
+    }
 
     uint8 SoulHarvestRank(Player* owner)
     {
@@ -121,15 +146,33 @@ public:
     void ModifyMeleeDamage(Unit* /*target*/, Unit* attacker, uint32& damage) override
     {
         if (Player* owner = Demonology::WarlockOwnerOfDemon(attacker))
-            damage = uint32(float(damage) * Demonology::DemonDamageMult(owner, /*meleeSide=*/true));
+            damage = uint32(float(damage) * DemonDamageMultFull(owner, /*meleeSide=*/true));
     }
 
     void ModifySpellDamageTaken(Unit* /*target*/, Unit* attacker, int32& damage, SpellInfo const* /*spellInfo*/) override
     {
         if (Player* owner = Demonology::WarlockOwnerOfDemon(attacker))
-            damage = int32(float(damage) * Demonology::DemonDamageMult(owner, /*meleeSide=*/false));
+            damage = int32(float(damage) * DemonDamageMultFull(owner, /*meleeSide=*/false));
     }
 };
+
+namespace Demonology
+{
+    void RecordPfHit(ObjectGuid owner, bool crit)
+    {
+        auto& s = g_pfStats[owner];
+        ++s.first;
+        if (crit)
+            ++s.second;
+    }
+
+    void GetPfStats(ObjectGuid owner, uint32& hits, uint32& crits)
+    {
+        auto it = g_pfStats.find(owner);
+        hits  = (it != g_pfStats.end()) ? it->second.first  : 0;
+        crits = (it != g_pfStats.end()) ? it->second.second : 0;
+    }
+}
 
 void AddSC_demonology_shard_economy()
 {

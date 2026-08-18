@@ -21,6 +21,30 @@
 
 namespace Demonology::PetScaling
 {
+    namespace
+    {
+        // Demon base-attack interval from the template, hasted by Savage Instincts plus any
+        // transient Bound by Blood window on the owner's pool. Re-derived each call so it
+        // never compounds and reverts cleanly when the sources drop.
+        uint32 DerivedAttackTime(Player* owner, Creature* demon)
+        {
+            uint32 baseTime = demon->GetCreatureTemplate() ? demon->GetCreatureTemplate()->BaseAttackTime : uint32(BASE_ATTACK_TIME);
+            if (!baseTime)
+                baseTime = uint32(BASE_ATTACK_TIME);
+            float haste = DemonHastePct(owner) / 100.0f;
+            if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
+                haste += pool->LegionBuffHaste();
+            return uint32(float(baseTime) / (1.0f + haste));
+        }
+    }
+
+    void ReapplyAttackSpeed(Player* owner, Creature* demon)
+    {
+        if (!owner || !demon || !demon->IsInWorld())
+            return;
+        demon->SetAttackTime(BASE_ATTACK, DerivedAttackTime(owner, demon));
+    }
+
     int32 OwnerSpellPower(Player* owner)
     {
         if (!owner)
@@ -61,15 +85,9 @@ namespace Demonology::PetScaling
             demon->UpdateDamagePhysical(BASE_ATTACK);
         }
 
-        // --- Attack speed: Savage Instincts (si) hastes demon swings. Re-derived from
-        // the template base each apply, so it never compounds and resets when dropped. ---
-        {
-            uint32 baseTime = demon->GetCreatureTemplate() ? demon->GetCreatureTemplate()->BaseAttackTime : uint32(BASE_ATTACK_TIME);
-            if (!baseTime)
-                baseTime = uint32(BASE_ATTACK_TIME);
-            float const haste = DemonHastePct(owner) / 100.0f;
-            demon->SetAttackTime(BASE_ATTACK, uint32(float(baseTime) / (1.0f + haste)));
-        }
+        // --- Attack speed: Savage Instincts (si) + transient Bound by Blood haste,
+        // re-derived from the template base so it never compounds and resets when dropped. ---
+        demon->SetAttackTime(BASE_ATTACK, DerivedAttackTime(owner, demon));
     }
 
     // ---- Anchor pet (core Pet) talent buffs ----
@@ -106,13 +124,10 @@ namespace Demonology::PetScaling
             cur.healthMult = wantHealth;
         }
 
-        // Attack speed (Savage Instincts): set the base attack time from the template,
-        // re-derived each call so it never compounds and shows in GetAttackTime (same as
-        // legionnaires). Haste auras still multiply on top via m_modAttackSpeedPct.
-        uint32 baseTime = pet->GetCreatureTemplate() ? pet->GetCreatureTemplate()->BaseAttackTime : uint32(BASE_ATTACK_TIME);
-        if (!baseTime)
-            baseTime = uint32(BASE_ATTACK_TIME);
-        pet->SetAttackTime(BASE_ATTACK, uint32(float(baseTime) / (1.0f + DemonHastePct(owner) / 100.0f)));
+        // Attack speed (Savage Instincts + transient Bound by Blood): set the base attack
+        // time from the template, re-derived each call so it never compounds and shows in
+        // GetAttackTime (same as legionnaires). Haste auras still multiply on top.
+        pet->SetAttackTime(BASE_ATTACK, DerivedAttackTime(owner, pet));
     }
 
     void ForgetPet(ObjectGuid owner)

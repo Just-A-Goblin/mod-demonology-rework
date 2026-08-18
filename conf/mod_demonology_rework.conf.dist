@@ -93,5 +93,26 @@ Demonology.LegionAura.DamagePct = 0.05
 Demonology.LegionAura.HastePct = 0.05
 Demonology.Beacon.DemonDamagePct = 0.50
 
+# --- Phase 1 talents ---
+# Pactbound Fury (pf, T3): demons roll a crit at hit time (per-rank chance), damage x mult.
+Demonology.PactboundFury.CritChancePct = 0.02, 0.04, 0.06
+Demonology.PactboundFury.CritMultiplier = 2.0
+# Demonic Rebirth (dr, T6): chance to instantly resummon a dying legionnaire; shared ICD.
+Demonology.DemonicRebirth.ChancePct = 0.50, 1.00
+Demonology.DemonicRebirth.IcdMs = 60000
+# Bound by Blood (bbb, T9): on demon death, surviving demons gain +damage/+haste for a
+# window, and the owner refunds a Soul Shard (Path B economy).
+Demonology.BoundByBlood.DamagePct = 0.15, 0.30
+Demonology.BoundByBlood.HastePct = 0.25, 0.45
+Demonology.BoundByBlood.DurationMs = 10000
+Demonology.BoundByBlood.RefundShard = 1
+# Overlord's Presence (op, T8): per commanded demon, buff the OWNER's max health & haste.
+Demonology.OverlordsPresence.HealthPct = 0.02, 0.04, 0.06
+Demonology.OverlordsPresence.HastePct = 0.015, 0.03, 0.045
+# Cursed Vitality (cv, T1) owner half: +owner stamina (the demon-health half is separate).
+Demonology.CursedVitality.OwnerStaminaPct = 0.03, 0.06
+# Legion Aura (Grand Warlock's Design groundwork): party aura toggles on at this pool size.
+Demonology.LegionAura.MinDemons = 1
+
 # Log every shard gain to the server log (noisy; for tuning only).
 Demonology.Debug.LogShardIncome = 0

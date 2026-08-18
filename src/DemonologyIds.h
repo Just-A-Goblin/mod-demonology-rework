@@ -50,6 +50,14 @@ namespace Demonology
     constexpr uint32 SPELL_TALENT_VICIOUS_PACT     = 290933;  // vp [8,16,24]% SP->melee, [5,10,15]% SP->spell
     constexpr uint32 SPELL_TALENT_ETERNAL_SERVITUDE = 290965; // es: Infernal/Doomguard permanent + 60s CD
 
+    // Phase 1 talent markers (verified rank-1 spell ids in Talent.dbc tab 303; ranks are
+    // consecutive ids so TalentRank reads the trained rank). All read via HasTalent.
+    constexpr uint32 SPELL_TALENT_PACTBOUND_FURY        = 290917;  // pf  [2,4,6]% demon crit (damage hook)
+    constexpr uint32 SPELL_TALENT_DEMONIC_REBIRTH       = 290940;  // dr  50/100% instant resummon, 60s ICD
+    constexpr uint32 SPELL_TALENT_OVERLORDS_PRESENCE    = 290956;  // op  per commanded demon: owner +HP/+haste
+    constexpr uint32 SPELL_TALENT_BOUND_BY_BLOOD        = 290974;  // bbb on demon death: survivors +dmg/haste, refund 1 shard
+    constexpr uint32 SPELL_TALENT_GRAND_WARLOCKS_DESIGN = 290976;  // gwd capstone (Legion Aura groundwork here; full rider Phase 5)
+
     // Core base pet-summon spells (warlocks learn these normally). Knowing one + the
     // Expanded Command talent grants that type's "Summon <type> Legionnaire" (hybrid
     // learn). Felguard is the exception: its PET is itself gated behind the sfg talent.

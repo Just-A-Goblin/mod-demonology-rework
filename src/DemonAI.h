@@ -35,6 +35,16 @@ namespace Demonology
         void EnterEvadeMode(EvadeReason /*why*/) override { }   // never reset to spawn
         void MoveInLineOfSight(Unit* /*who*/) override { }       // never auto-aggro (no self-fight)
 
+        // Real death of an owned demon (§8.2). Dismiss/stash/logout go through
+        // DespawnOrUnsummon and never reach here, so this fires on genuine deaths only —
+        // driving Demonic Rebirth + Bound by Blood via the owner's Command Pool.
+        void JustDied(Unit* /*killer*/) override
+        {
+            if (Unit* owner = me->GetOwner())
+                if (Player* p = owner->ToPlayer())
+                    Demonology::NotifyDemonDeath(p, me);
+        }
+
         // Casters engage without forcing a melee chase: hold at cast range and let
         // UpdateAI drive the casting. Melee demons keep the default chase.
         void AttackStart(Unit* who) override
