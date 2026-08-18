@@ -51,7 +51,9 @@ public:
         gConfig.Enable                       = sConfigMgr->GetOption<bool>("Demonology.Enable", true);
         gConfig.SoulHarvestChancePerRank     = sConfigMgr->GetOption<float>("Demonology.SoulHarvest.ChancePerRank", 0.04f);
         gConfig.SoulHarvestInternalCdMs      = sConfigMgr->GetOption<uint32>("Demonology.SoulHarvest.InternalCooldownMs", 1000);
-        gConfig.CruelMasterCritMultiplier    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.CritMultiplier", 2.0f);
+        gConfig.CruelMasterProcChanceMult    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.ProcChanceMult", 2.0f);
+        gConfig.CruelMasterIcdMultOnCrit     = sConfigMgr->GetOption<float>("Demonology.CruelMaster.IcdMultOnCrit", 0.5f);
+        gConfig.CruelMasterBaseCritChance    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.BaseCritChance", 0.05f);
         LoadFloatList("Demonology.ViciousPact.MeleePct",         gConfig.VpMeleePct,       3);
         LoadFloatList("Demonology.ViciousPact.SpellPct",         gConfig.VpSpellPct,       3);
         LoadFloatList("Demonology.FelArmory.DamagePct",          gConfig.FaDamagePct,      3);

@@ -16,8 +16,13 @@ Demonology.SoulHarvest.ChancePerRank = 0.04
 # Per-player internal cooldown between shard procs, in ms.
 Demonology.SoulHarvest.InternalCooldownMs = 1000
 
-# --- Cruel Master (T2) ---
-Demonology.CruelMaster.CritMultiplier = 2.0
+# --- Cruel Master (T2): demon crits accelerate Soul Harvest ---
+# The crit is simulated in the Soul Harvest proc (no server hook reports a crit result):
+# roll the demon's crit chance (Pactbound Fury + BaseCritChance); on a "crit", rank 1
+# multiplies the proc chance and rank 2 also multiplies the ICD (values below).
+Demonology.CruelMaster.ProcChanceMult = 2.0
+Demonology.CruelMaster.IcdMultOnCrit = 0.5
+Demonology.CruelMaster.BaseCritChance = 0.05
 
 # --- Per-rank talent multipliers (comma-separated, one value per talent rank) ---
 # A short list keeps code defaults for the unspecified ranks. These are the source

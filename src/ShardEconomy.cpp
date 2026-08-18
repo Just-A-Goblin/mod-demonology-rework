@@ -111,12 +111,24 @@ public:
         if (!rank)
             return;
 
+        // Cruel Master: simulate whether this demon hit crit (no server hook reports the
+        // real crit result), at the demon's crit chance. On a sim-crit, rank 1 multiplies
+        // the proc chance and rank 2 also shortens the effective ICD.
+        uint8 const cm = Demonology::CruelMasterRank(owner);
+        bool const cmCrit = cm && roll_chance_f(Demonology::DemonSimCritChance(owner) * 100.0f);
+
+        uint32 icd = gConfig.SoulHarvestInternalCdMs;
+        if (cmCrit && cm >= 2)
+            icd = uint32(float(icd) * gConfig.CruelMasterIcdMultOnCrit);
+
         uint32 const now = getMSTime();
         auto it = g_lastProc.find(owner->GetGUID());
-        if (it != g_lastProc.end() && getMSTimeDiff(it->second, now) < gConfig.SoulHarvestInternalCdMs)
+        if (it != g_lastProc.end() && getMSTimeDiff(it->second, now) < icd)
             return;
 
-        float const chancePct = rank * gConfig.SoulHarvestChancePerRank * 100.0f;
+        float chancePct = rank * gConfig.SoulHarvestChancePerRank * 100.0f;
+        if (cmCrit && cm >= 1)
+            chancePct *= gConfig.CruelMasterProcChanceMult;
         if (!roll_chance_f(chancePct))
             return;
 

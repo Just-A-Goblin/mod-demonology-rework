@@ -305,6 +305,11 @@ public:
             Demonology::TalentRank(player, Demonology::SPELL_TALENT_IMPROVED_LEGION, 2) ? "trained" : "untrained",
             Demonology::gConfig.SummonLegionnaireShardCost,
             player->GetItemCount(SOUL_SHARD_ITEM));
+        handler->PSendSysMessage("[legion] Cruel Master: rank {} — on a sim-crit ({:.0f}% chance): x{:.1f} proc chance, rank2 x{:.2f} ICD",
+            uint32(Demonology::CruelMasterRank(player)),
+            Demonology::DemonSimCritChance(player) * 100.0f,
+            Demonology::gConfig.CruelMasterProcChanceMult,
+            Demonology::gConfig.CruelMasterIcdMultOnCrit);
         return true;
     }
 };

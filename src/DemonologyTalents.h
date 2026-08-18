@@ -146,6 +146,19 @@ namespace Demonology
         return 0.0f;
     }
 
+    // Cruel Master (cm): trained rank (0/1/2).
+    inline uint8 CruelMasterRank(Player* owner)
+    {
+        return TalentRank(owner, SPELL_TALENT_CRUEL_MASTER, 2);
+    }
+
+    // The demon crit chance Cruel Master simulates in the Soul Harvest proc: the
+    // Pactbound Fury talent crit plus a base (fraction). Used only for cm's roll.
+    inline float DemonSimCritChance(Player* owner)
+    {
+        return PactboundFuryCritChance(owner) + gConfig.CruelMasterBaseCritChance;
+    }
+
     // Effective Soul Shard cost of Summon Wild Imps (Path B), trimmed by Improved Legion.
     inline uint32 WildImpShardCost(Player* owner)
     {

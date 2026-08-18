@@ -19,8 +19,13 @@ namespace Demonology
         float SoulHarvestChancePerRank   = 0.04f;  // 4/8/12% at ranks 1/2/3
         uint32 SoulHarvestInternalCdMs   = 1000;
 
-        // Cruel Master (T2)
-        float CruelMasterCritMultiplier  = 2.0f;
+        // Cruel Master (T2) — demon crits accelerate Soul Harvest. The crit is SIMULATED in
+        // the Soul Harvest proc (no server hook reports a crit result): roll the demon's crit
+        // chance (Pactbound Fury + a base), and on a "crit" rank 1 multiplies the proc chance,
+        // rank 2 also multiplies down the ICD.
+        float CruelMasterProcChanceMult  = 2.0f;   // rank>=1: x proc chance on a sim-crit
+        float CruelMasterIcdMultOnCrit   = 0.5f;   // rank>=2: x ICD on a sim-crit (<1 = shorter)
+        float CruelMasterBaseCritChance  = 0.05f;  // demon base crit added to Pactbound Fury for the sim
 
         // Per-rank talent multipliers (source of truth = conf; comma lists in the .dist).
         // Demon DAMAGE, additive on 1.0:
