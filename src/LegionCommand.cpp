@@ -186,7 +186,7 @@ public:
             Demonology::gConfig.InheritHealthPctOfOwner * 100.0f, Demonology::gConfig.InheritMeleeDamagePerSP, Demonology::gConfig.WildImpSPCoefficient);
         float const meleeMult = Demonology::DemonDamageMult(player, true);
         float const spellMult = Demonology::DemonDamageMult(player, false);
-        handler->PSendSysMessage("[legion] talents: fc={} vp={} si={} fa={} (felArmor={}) | dmgMult melee={:.2f} spell={:.2f}",
+        handler->PSendSysMessage("[legion] scaling talents: Fel Conditioning={} Vicious Pact={} Savage Instincts={} Fel Armory={} (Fel Armor up={}) | dmgMult melee={:.2f} spell={:.2f}",
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_FEL_CONDITIONING, 3)),
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_VICIOUS_PACT, 3)),
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_SAVAGE_INSTINCTS, 3)),
@@ -246,8 +246,8 @@ public:
             }
         }
 
-        // --- Phase 1 talents + live state (demon-death hooks, owner auras, pf crits) ---
-        handler->PSendSysMessage("[legion] P1 talents: pf={} dr={} op={} bbb={} cv={}",
+        // --- Phase 1 talents + live state (demon-death hooks, owner auras, crit rolls) ---
+        handler->PSendSysMessage("[legion] Phase 1 talents: Pactbound Fury={} Demonic Rebirth={} Overlord's Presence={} Bound by Blood={} Cursed Vitality={}",
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_PACTBOUND_FURY, 3)),
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_DEMONIC_REBIRTH, 2)),
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_OVERLORDS_PRESENCE, 3)),
@@ -257,30 +257,30 @@ public:
         if (Demonology::CommandPool* p1 = sCommandPoolMgr->Find(player->GetGUID()))
         {
             uint8 const cmd = p1->CommandedDemonCount(player);
-            handler->PSendSysMessage("[legion] op: {} commanded demon(s) -> owner +{:.1f}% max HP, +{:.1f}% haste  (cv +{:.0f}% stam)",
+            handler->PSendSysMessage("[legion] Overlord's Presence: {} commanded demon(s) -> owner +{:.1f}% max HP, +{:.1f}% haste  (Cursed Vitality +{:.0f}% stamina)",
                 uint32(cmd),
                 Demonology::OverlordsPresenceHealthPerDemon(player) * float(cmd) * 100.0f,
                 Demonology::OverlordsPresenceHastePerDemon(player) * float(cmd) * 100.0f,
                 Demonology::CursedVitalityOwnerStamina(player) * 100.0f);
 
             uint32 const drCd = p1->RebirthReadyInMs();
-            handler->PSendSysMessage("[legion] dr: chance {:.0f}%, {} (ICD {}s)",
+            handler->PSendSysMessage("[legion] Demonic Rebirth: chance {:.0f}%, {} (ICD {}s)",
                 Demonology::DemonicRebirthChance(player) * 100.0f,
                 drCd ? "on cooldown" : "ready", drCd / 1000);
 
-            float const bbbDmg = p1->LegionBuffDamage();
-            if (bbbDmg > 0.0f)
-                handler->PSendSysMessage("[legion] bbb: WINDOW ACTIVE — survivors +{:.0f}% dmg, +{:.0f}% haste",
-                    bbbDmg * 100.0f, p1->LegionBuffHaste() * 100.0f);
+            float const bloodDmg = p1->LegionBuffDamage();
+            if (bloodDmg > 0.0f)
+                handler->PSendSysMessage("[legion] Bound by Blood: WINDOW ACTIVE — survivors +{:.0f}% damage, +{:.0f}% haste",
+                    bloodDmg * 100.0f, p1->LegionBuffHaste() * 100.0f);
             else
-                handler->PSendSysMessage("[legion] bbb: idle (on death: +{:.0f}% dmg/+{:.0f}% haste {}s, refund {})",
+                handler->PSendSysMessage("[legion] Bound by Blood: idle (on death: +{:.0f}% damage/+{:.0f}% haste {}s, refund {})",
                     Demonology::BoundByBloodDamage(player) * 100.0f, Demonology::BoundByBloodHaste(player) * 100.0f,
                     Demonology::gConfig.BoundByBloodDurationMs / 1000, Demonology::gConfig.BoundByBloodRefundShard ? "1 shard" : "off");
         }
 
         uint32 pfHits = 0, pfCrits = 0;
         Demonology::GetPfStats(player->GetGUID(), pfHits, pfCrits);
-        handler->PSendSysMessage("[legion] pf crits: {}/{} hits ({:.1f}% realised, target {:.0f}%)",
+        handler->PSendSysMessage("[legion] Pactbound Fury crits: {}/{} hits ({:.1f}% realised, target {:.0f}%)",
             pfCrits, pfHits, pfHits ? 100.0f * float(pfCrits) / float(pfHits) : 0.0f,
             Demonology::PactboundFuryCritChance(player) * 100.0f);
         return true;
