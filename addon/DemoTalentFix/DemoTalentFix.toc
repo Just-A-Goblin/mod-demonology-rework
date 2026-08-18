@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: Talent Frame Draw Fix
+## Notes: General fix for the Blizzard TalentFrame_DrawLines crash on custom/expanded trees (any class). Lets all talents render even when a prereq arrow is blocked.
+## Author: mod-demonology-rework
+## Version: 1.0.0
+
+DemoTalentFix.lua

@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: Master of the Legion
+## Notes: Display-only health/buff frames for legion demons (slots 1-3). Reads client-visible state only; sends nothing to the server.
+## Author: mod-demonology-rework
+## Version: 0.1.0
+## SavedVariables: MasterOfTheLegionDB
+
+LegionFrames.xml
+LegionFrames.lua

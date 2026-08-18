@@ -1,0 +1,114 @@
+{
+  "artifacts": {
+    "dbc/SkillLineAbility.dbc": "0275be2f70e3e422d4b1e62fa653ef0afafcb6cacc33a0d2f021a437e152845f",
+    "dbc/Spell.dbc": "b124ffd155bcf577337fb06e8f3a8b0f9abe1d6cf5a8ba46b9bd556fc436774f",
+    "dbc/Talent.dbc": "322e1e31594624e032746de2d3c041f26875bf0a4f3f9911d1f0f1f1f7d6aeae",
+    "dbc/TalentTab.dbc": "4b32ea0dcf5b89aeead630d21996546b4c84123c224448dab666ef57a3299644",
+    "mpq/patch-6.MPQ": "ea28fc88534467ea3412e3a53fce5056140e1b0a1e66f4db60573f72f8a4cad9",
+    "sql/db-characters/91_cleanup_characters.sql": "966275617d05e968ab05a75ff93291a26bba1b2b940859fa8e8453ab260e32a4",
+    "sql/db-world/00_spell_dbc.sql": "18e67f6925b20490cd10323c38ff17cb55e27edb53b58dd5ad5d2e3cfcb0f62e",
+    "sql/db-world/10_spell_ranks.sql": "2176d3b5d6dee7f1cd4b19a38f0204b1ec79e49ff6597d81d959492d85cf3b1b",
+    "sql/db-world/11_spell_bonus_data.sql": "3e24f79f872ce7c3aaf54185473a41e7f3a6b8fdc11825d70a4c76f36dc2c36f",
+    "sql/db-world/12_spell_proc.sql": "cebdf0351ec6615b91cb95971ad30fcde3eab1725377dcbb1445dca65053e8c1",
+    "sql/db-world/13_spell_linked_spell.sql": "a5f024dd57782901ce43c9ee452e3587e7822ac4f56a67807fe56eb0f819a640",
+    "sql/db-world/14_spell_script_names.sql": "24fc1060084ea504031e734e1d676e09461716cc8020feba4160c4656b5bd2ad",
+    "sql/db-world/20_trainer_spell.sql": "0351965d9cfba1d9a9eb894f630e26cf284333ef91f8cbf4155fd91a400c2ccd",
+    "sql/db-world/90_cleanup.sql": "ded1a09585a232101878db6ae498a2143419df95f91a05f2f5aee0aa1ba605b0"
+  },
+  "base_hash": "f450a06d55ad2bbba47a6b98ff18ab7dbeb1fa5ce7950e64d07c7e68c0dc6ae1",
+  "index_rows_created": {
+    "icons_created": 0
+  },
+  "spells": [
+    {
+      "id": 290000,
+      "key": "demonology.demonic_empowerment",
+      "name": "Demonic Empowerment",
+      "tier": "A"
+    },
+    {
+      "id": 290500,
+      "key": "demonology.demonic_empowerment_buff",
+      "name": "Demonic Empowerment",
+      "tier": "A"
+    },
+    {
+      "id": 290901,
+      "key": "demonology.doom_bolt",
+      "name": "Doom Bolt",
+      "tier": "A"
+    },
+    {
+      "id": 290010,
+      "key": "demonology.soul_harvest_r1",
+      "name": "Soul Harvest",
+      "tier": "A"
+    },
+    {
+      "id": 290011,
+      "key": "demonology.soul_harvest_r2",
+      "name": "Soul Harvest",
+      "tier": "A"
+    },
+    {
+      "id": 290012,
+      "key": "demonology.soul_harvest_r3",
+      "name": "Soul Harvest",
+      "tier": "A"
+    },
+    {
+      "id": 290008,
+      "key": "demonology.summon_doomguard",
+      "name": "Summon Doomguard",
+      "tier": "A"
+    },
+    {
+      "id": 290007,
+      "key": "demonology.summon_infernal",
+      "name": "Summon Infernal",
+      "tier": "A"
+    },
+    {
+      "id": 290003,
+      "key": "demonology.summon_legionnaire_felguard",
+      "name": "Summon Felguard Legionnaire",
+      "tier": "A"
+    },
+    {
+      "id": 290005,
+      "key": "demonology.summon_legionnaire_felhound",
+      "name": "Summon Felhound Legionnaire",
+      "tier": "A"
+    },
+    {
+      "id": 290002,
+      "key": "demonology.summon_legionnaire_imp",
+      "name": "Summon Imp Legionnaire",
+      "tier": "A"
+    },
+    {
+      "id": 290004,
+      "key": "demonology.summon_legionnaire_succubus",
+      "name": "Summon Succubus Legionnaire",
+      "tier": "A"
+    },
+    {
+      "id": 290006,
+      "key": "demonology.summon_legionnaire_voidwalker",
+      "name": "Summon Voidwalker Legionnaire",
+      "tier": "A"
+    },
+    {
+      "id": 290001,
+      "key": "demonology.summon_wild_imps",
+      "name": "Summon Wild Imps",
+      "tier": "A"
+    },
+    {
+      "id": 290900,
+      "key": "demonology.wild_imp_firebolt",
+      "name": "Firebolt",
+      "tier": "A"
+    }
+  ]
+}

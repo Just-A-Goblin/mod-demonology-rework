@@ -1,0 +1,79 @@
+[worldserver]
+
+###################################################################################################
+# mod-demonology-rework
+#
+# Every design number is tunable here — none survive playtesting (PLAN §10.2).
+# Copy to mod_demonology_rework.conf (drop the .dist) to override.
+###################################################################################################
+
+# Master switch for the module. (1: on | 0: off)
+Demonology.Enable = 1
+
+# --- Soul Harvest (T1): the shard-economy throttle ---
+# Proc chance per rank of Soul Harvest (0.04 = 4% -> 4/8/12% at ranks 1/2/3).
+Demonology.SoulHarvest.ChancePerRank = 0.04
+# Per-player internal cooldown between shard procs, in ms.
+Demonology.SoulHarvest.InternalCooldownMs = 1000
+
+# --- Cruel Master (T2) ---
+Demonology.CruelMaster.CritMultiplier = 2.0
+
+# --- Wild Imps ---
+Demonology.WildImp.Count = 3
+Demonology.WildImp.DurationMs = 20000
+Demonology.WildImp.SPCoefficient = 0.28
+
+# --- Greater demons (Infernal / Doomguard): temporary cooldown guardians ---
+# How long each fights before despawning, in ms. Cooldown is on the spell (180s).
+Demonology.Infernal.DurationMs = 60000
+Demonology.Doomguard.DurationMs = 60000
+# Doomguard Doom Bolt damage as a fraction of owner spell power (SP -> nuke).
+Demonology.Doomguard.DoomBoltSPCoefficient = 0.64
+# Doom Bolt SINGLE-TARGET base damage (the bigger hit; overrides the cloned base).
+Demonology.Doomguard.DoomBoltBaseDamage = 850
+# Doom Blast (40878) is the AOE second hit Doom Bolt triggers — kept BELOW the
+# single-target bolt so the cleave isn't the stronger effect.
+Demonology.Doomguard.DoomBlastBaseDamage = 300
+Demonology.Doomguard.DoomBlastSPCoefficient = 0.50
+# Infernal model scale (1.0 = model default, which is very large; lower = smaller).
+Demonology.Infernal.Scale = 0.70
+# Command slots a greater demon occupies while active (it crowds out legionnaires, so it
+# can't stack on a full legion). Summoning one needs this many TOTAL slots and evicts the
+# oldest legionnaires to fit. With max 3 slots: Doomguard=3 needs the full Command spine.
+Demonology.Infernal.CommandSlots = 2
+Demonology.Doomguard.CommandSlots = 3
+
+# --- Demonic Empowerment ---
+Demonology.DemonicEmpowerment.Haste = 0.30
+Demonology.DemonicEmpowerment.Damage = 0.20
+Demonology.DemonicEmpowerment.DurationMs = 12000
+
+# --- Command Pool (Phase 1 + Phase 5 Command talents) ---
+# Legionnaire slots before talents (pool slots 1..N; the anchor pet is slot 0).
+# Design: base 0 — with no talents you command no legionnaires. The Command talent
+# spine grants every slot: +1 Expanded Command, +1 Expanded Command II, +1 Legion
+# Commander (so a fully-talented warlock commands BaseLegionnaires + 3 = 3).
+Demonology.Pool.BaseLegionnaires = 0
+# Hard cap the effective slot count never exceeds (base + all Command talents).
+Demonology.Pool.MaxLegionnaires = 4
+# Soul Shards charged per per-type legionnaire summon (Summon Imp/Felguard/etc.).
+Demonology.SummonLegionnaire.ShardCost = 1
+
+# --- Stat inheritance (Phase 6) ---
+# Demons scale off the owner instead of a flat clamp. Warlocks are casters, so
+# their demons derive power from spell power (SP), not the owner's attack power.
+# Demon max health as a fraction of the owner's max health.
+Demonology.Inherit.HealthPctOfOwner = 0.60
+# Per-swing melee weapon damage as a fraction of owner SP (SP -> melee).
+Demonology.Inherit.MeleeDamagePerSP = 0.15
+
+# --- Misc effects ---
+Demonology.LegionStandard.HealthPctOfOwner = 0.40
+Demonology.Threat.NonAnchorMultiplier = 0.50
+Demonology.LegionAura.DamagePct = 0.05
+Demonology.LegionAura.HastePct = 0.05
+Demonology.Beacon.DemonDamagePct = 0.50
+
+# Log every shard gain to the server log (noisy; for tuning only).
+Demonology.Debug.LogShardIncome = 0

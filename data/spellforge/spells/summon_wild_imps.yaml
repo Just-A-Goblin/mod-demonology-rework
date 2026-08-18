@@ -1,0 +1,19 @@
+# Summon Wild Imps — a targeted offensive spell. Requires a hostile/attackable
+# target and a standard 30yd range (cloned from Shadow Bolt for those defaults).
+# The C++ script (spell_demonology_summon_wild_imps) engages the target so the
+# whole legion responds, then summons 3 Wild Imp guardians onto it for 20s (PLAN §5).
+# TODO(cleanup): cloning Shadow Bolt also inherits its projectile SpellVisual, so
+# the cast fires a (harmless, no-damage) shadowbolt. Suppress it later with a
+# `visual:` override (clear the missile) or by clearing SpellVisual — deferred to
+# avoid a client-patch cycle for a cosmetic.
+key: demonology.summon_wild_imps
+clone_from: 686                 # Shadow Bolt — enemy target, 30yd range, shadow school
+name: Summon Wild Imps
+description: "Hurls imps at the enemy: summons 3 Wild Imps to attack the target for 20 sec."
+cast_time: 0s
+cooldown: 6s
+range: 30yd
+effects:
+  - {effect: dummy, target_a: unit_target_enemy}
+server:
+  script: spell_demonology_summon_wild_imps

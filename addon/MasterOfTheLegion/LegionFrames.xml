@@ -1,0 +1,29 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+    ..\FrameXML\UI.xsd">
+    <!-- Display-only slot frames for legion demons 1-3 (PLAN §3.3). -->
+    <Frame name="MasterOfTheLegionSlot1" parent="UIParent" hidden="true">
+        <Size x="120" y="24"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="LEFT" x="8" y="120"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture setAllPoints="true">
+                    <Color r="0" g="0" b="0" a="0.4"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="MasterOfTheLegionSlot2" inherits="MasterOfTheLegionSlot1" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="MasterOfTheLegionSlot1" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+    </Frame>
+    <Frame name="MasterOfTheLegionSlot3" inherits="MasterOfTheLegionSlot1" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="MasterOfTheLegionSlot2" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+    </Frame>
+</Ui>

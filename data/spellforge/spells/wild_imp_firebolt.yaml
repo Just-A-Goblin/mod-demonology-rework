@@ -1,0 +1,12 @@
+# Wild Imp Firebolt — the pet ability the summoned imps cast. Cloned from the
+# classic Imp Firebolt (3110). The base damage is trivial; the C++ SpellScript
+# (spell_demonology_wild_imp_firebolt) adds owner_SP * WildImp.SPCoefficient at
+# cast time — this is the imps' stat inheritance (PLAN §8, §9.4).
+key: demonology.wild_imp_firebolt
+clone_from: 3110
+name: Firebolt
+description: "Hurls a fiery bolt at the enemy."
+cast_time: 2s
+range: 30yd
+server:
+  script: spell_demonology_wild_imp_firebolt

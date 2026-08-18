@@ -1,0 +1,340 @@
+# Demonology: Master of the Legion — full 36-node talent tree (Phase 5).
+# Canonical spec: demonology_tree_spec.md. Replaces the live Warlock Demonology
+# tab (302) wholesale. Most nodes are passive MARKERS (aura: dummy) whose effect
+# is applied in C++ by reading the player's rank (like Soul Harvest); the marker's
+# per_rank_base_points carry the design value. Effects wired incrementally — many
+# depend on Phase 3/4 systems (Rend Veil, Grimoire, Legion Standard, Hand of Gul'dan,
+# Metamorphosis, Fel Lash, Command Demon) not built yet. Columns keep the Command
+# spine (col 0) and Empowerment spine (col 3) clean; arrows refined via in-game test.
+tab:
+  key: demonology.tab
+  name: "Demonology"                 # keep the tab named Demonology (not "Master of the Legion")
+  class: Warlock
+  replace: 303                     # Warlock DEMONOLOGY tab (verified: 302=Afflic, 303=Demo, 301=Destro)
+  order_index: 1                   # Demonology's slot (Afflic 0, Demo 1, Destro 2); default 0 was wrong
+  background: "WarlockSummoning"    # Demonology background (else defaults may pick the wrong art)
+
+talents:
+  # ---- Tier 1 (row 0) ----
+  - key: demonology.il
+    row: 0
+    col: 1
+    generate:
+      name: "Improved Legion"
+      aura: dummy
+      description: "Your legionnaire summons cast 0.5 sec faster (rank 1) and cost 1 less Soul Shard, minimum 1 (rank 2)."
+      per_rank_base_points: [1, 2]
+  - key: demonology.fc
+    row: 0
+    col: 0
+    generate:
+      name: "Fel Conditioning"
+      aura: dummy
+      description: "Increases the health of your demons by 5/10/15%."
+      per_rank_base_points: [5, 10, 15]
+  - key: demonology.sh
+    row: 0
+    col: 2
+    max_rank: 3
+    ranks: [290010, 290011, 290012]   # existing Soul Harvest passives (ShardEconomy reads these)
+  - key: demonology.cv
+    row: 0
+    col: 3
+    generate:
+      name: "Cursed Vitality"
+      aura: dummy
+      description: "Increases your Stamina by 3/6% and your demons' Stamina by 6/12%."
+      per_rank_base_points: [3, 6]
+
+  # ---- Tier 2 (row 1) ----
+  - key: demonology.rc
+    row: 1
+    col: 1
+    requires: { talent: demonology.il, rank: 2 }
+    generate:
+      name: "Rapid Conjuration"
+      aura: dummy
+      description: "Reduces the cast time of your legionnaire summons by 1.5/3/4.5 sec. At rank 3 they are castable while moving."
+      per_rank_base_points: [1, 2, 3]
+  - key: demonology.fa
+    row: 1
+    col: 3
+    generate:
+      name: "Fel Armory"
+      aura: dummy
+      description: "While Fel Armor is active, your demons deal 5/10/15% increased damage."
+      per_rank_base_points: [5, 10, 15]
+  - key: demonology.cm
+    row: 1
+    col: 2
+    requires: { talent: demonology.sh, rank: 1 }
+    generate:
+      name: "Cruel Master"
+      aura: dummy
+      description: "Your demons' critical strikes proc Soul Harvest at double the chance, and Soul Harvest's cooldown is reduced by 0.25/0.5 sec."
+      per_rank_base_points: [1, 2]
+
+  # ---- Tier 3 (row 2) ----
+  - key: demonology.pf
+    row: 2
+    col: 2
+    generate:
+      name: "Pactbound Fury"
+      aura: dummy
+      description: "Increases your demons' critical strike chance by 2/4/6%."
+      per_rank_base_points: [2, 4, 6]
+  - key: demonology.fb
+    row: 2
+    col: 3
+    generate:
+      name: "Fel Blood"
+      aura: dummy
+      description: "Increases Fel Lash damage by 15/30%. Your demons' killing blows refresh your Corruption on nearby enemies."
+      per_rank_base_points: [15, 30]
+  - key: demonology.ec
+    row: 2
+    col: 0
+    requires: { talent: demonology.fc, rank: 3 }
+    generate:
+      name: "Expanded Command"
+      aura: dummy
+      description: "Increases your Command, allowing you to control a legionnaire."
+      per_rank_base_points: [2]
+  - key: demonology.vc
+    row: 2
+    col: 1
+    generate:
+      name: "Vital Conduit"
+      aura: dummy
+      description: "Your Health Funnel is 20/40% more efficient and no longer reduces your damage while channeling."
+      per_rank_base_points: [20, 40]
+
+  # ---- Tier 4 (row 3) ----
+  - key: demonology.si
+    row: 3
+    col: 3
+    requires: { talent: demonology.fa, rank: 3 }
+    generate:
+      name: "Savage Instincts"
+      aura: dummy
+      description: "Increases your demons' attack and cast speed by 4/8/12%."
+      per_rank_base_points: [4, 8, 12]
+  - key: demonology.sl
+    row: 3
+    col: 2
+    generate:
+      name: "Shadowflame Legion"
+      aura: dummy
+      description: "Hand of Gul'dan grants your demons a shield absorbing 15/30% of your spell power, stacking up to 3 times."
+      per_rank_base_points: [15, 30]
+  - key: demonology.iwi
+    row: 3
+    col: 1
+    generate:
+      name: "Improved Wild Imps"
+      aura: dummy
+      description: "Your Wild Imps last 5/10 sec longer and their Firebolts have a 10/20% chance to strike a second target."
+      per_rank_base_points: [5, 10]
+
+  # ---- Tier 5 (row 4) ----
+  - key: demonology.ec2
+    row: 4
+    col: 0
+    requires: { talent: demonology.ec, rank: 1 }
+    generate:
+      name: "Expanded Command II"
+      aura: dummy
+      description: "Increases your Command, allowing you to control a 2nd legionnaire."
+      per_rank_base_points: [3]
+  - key: demonology.vp
+    row: 4
+    col: 3
+    requires: { talent: demonology.si, rank: 3 }
+    generate:
+      name: "Vicious Pact"
+      aura: dummy
+      description: "Your demons gain 8/16/24% of your spell power as attack power and 5/10/15% of your spell power as spell power."
+      per_rank_base_points: [8, 16, 24]
+  - key: demonology.bt
+    row: 4
+    col: 1
+    requires: { talent: demonology.vc, rank: 2 }
+    generate:
+      name: "Blood Tithe"
+      aura: dummy
+      description: "Your demons heal you for 4/8% of the damage they deal, doubled while you command 3 or more demons."
+      per_rank_base_points: [4, 8]
+  - key: demonology.wl
+    row: 4
+    col: 2
+    requires: { talent: demonology.fc, rank: 2 }
+    generate:
+      name: "Warded Legion"
+      aura: dummy
+      description: "Your demons have a 9/18% chance to fully resist harmful spells. At rank 2 they are immune to Fear, Charm and Polymorph."
+      per_rank_base_points: [9, 18]
+
+  # ---- Tier 6 (row 5) ----
+  - key: demonology.dr
+    row: 5
+    col: 1
+    generate:
+      name: "Demonic Rebirth"
+      aura: dummy
+      description: "When one of your demons dies, you have a 50/100% chance to instantly resummon it. 60 sec cooldown."
+      per_rank_base_points: [50, 100]
+  - key: demonology.dc
+    row: 5
+    col: 2
+    generate:
+      name: "Dark Command"
+      aura: dummy
+      description: "Reduces the cooldown of Command Demon by 3/6/10 sec and it grants your demons 10% haste for 6 sec."
+      per_rank_base_points: [3, 6, 10]
+  - key: demonology.uv
+    row: 5
+    col: 3
+    generate:
+      name: "Unholy Vigor"
+      aura: dummy
+      description: "Increases the duration of Demonic Empowerment by 1/2/3 sec."
+      per_rank_base_points: [1, 2, 3]
+
+  # ---- Tier 7 (row 6) ----
+  - key: demonology.sfg
+    row: 6
+    col: 0
+    generate:
+      name: "Summon Felguard"
+      aura: dummy
+      description: "Teaches Summon Felguard — a powerful melee demon that wields Felstorm."
+      per_rank_base_points: [1]
+  - key: demonology.wotl
+    row: 6
+    col: 1
+    requires: { talent: demonology.iwi, rank: 2 }
+    generate:
+      name: "Wrath of the Legion"
+      aura: dummy
+      description: "Your Wild Imp Firebolts have a 10/20/30% chance to summon an additional Wild Imp (no more than 2 from a single cast)."
+      per_rank_base_points: [10, 20, 30]
+  - key: demonology.gb
+    row: 6
+    col: 2
+    generate:
+      name: "Grim Bargain"
+      aura: dummy
+      description: "Your Grimoire of Synergy duplicate lasts 6/12 sec longer and deals 15/30% more damage."
+      per_rank_base_points: [6, 12]
+  - key: demonology.fs
+    row: 6
+    col: 3
+    generate:
+      name: "Fervent Standard"
+      aura: dummy
+      description: "Increases your Legion Standard's radius by 5/10 yd and health by 50/100%, and it grants an additional 5/10% demon damage."
+      per_rank_base_points: [5, 10]
+
+  # ---- Tier 8 (row 7) ----
+  - key: demonology.op
+    row: 7
+    col: 0
+    requires: { talent: demonology.ec2, rank: 1 }
+    generate:
+      name: "Overlord's Presence"
+      aura: dummy
+      description: "Each demon you command increases your maximum health by 2/4/6% and your haste by 1.5/3/4.5%."
+      per_rank_base_points: [2, 4, 6]
+  - key: demonology.fcd
+    row: 7
+    col: 1
+    generate:
+      name: "Fel Conduit"
+      aura: dummy
+      description: "Your demons' attacks have a 5/10% chance to make your next Shadow Bolt instant and free, stacking up to 3 times."
+      per_rank_base_points: [5, 10]
+  - key: demonology.rw
+    row: 7
+    col: 2
+    generate:
+      name: "Riftwalker"
+      aura: dummy
+      description: "Reduces the cooldown of Rend Veil by 90 sec and increases its rift duration by 10 sec."
+      per_rank_base_points: [1]
+  - key: demonology.cotp
+    row: 7
+    col: 3
+    requires: { talent: demonology.uv, rank: 3 }
+    generate:
+      name: "Cruelty of the Pit"
+      aura: dummy
+      description: "Demons affected by your Demonic Empowerment deal an additional 5/10/15% damage."
+      per_rank_base_points: [5, 10, 15]
+
+  # ---- Tier 9 (row 8) ----
+  - key: demonology.es
+    row: 9
+    col: 1
+    requires: { talent: demonology.lc, rank: 1 }
+    generate:
+      name: "Eternal Servitude"
+      aura: dummy
+      description: "Your Doomguard and Infernal become permanent while you hold a Command slot, and their cooldown is reduced to 60 sec."
+      per_rank_base_points: [1]
+  - key: demonology.re
+    row: 8
+    col: 3
+    requires: { talent: demonology.cotp, rank: 3 }
+    generate:
+      name: "Ruinous Empowerment"
+      aura: dummy
+      description: "Demonic Empowerment grants your demons 7/14/20% leech and a 10/20/30% chance not to expire."
+      per_rank_base_points: [7, 14, 20]
+  - key: demonology.bor
+    row: 8
+    col: 1
+    generate:
+      name: "Beacon of Ruin"
+      aura: dummy
+      description: "Your Metamorphosis lasts 5/10 sec longer and reduces damage taken by 30/60% while you are rooted by it."
+      per_rank_base_points: [30, 60]
+
+  # ---- Tier 10 (row 9) ----
+  - key: demonology.lc
+    row: 9
+    col: 0
+    requires: { talent: demonology.bbb, rank: 1 }
+    generate:
+      name: "Legion Commander"
+      aura: dummy
+      description: "Increases your Command, allowing you to control a 3rd legionnaire."
+      per_rank_base_points: [4]
+  - key: demonology.se
+    row: 9
+    col: 3
+    requires: { talent: demonology.re, rank: 3 }
+    generate:
+      name: "Supreme Empowerment"
+      aura: dummy
+      description: "Your Demonic Empowerment affects all of your demons, including temporary ones, and lasts an additional 3/6 sec."
+      per_rank_base_points: [3, 6]
+  - key: demonology.bbb
+    row: 8
+    col: 0
+    requires: { talent: demonology.ec2, rank: 1 }
+    generate:
+      name: "Bound by Blood"
+      aura: dummy
+      description: "When one of your demons dies, the rest gain 15/30% damage and 25/45% haste for 10 sec, and you regain a Soul Shard."
+      per_rank_base_points: [15, 30]
+
+  # ---- Tier 11 (row 10) — capstone ----
+  - key: demonology.gwd
+    row: 10
+    col: 0
+    requires: { talent: demonology.lc, rank: 1 }
+    generate:
+      name: "Grand Warlock's Design"
+      aura: dummy
+      description: "While you command 3 or more demons, your party and raid gain Legion Aura (+5% damage and haste). Demonic Empowerment no longer costs a global cooldown, your first summon after entering combat is free and instant, and each demon increases your other demons' damage by 4%."
+      per_rank_base_points: [1]

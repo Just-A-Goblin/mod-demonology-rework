@@ -1,0 +1,20 @@
+# Summon Infernal — a temporary GREATER demon (big-cooldown guardian, NOT a pool
+# slot; Eternal Servitude makes it permanent later). A melee bruiser that fights
+# your current target for a while, then despawns. Cloned from Demonic Empowerment
+# (47193), NOT a pet summon (cloning real pet summons makes the client dismiss the
+# anchor). Cooldown-gated (no shard cost). SpellScript summons entry 89.
+key: demonology.summon_infernal
+clone_from: 47193
+icon: "Spell_Shadow_SummonInfernal"
+name: Summon Infernal
+description: "Summons an Infernal to smash your enemies for a short time. Cannot be commanded like your legion."
+cast_time: 2s
+cooldown: 60s
+range: 0yd
+effects:
+  - {effect: dummy, target_a: unit_caster}
+server:
+  script: spell_demonology_summon_greater_demon
+learn:
+  class: warlock
+  skill_line: 354   # appear in the Demonology spellbook tab

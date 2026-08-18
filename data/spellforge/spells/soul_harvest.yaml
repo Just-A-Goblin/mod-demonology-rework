@@ -1,0 +1,29 @@
+# Soul Harvest (T1) — 3-rank passive. Learnable for the slice (.learn <id>); placed
+# in the talent tree in Phase 5. The passive carries a dummy marker aura; the C++
+# ShardEconomy reads the player's highest known rank to set the proc chance (PLAN §4.1).
+- key: demonology.soul_harvest_r1
+  clone_from: 47193
+  name: Soul Harvest
+  rank: "Rank 1"
+  description: "Your demons' damage has a 4% chance to harvest a Soul Shard."
+  attributes: [passive]
+  effects:
+    - {effect: apply_aura, aura: dummy, target_a: unit_caster}
+
+- key: demonology.soul_harvest_r2
+  clone_from: 47193
+  name: Soul Harvest
+  rank: "Rank 2"
+  description: "Your demons' damage has an 8% chance to harvest a Soul Shard."
+  attributes: [passive]
+  effects:
+    - {effect: apply_aura, aura: dummy, target_a: unit_caster}
+
+- key: demonology.soul_harvest_r3
+  clone_from: 47193
+  name: Soul Harvest
+  rank: "Rank 3"
+  description: "Your demons' damage has a 12% chance to harvest a Soul Shard."
+  attributes: [passive]
+  effects:
+    - {effect: apply_aura, aura: dummy, target_a: unit_caster}

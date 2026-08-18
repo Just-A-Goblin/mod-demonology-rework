@@ -1,0 +1,29 @@
+# Pinned IDs for the demonology.* namespace (source of truth for this module).
+# build.sh seeds these into the shared spellforge-content/content/ids.yaml so
+# SpellForge allocates our keys at these exact IDs (see tools/seed_ids.py).
+# Bands (docs/ID_RANGES.md):
+#   player spells   290000-290499
+#   internal spells 290500-290899
+#   pet spells      290900-291199
+#   talents         9000-9099
+#   spell_icons     19000-19099
+
+spells:
+  demonology.demonic_empowerment: 290000   # player: the cast
+  demonology.summon_wild_imps: 290001      # player: the cast
+  demonology.summon_legionnaire_imp: 290002       # player: per-type legion summon
+  demonology.summon_legionnaire_felguard: 290003  # player: per-type legion summon
+  demonology.summon_legionnaire_succubus: 290004  # player: per-type legion summon
+  demonology.summon_legionnaire_felhound: 290005  # player: per-type legion summon
+  demonology.summon_legionnaire_voidwalker: 290006 # player: per-type legion summon
+  demonology.summon_infernal: 290007       # player: greater demon (temp guardian)
+  demonology.summon_doomguard: 290008      # player: greater demon (temp guardian)
+  demonology.soul_harvest_r1: 290010       # player: passive rank 1
+  demonology.soul_harvest_r2: 290011       # player: passive rank 2
+  demonology.soul_harvest_r3: 290012       # player: passive rank 3
+  demonology.demonic_empowerment_buff: 290500  # internal: the buff applied to demons
+  demonology.wild_imp_firebolt: 290900     # pet: Wild Imp Firebolt
+  demonology.doom_bolt: 290901             # pet: Doomguard Doom Bolt
+
+talents: {}
+spell_icons: {}

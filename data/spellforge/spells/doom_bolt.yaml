@@ -1,0 +1,12 @@
+# Doom Bolt — the Doomguard's nuke (pet ability). Cloned from Doom Bolt (40876);
+# the base damage is small — the C++ SpellScript (spell_demonology_doom_bolt) adds
+# owner_SP * Doomguard.DoomBoltSPCoefficient at cast, live, so it scales with the
+# owner's gear (PLAN §8: Doom Bolt ~64% SP). Same inheritance pattern as Wild Imp Firebolt.
+key: demonology.doom_bolt
+clone_from: 40876
+name: Doom Bolt
+description: "Hurls a bolt of doom at the enemy, dealing heavy shadow damage."
+cast_time: 2.5s
+range: 40yd
+server:
+  script: spell_demonology_doom_bolt

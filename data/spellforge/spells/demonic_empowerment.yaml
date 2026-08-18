@@ -1,0 +1,12 @@
+# Demonic Empowerment — player cast. The DBC spell is a thin dummy shell; the C++
+# SpellScript (spell_demonology_demonic_empowerment) selects all owned legion
+# demons and applies the buff spell below to each (PLAN §6).
+key: demonology.demonic_empowerment
+clone_from: 47193                     # base look/timing from Blizzard Demonic Empowerment
+name: Demonic Empowerment
+description: "Empowers all of your demons, granting them haste and increased damage for a short time."
+cooldown: 60s
+effects:
+  - {effect: dummy, target_a: unit_caster}
+server:
+  script: spell_demonology_demonic_empowerment

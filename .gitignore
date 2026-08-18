@@ -1,0 +1,16 @@
+# Install-time backups made by install.sh
+.install-backups/
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor noise
+*.swp
+.DS_Store
+
+# Windows "mark of the web" alternate-data-stream artifacts
+*:Zone.Identifier
+
+# NOTE: dist/ is intentionally NOT ignored — the vendored build artifacts are
+# what make this module installable offline. Commit them.
