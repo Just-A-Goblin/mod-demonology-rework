@@ -55,6 +55,26 @@ echo "[2/6] link module into AzerothCore"
 run "ln -sfn '$MODULE_DIR' '$AC_SOURCE/modules/$MODULE_NAME'"
 echo "  NOTE: rebuild the worldserver after linking (new C++ sources)."
 
+# 2b. Live module .conf -----------------------------------------------------
+# AzerothCore loads mod_demonology_rework.conf (NOT the .conf.dist template — the
+# .dist is only a reference), so without a live .conf the server runs entirely on
+# code defaults and spams "Missing property" for every key. Seed the live .conf
+# from the repo .dist ONCE; never clobber an admin's edits. (New keys added to the
+# .dist in later phases fall back to code defaults until re-seeded — benign.)
+echo "[2b] ensure live module .conf"
+MODULE_CONF_DIR="$(dirname "$WORLDSERVER_CONF")/modules"
+LIVE_CONF="$MODULE_CONF_DIR/mod_demonology_rework.conf"
+DIST_SRC="$MODULE_DIR/conf/mod_demonology_rework.conf.dist"
+if [[ -f "$LIVE_CONF" ]]; then
+    echo "  live .conf exists — left untouched ($LIVE_CONF)"
+elif [[ -f "$DIST_SRC" ]]; then
+    run "mkdir -p '$MODULE_CONF_DIR'"
+    run "cp '$DIST_SRC' '$LIVE_CONF'"
+    echo "  seeded live .conf from repo .dist -> $LIVE_CONF"
+else
+    echo "  WARN: repo .dist missing at $DIST_SRC"
+fi
+
 # 3. DBCs -> server ---------------------------------------------------------
 echo "[3/6] deploy DBCs -> $SERVER_DBC"
 if compgen -G "$MODULE_DIR/dist/dbc/*.dbc" >/dev/null; then

@@ -716,7 +716,7 @@ uint32 CommandPool::RebirthReadyInMs() const
     return now >= _rebirthReadyAtMs ? 0u : _rebirthReadyAtMs - now;
 }
 
-void NotifyDemonDeath(Player* owner, Creature* dead)
+void Demonology::NotifyDemonDeath(Player* owner, Creature* dead)
 {
     if (!owner)
         return;
