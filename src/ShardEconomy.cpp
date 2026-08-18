@@ -172,6 +172,11 @@ namespace Demonology
         hits  = (it != g_pfStats.end()) ? it->second.first  : 0;
         crits = (it != g_pfStats.end()) ? it->second.second : 0;
     }
+
+    void ClearPfStats(ObjectGuid owner)
+    {
+        g_pfStats.erase(owner);
+    }
 }
 
 void AddSC_demonology_shard_economy()

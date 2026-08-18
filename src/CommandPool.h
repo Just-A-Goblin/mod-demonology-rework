@@ -83,6 +83,7 @@ namespace Demonology
         uint8 CommandedDemonCount(Player* owner) const;
 
         uint32 RebirthReadyInMs() const;        // ms until Demonic Rebirth can proc again (0 = ready)
+        uint32 BloodBuffReadyInMs() const;      // ms until the Bound by Blood buff can proc again (0 = ready)
 
         // Eternal Servitude REMOVES the vanilla Inferno/Ritual of Doom (which are quest-
         // learned) and REMEMBERS them, so a respec restores only what we took — never
@@ -110,10 +111,11 @@ namespace Demonology
         std::vector<PendingDemon> _restore;                                // queued login restore
         uint32 _restoreTimer = 0;
 
-        // Bound by Blood survivor buff (transient; getMSTime-based expiry).
+        // Bound by Blood survivor buff (transient; getMSTime-based expiry) + its cooldown.
         float _legionBuffDmg = 0.0f;
         float _legionBuffHaste = 0.0f;
         uint32 _legionBuffUntilMs = 0;
+        uint32 _bloodBuffReadyAtMs = 0;                                    // Bound by Blood buff ICD
 
         // Demonic Rebirth: instant-resummon queue (entries) + shared ICD.
         std::vector<uint32> _pendingRebirth;

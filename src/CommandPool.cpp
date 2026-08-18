@@ -677,10 +677,16 @@ void CommandPool::OnDemonDeath(Player* owner, Creature* dead)
         std::find(_legionnaires.begin(), _legionnaires.end(), dead->GetGUID()) != _legionnaires.end();
 
     // --- Bound by Blood (bbb): the survivors gain a transient damage/haste buff and the
-    // owner refunds a Soul Shard ("demon deaths fund your actives" under Path B). ---
+    // owner refunds a Soul Shard ("demon deaths fund your actives" under Path B). The buff
+    // is a strong bloodlust, so it's on its own cooldown; the shard refund is NOT gated. ---
     if (float const dmg = Demonology::BoundByBloodDamage(owner))
     {
-        TriggerLegionBuff(dmg, Demonology::BoundByBloodHaste(owner), gConfig.BoundByBloodDurationMs);
+        uint32 const now = getMSTime();
+        if (now >= _bloodBuffReadyAtMs)
+        {
+            TriggerLegionBuff(dmg, Demonology::BoundByBloodHaste(owner), gConfig.BoundByBloodDurationMs);
+            _bloodBuffReadyAtMs = now + gConfig.BoundByBloodIcdMs;
+        }
 
         if (gConfig.BoundByBloodRefundShard)
         {
@@ -714,6 +720,12 @@ uint32 CommandPool::RebirthReadyInMs() const
 {
     uint32 const now = getMSTime();
     return now >= _rebirthReadyAtMs ? 0u : _rebirthReadyAtMs - now;
+}
+
+uint32 CommandPool::BloodBuffReadyInMs() const
+{
+    uint32 const now = getMSTime();
+    return now >= _bloodBuffReadyAtMs ? 0u : _bloodBuffReadyAtMs - now;
 }
 
 void Demonology::NotifyDemonDeath(Player* owner, Creature* dead)
@@ -839,6 +851,7 @@ public:
         sCommandPoolMgr->Remove(player->GetGUID());     // clean up legionnaires on logout/disconnect
         Demonology::PetScaling::ForgetPet(player->GetGUID());
         Demonology::OwnerMods::Clear(player->GetGUID()); // owner unit-mods die with the unit; drop bookkeeping
+        Demonology::ClearPfStats(player->GetGUID());     // reset the Pactbound Fury crit tally
     }
 
     // Gear changes move the owner's spell power, so re-run inheritance on every

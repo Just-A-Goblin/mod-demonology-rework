@@ -89,6 +89,7 @@ namespace Demonology
         float  BoundByBloodDamagePct[2]     = { 0.15f, 0.30f };         // +demon damage (fraction)
         float  BoundByBloodHastePct[2]      = { 0.25f, 0.45f };         // +demon attack speed (fraction)
         uint32 BoundByBloodDurationMs       = 10000;
+        uint32 BoundByBloodIcdMs            = 180000;                   // buff cooldown (it's a strong bloodlust); shard refund is NOT gated
         bool   BoundByBloodRefundShard      = true;
 
         // Overlord's Presence (op, T8) — per commanded demon, buff the OWNER.

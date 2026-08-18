@@ -91,6 +91,7 @@ public:
         LoadFloatList("Demonology.BoundByBlood.DamagePct", gConfig.BoundByBloodDamagePct, 2);
         LoadFloatList("Demonology.BoundByBlood.HastePct",  gConfig.BoundByBloodHastePct,  2);
         gConfig.BoundByBloodDurationMs       = sConfigMgr->GetOption<uint32>("Demonology.BoundByBlood.DurationMs", 10000);
+        gConfig.BoundByBloodIcdMs            = sConfigMgr->GetOption<uint32>("Demonology.BoundByBlood.IcdMs", 180000);
         gConfig.BoundByBloodRefundShard      = sConfigMgr->GetOption<bool>("Demonology.BoundByBlood.RefundShard", true);
         LoadFloatList("Demonology.OverlordsPresence.HealthPct", gConfig.OverlordsPresenceHealthPct, 3);
         LoadFloatList("Demonology.OverlordsPresence.HastePct",  gConfig.OverlordsPresenceHastePct,  3);

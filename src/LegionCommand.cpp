@@ -49,6 +49,7 @@ public:
             { "summon",    HandleSummonCommand,    SEC_GAMEMASTER, Console::No },
             { "shards",    HandleShardsCommand,    SEC_GAMEMASTER, Console::No },
             { "dumpstats", HandleDumpStatsCommand, SEC_GAMEMASTER, Console::No },
+            { "resetcrits", HandleResetCritsCommand, SEC_GAMEMASTER, Console::No },
         };
 
         static ChatCommandTable commandTable =
@@ -173,6 +174,17 @@ public:
         return true;
     }
 
+    static bool HandleResetCritsCommand(ChatHandler* handler)
+    {
+        Player* player = handler->GetSession()->GetPlayer();
+        if (!player)
+            return false;
+
+        Demonology::ClearPfStats(player->GetGUID());
+        handler->PSendSysMessage("[legion] Pactbound Fury crit tally reset.");
+        return true;
+    }
+
     static bool HandleDumpStatsCommand(ChatHandler* handler)
     {
         Player* player = handler->GetSession()->GetPlayer();
@@ -269,13 +281,16 @@ public:
                 drCd ? "on cooldown" : "ready", drCd / 1000);
 
             float const bloodDmg = p1->LegionBuffDamage();
+            uint32 const bloodCd = p1->BloodBuffReadyInMs();
             if (bloodDmg > 0.0f)
                 handler->PSendSysMessage("[legion] Bound by Blood: WINDOW ACTIVE — survivors +{:.0f}% damage, +{:.0f}% haste",
                     bloodDmg * 100.0f, p1->LegionBuffHaste() * 100.0f);
             else
-                handler->PSendSysMessage("[legion] Bound by Blood: idle (on death: +{:.0f}% damage/+{:.0f}% haste {}s, refund {})",
+                handler->PSendSysMessage("[legion] Bound by Blood: buff {} (on death: +{:.0f}% damage/+{:.0f}% haste {}s, CD {}s; refund {})",
+                    bloodCd ? "on cooldown" : "ready",
                     Demonology::BoundByBloodDamage(player) * 100.0f, Demonology::BoundByBloodHaste(player) * 100.0f,
-                    Demonology::gConfig.BoundByBloodDurationMs / 1000, Demonology::gConfig.BoundByBloodRefundShard ? "1 shard" : "off");
+                    Demonology::gConfig.BoundByBloodDurationMs / 1000, Demonology::gConfig.BoundByBloodIcdMs / 1000,
+                    Demonology::gConfig.BoundByBloodRefundShard ? "1 shard" : "off");
         }
 
         uint32 pfHits = 0, pfCrits = 0;

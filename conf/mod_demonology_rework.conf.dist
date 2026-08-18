@@ -105,6 +105,9 @@ Demonology.DemonicRebirth.IcdMs = 60000
 Demonology.BoundByBlood.DamagePct = 0.15, 0.30
 Demonology.BoundByBlood.HastePct = 0.25, 0.45
 Demonology.BoundByBlood.DurationMs = 10000
+# The survivor buff is a strong bloodlust, so it's on a cooldown (ms). The shard
+# refund below is NOT gated by this — it fires on every real demon death (Path B).
+Demonology.BoundByBlood.IcdMs = 180000
 Demonology.BoundByBlood.RefundShard = 1
 # Overlord's Presence (op, T8): per commanded demon, buff the OWNER's max health & haste.
 Demonology.OverlordsPresence.HealthPct = 0.02, 0.04, 0.06
