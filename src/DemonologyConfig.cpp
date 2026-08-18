@@ -6,12 +6,40 @@
 #include "Config.h"
 #include "ScriptMgr.h"
 
+#include <cstdlib>
+#include <sstream>
+#include <string>
+
 namespace Demonology
 {
     ModuleConfig gConfig;
 }
 
 using namespace Demonology;
+
+namespace
+{
+    // Parse a comma-separated float list ("0.08, 0.16, 0.24") into out[0..count).
+    // Missing/blank leaves the caller's existing (default) values untouched, so a
+    // short or absent list simply keeps code defaults for the unspecified ranks.
+    void LoadFloatList(std::string const& key, float* out, uint8 count)
+    {
+        std::string const val = sConfigMgr->GetOption<std::string>(key, "");
+        if (val.empty())
+            return;
+
+        std::stringstream ss(val);
+        std::string tok;
+        for (uint8 i = 0; i < count && std::getline(ss, tok, ','); ++i)
+        {
+            size_t const a = tok.find_first_not_of(" \t");
+            if (a == std::string::npos)
+                continue;                       // blank slot — keep the default
+            size_t const b = tok.find_last_not_of(" \t");
+            out[i] = float(std::atof(tok.substr(a, b - a + 1).c_str()));
+        }
+    }
+}
 
 class demonology_config_worldscript : public WorldScript
 {
@@ -24,12 +52,18 @@ public:
         gConfig.SoulHarvestChancePerRank     = sConfigMgr->GetOption<float>("Demonology.SoulHarvest.ChancePerRank", 0.04f);
         gConfig.SoulHarvestInternalCdMs      = sConfigMgr->GetOption<uint32>("Demonology.SoulHarvest.InternalCooldownMs", 1000);
         gConfig.CruelMasterCritMultiplier    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.CritMultiplier", 2.0f);
+        LoadFloatList("Demonology.ViciousPact.MeleePct",         gConfig.VpMeleePct,       3);
+        LoadFloatList("Demonology.ViciousPact.SpellPct",         gConfig.VpSpellPct,       3);
+        LoadFloatList("Demonology.FelArmory.DamagePct",          gConfig.FaDamagePct,      3);
+        LoadFloatList("Demonology.FelConditioning.HealthPct",    gConfig.FcHealthPct,      3);
+        LoadFloatList("Demonology.CursedVitality.DemonHealthPct", gConfig.CvDemonHealthPct, 2);
+        LoadFloatList("Demonology.SavageInstincts.HastePct",     gConfig.SiHastePct,       3);
         gConfig.WildImpCount                 = sConfigMgr->GetOption<uint32>("Demonology.WildImp.Count", 3);
         gConfig.WildImpDurationMs            = sConfigMgr->GetOption<uint32>("Demonology.WildImp.DurationMs", 20000);
         gConfig.WildImpSPCoefficient         = sConfigMgr->GetOption<float>("Demonology.WildImp.SPCoefficient", 0.28f);
         gConfig.InfernalDurationMs           = sConfigMgr->GetOption<uint32>("Demonology.Infernal.DurationMs", 60000);
         gConfig.DoomguardDurationMs          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DurationMs", 60000);
-        gConfig.DoomBoltSPCoefficient        = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBoltSPCoefficient", 0.50f);
+        gConfig.DoomBoltSPCoefficient        = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBoltSPCoefficient", 0.64f);
         gConfig.DoomBoltBaseDamage           = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBoltBaseDamage", 850);
         gConfig.DoomBlastBaseDamage          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBlastBaseDamage", 300);
         gConfig.DoomBlastSPCoefficient       = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBlastSPCoefficient", 0.50f);

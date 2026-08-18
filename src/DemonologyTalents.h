@@ -10,6 +10,7 @@
 #define MOD_DEMONOLOGY_REWORK_TALENTS_H
 
 #include "Define.h"
+#include "DemonologyConfig.h"
 #include "DemonologyIds.h"
 #include "Creature.h"
 #include "Player.h"
@@ -62,17 +63,10 @@ namespace Demonology
             return 1.0f;
         float mult = 1.0f;
         if (uint8 vp = TalentRank(owner, SPELL_TALENT_VICIOUS_PACT, 3))
-        {
-            static constexpr float VP_MELEE[] = { 0.08f, 0.16f, 0.24f };
-            static constexpr float VP_SPELL[] = { 0.05f, 0.10f, 0.15f };
-            mult += meleeSide ? VP_MELEE[vp - 1] : VP_SPELL[vp - 1];
-        }
+            mult += meleeSide ? gConfig.VpMeleePct[vp - 1] : gConfig.VpSpellPct[vp - 1];
         if (uint8 fa = TalentRank(owner, SPELL_TALENT_FEL_ARMORY, 3))
             if (OwnerHasFelArmor(owner))
-            {
-                static constexpr float FA[] = { 0.05f, 0.10f, 0.15f };
-                mult += FA[fa - 1];
-            }
+                mult += gConfig.FaDamagePct[fa - 1];
         return mult;
     }
 
@@ -84,15 +78,9 @@ namespace Demonology
             return 1.0f;
         float mult = 1.0f;
         if (uint8 fc = TalentRank(owner, SPELL_TALENT_FEL_CONDITIONING, 3))
-        {
-            static constexpr float FC[] = { 0.05f, 0.10f, 0.15f };
-            mult += FC[fc - 1];
-        }
+            mult += gConfig.FcHealthPct[fc - 1];
         if (uint8 cv = TalentRank(owner, SPELL_TALENT_CURSED_VITALITY, 2))
-        {
-            static constexpr float CV[] = { 0.06f, 0.12f };
-            mult += CV[cv - 1];
-        }
+            mult += gConfig.CvDemonHealthPct[cv - 1];
         return mult;
     }
 
@@ -100,10 +88,7 @@ namespace Demonology
     inline float DemonHastePct(Player* owner)
     {
         if (uint8 si = TalentRank(owner, SPELL_TALENT_SAVAGE_INSTINCTS, 3))
-        {
-            static constexpr float SI[] = { 4.0f, 8.0f, 12.0f };
-            return SI[si - 1];
-        }
+            return gConfig.SiHastePct[si - 1];
         return 0.0f;
     }
 }

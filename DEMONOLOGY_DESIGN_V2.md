@@ -409,7 +409,7 @@ the banked spell slot.
 - Pet-mod dual-spec re-sync edge cases untested.
 - Damage hook applies ×1.0 globally when talents absent — harmless; scope to module
   entries only if it ever bites.
-- Doom Bolt 850 + 0.50×SP; Doom Blast 300 + 0.50×SP (→ conf in Phase 0).
+- Doom Bolt 850 + 0.64×SP; Doom Blast 300 + 0.50×SP (in conf as of Phase 0).
 
 ## 12. Open decisions (do not block Phases 0–6)
 

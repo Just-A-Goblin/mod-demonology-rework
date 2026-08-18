@@ -19,6 +19,24 @@ Demonology.SoulHarvest.InternalCooldownMs = 1000
 # --- Cruel Master (T2) ---
 Demonology.CruelMaster.CritMultiplier = 2.0
 
+# --- Per-rank talent multipliers (comma-separated, one value per talent rank) ---
+# A short list keeps code defaults for the unspecified ranks. These are the source
+# of truth for the numbers in the DESIGN_V2 §4 talent table.
+# Demon DAMAGE, additive on 1.0:
+#   Vicious Pact (vp): SP-as-attack-power on melee / SP-as-spell-power on spells.
+Demonology.ViciousPact.MeleePct = 0.08, 0.16, 0.24
+Demonology.ViciousPact.SpellPct = 0.05, 0.10, 0.15
+#   Fel Armory (fa): +demon damage while the owner's Fel Armor is up.
+Demonology.FelArmory.DamagePct = 0.05, 0.10, 0.15
+# Demon HEALTH, additive on 1.0:
+#   Fel Conditioning (fc): flat demon health.
+Demonology.FelConditioning.HealthPct = 0.05, 0.10, 0.15
+#   Cursed Vitality (cv): demon stamina->health part (owner-stamina part is a separate aura).
+Demonology.CursedVitality.DemonHealthPct = 0.06, 0.12
+# Demon melee HASTE, percent (12 = +12% attack speed):
+#   Savage Instincts (si).
+Demonology.SavageInstincts.HastePct = 4, 8, 12
+
 # --- Wild Imps ---
 Demonology.WildImp.Count = 3
 Demonology.WildImp.DurationMs = 20000
