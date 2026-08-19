@@ -64,6 +64,10 @@ namespace Demonology
         // fit. Caller ensures GetMaxLegionnaires() >= slotCost (checked at CheckCast).
         void RegisterGreaterDemon(Player* owner, Creature* demon, uint8 slotCost);
 
+        // Despawn the active greater demon and free its command slots (a legionnaire summon
+        // evicts it when there's no free legionnaire slot — the greater demon goes first).
+        void DespawnGreaterDemon(Player* owner);
+
         // Adds a legionnaire; if at capacity, unsummons the OLDEST first (design §2).
         void Add(Creature* legionnaire);
         void Remove(ObjectGuid guid);

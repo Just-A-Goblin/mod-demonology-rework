@@ -165,11 +165,12 @@ class spell_demonology_summon_legionnaire : public SpellScript
         Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
         if (!caster)
             return SPELL_FAILED_ERROR;
-        // No free command slots (no Expanded Command, or a greater demon fills them) →
-        // block before a shard is spent and tell the player why.
-        if (sCommandPoolMgr->GetOrCreate(caster->GetGUID()).LegionnaireCap() == 0)
+        // Block only when the player has NO command slots at all (no Expanded Command). If a
+        // greater demon is holding the slots, the summon is allowed — it evicts the greater
+        // demon to make room (handled in HandleDummy), rather than being blocked.
+        if (sCommandPoolMgr->GetOrCreate(caster->GetGUID()).GetMaxLegionnaires() == 0)
         {
-            ChatHandler(caster->GetSession()).SendSysMessage("No free legion command slots (train Expanded Command, or your Infernal/Doomguard is using them).");
+            ChatHandler(caster->GetSession()).SendSysMessage("You have no legion command slots. Train Expanded Command.");
             return SPELL_FAILED_DONT_REPORT;
         }
         // The Felguard is gated behind the Summon Felguard talent (pet AND legionnaire).
@@ -195,6 +196,13 @@ class spell_demonology_summon_legionnaire : public SpellScript
             return;
 
         Demonology::CommandPool& pool = sCommandPoolMgr->GetOrCreate(caster->GetGUID());
+
+        // A greater demon (Infernal/Doomguard) occupies command slots. When there's no free
+        // legionnaire slot, summoning a legionnaire evicts the greater demon (it's the first
+        // casualty, not an existing legionnaire) — then the summon fits.
+        if (!pool.GreaterDemonGuid().IsEmpty() && pool.Count() >= pool.LegionnaireCap())
+            pool.DespawnGreaterDemon(caster);
+
         if (pool.Recruit(caster, entry))                        // spawn + inherit + add (evicts oldest if full)
             if (gConfig.SummonLegionnaireShardCost > 0)
                 caster->DestroyItemCount(ITEM_SOUL_SHARD, gConfig.SummonLegionnaireShardCost, true);

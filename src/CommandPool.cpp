@@ -206,6 +206,18 @@ uint8 CommandPool::LegionnaireCap() const
     return total > _greaterDemonSlots ? uint8(total - _greaterDemonSlots) : uint8(0);
 }
 
+void CommandPool::DespawnGreaterDemon(Player* owner)
+{
+    if (_greaterDemonGuid.IsEmpty())
+        return;
+    if (owner)
+        if (Creature* gd = ObjectAccessor::GetCreature(*owner, _greaterDemonGuid))
+            gd->DespawnOrUnsummon();
+    _greaterDemonGuid.Clear();
+    _greaterDemonSlots = 0;
+    OnPoolChanged();
+}
+
 void CommandPool::RegisterGreaterDemon(Player* owner, Creature* demon, uint8 slotCost)
 {
     // One greater demon at a time — despawn any existing one first (frees its slots).
