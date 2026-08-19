@@ -197,11 +197,10 @@ class spell_demonology_summon_legionnaire : public SpellScript
 
         Demonology::CommandPool& pool = sCommandPoolMgr->GetOrCreate(caster->GetGUID());
 
-        // A greater demon (Infernal/Doomguard) occupies command slots. When there's no free
-        // legionnaire slot, summoning a legionnaire evicts the greater demon (it's the first
-        // casualty, not an existing legionnaire) — then the summon fits.
-        if (!pool.GreaterDemonGuid().IsEmpty() && pool.Count() >= pool.LegionnaireCap())
-            pool.DespawnGreaterDemon(caster);
+        // Summoning a legionnaire evicts any active greater demon (Infernal/Doomguard) and
+        // frees ALL its command slots — the greater demon is mutually exclusive with growing
+        // the legion, so it's always the first casualty (per playtest).
+        pool.DespawnGreaterDemon(caster);
 
         if (pool.Recruit(caster, entry))                        // spawn + inherit + add (evicts oldest if full)
             if (gConfig.SummonLegionnaireShardCost > 0)
