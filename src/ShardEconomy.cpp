@@ -102,6 +102,12 @@ public:
         if (victim && attacker->GetEntry() == NPC_BASE_VOIDWALKER && gConfig.VoidwalkerThreatMultiplier > 1.0f)
             victim->GetThreatMgr().AddThreat(attacker, float(damage) * (gConfig.VoidwalkerThreatMultiplier - 1.0f));
 
+        // Ruinous Empowerment (re) leech: while a demon is empowered, its damage heals the
+        // owner for a fraction of what it deals — the army sustains you during a burst window.
+        if (attacker->HasAura(SPELL_DEMONIC_EMPOWERMENT_BUFF))
+            if (float const leech = Demonology::RuinousEmpowermentLeech(owner))
+                owner->ModifyHealth(int32(float(damage) * leech));
+
         uint8 const rank = SoulHarvestRank(owner);
         if (!rank)
             return;

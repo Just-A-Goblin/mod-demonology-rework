@@ -76,6 +76,13 @@ namespace Demonology
     constexpr uint32 SPELL_TALENT_BOUND_BY_BLOOD        = 290974;  // bbb on demon death: survivors +dmg/haste, refund 1 shard
     constexpr uint32 SPELL_TALENT_GRAND_WARLOCKS_DESIGN = 290976;  // gwd capstone (Legion Aura groundwork here; full rider Phase 5)
 
+    // Phase 4 — Demonic Empowerment spine (all enhance the 290000/290500 empowerment).
+    constexpr uint32 SPELL_TALENT_SHADOWFLAME_LEGION    = 290928;  // sl   Empowerment also shields demons ([15,30]% max HP)
+    constexpr uint32 SPELL_TALENT_UNHOLY_VIGOR          = 290945;  // uv   Empowerment +[1,2,3]s
+    constexpr uint32 SPELL_TALENT_CRUELTY_OF_THE_PIT    = 290962;  // cotp empowered demons +[5,10,15]% damage
+    constexpr uint32 SPELL_TALENT_RUINOUS_EMPOWERMENT   = 290966;  // re   empowered demons leech + [7,14,20]% no-expire
+    constexpr uint32 SPELL_TALENT_SUPREME_EMPOWERMENT   = 290972;  // se   Empowerment affects temp demons + [3,6]s longer
+
     // Core base pet-summon spells (warlocks learn these normally). Knowing one + the
     // Expanded Command talent grants that type's "Summon <type> Legionnaire" (hybrid
     // learn). Felguard is the exception: its PET is itself gated behind the sfg talent.

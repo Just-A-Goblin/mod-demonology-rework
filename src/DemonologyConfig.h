@@ -66,6 +66,14 @@ namespace Demonology
         float DemonicEmpowermentDamage    = 0.20f;
         uint32 DemonicEmpowermentDurationMs = 12000;
 
+        // --- Phase 4: Demonic Empowerment spine (all layer onto the 290500 buff) ---
+        uint32 UnholyVigorDurationMsPerRank      = 1000;                 // uv: +1s per rank (3 ranks)
+        float  CrueltyOfThePitDamagePct[3]       = { 0.05f, 0.10f, 0.15f }; // cotp: +demon damage while empowered
+        float  RuinousEmpowermentLeechPct[3]     = { 0.07f, 0.14f, 0.20f }; // re: heal owner for % of empowered demon damage
+        float  RuinousEmpowermentNoExpirePct[3]  = { 0.07f, 0.14f, 0.20f }; // re: chance the buff refreshes on expiry
+        uint32 SupremeEmpowermentDurationMsPerRank = 3000;               // se: +3s per rank (2 ranks); also gates temp demons
+        float  ShadowflameLegionAbsorbPct[2]     = { 0.15f, 0.30f };     // sl: absorb shield = % of the demon's max HP
+
         // Command Pool (Phase 1 + Phase 5 Command talents)
         uint8 PoolBaseLegionnaires = 0;  // slots before talents (design: base 0 — Command talents grant every slot)
         uint8 PoolMaxLegionnaires = 4;   // hard cap ceiling = Expanded Command/II + Legion Commander (+headroom)

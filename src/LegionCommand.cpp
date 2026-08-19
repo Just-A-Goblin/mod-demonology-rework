@@ -314,6 +314,22 @@ public:
             (Demonology::gConfig.CommandDemonCooldownMs
                 - Demonology::TalentRank(player, Demonology::SPELL_TALENT_DARK_COMMAND, 3) * Demonology::gConfig.DarkCommandCdReductionMsPerRank) / 1000,
             Demonology::GetLastCommandPress(player->GetGUID()));
+
+        // Phase 4 Empowerment spine — the buff a Demonic Empowerment cast would apply now.
+        handler->PSendSysMessage("[legion] Empowerment spine: sl={} uv={} cotp={} re={} se={}",
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_SHADOWFLAME_LEGION, 2)),
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_UNHOLY_VIGOR, 3)),
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_CRUELTY_OF_THE_PIT, 3)),
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_RUINOUS_EMPOWERMENT, 3)),
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_SUPREME_EMPOWERMENT, 2)));
+        handler->PSendSysMessage("[legion]   buff now: +{:.0f}% dmg, +{:.0f}% haste, shield {:.0f}% max HP, {}s{}, leech {:.0f}%, refresh {:.0f}%",
+            (Demonology::gConfig.DemonicEmpowermentDamage + Demonology::CrueltyOfThePitDamage(player)) * 100.0f,
+            Demonology::gConfig.DemonicEmpowermentHaste * 100.0f,
+            Demonology::ShadowflameLegionAbsorb(player) * 100.0f,
+            (Demonology::gConfig.DemonicEmpowermentDurationMs + Demonology::UnholyVigorDurationMs(player) + Demonology::SupremeEmpowermentDurationMs(player)) / 1000,
+            Demonology::SupremeEmpowermentTrained(player) ? " (temps too)" : " (permanent demons only)",
+            Demonology::RuinousEmpowermentLeech(player) * 100.0f,
+            Demonology::RuinousEmpowermentNoExpire(player) * 100.0f);
         return true;
     }
 };

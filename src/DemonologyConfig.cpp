@@ -77,6 +77,13 @@ public:
         gConfig.DemonicEmpowermentHaste      = sConfigMgr->GetOption<float>("Demonology.DemonicEmpowerment.Haste", 0.30f);
         gConfig.DemonicEmpowermentDamage     = sConfigMgr->GetOption<float>("Demonology.DemonicEmpowerment.Damage", 0.20f);
         gConfig.DemonicEmpowermentDurationMs = sConfigMgr->GetOption<uint32>("Demonology.DemonicEmpowerment.DurationMs", 12000);
+        // --- Phase 4: Empowerment spine ---
+        gConfig.UnholyVigorDurationMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.UnholyVigor.DurationMsPerRank", 1000);
+        LoadFloatList("Demonology.CrueltyOfThePit.DamagePct",      gConfig.CrueltyOfThePitDamagePct,      3);
+        LoadFloatList("Demonology.RuinousEmpowerment.LeechPct",    gConfig.RuinousEmpowermentLeechPct,    3);
+        LoadFloatList("Demonology.RuinousEmpowerment.NoExpirePct", gConfig.RuinousEmpowermentNoExpirePct, 3);
+        gConfig.SupremeEmpowermentDurationMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.SupremeEmpowerment.DurationMsPerRank", 3000);
+        LoadFloatList("Demonology.ShadowflameLegion.AbsorbPct",    gConfig.ShadowflameLegionAbsorbPct,    2);
         gConfig.PoolBaseLegionnaires         = uint8(sConfigMgr->GetOption<uint32>("Demonology.Pool.BaseLegionnaires", 0));
         gConfig.PoolMaxLegionnaires          = uint8(sConfigMgr->GetOption<uint32>("Demonology.Pool.MaxLegionnaires", 4));
         gConfig.SummonLegionnaireShardCost   = sConfigMgr->GetOption<uint32>("Demonology.SummonLegionnaire.ShardCost", 1);

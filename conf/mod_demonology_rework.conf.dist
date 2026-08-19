@@ -75,6 +75,28 @@ Demonology.DemonicEmpowerment.Haste = 0.30
 Demonology.DemonicEmpowerment.Damage = 0.20
 Demonology.DemonicEmpowerment.DurationMs = 12000
 
+# --- Phase 4: Demonic Empowerment spine (all layer onto the buff) ---
+# WORST-CASE STACK (single empowered demon, everything maxed, inside a Doombrand window):
+#   base damage x1.20 (DemonicEmpowerment.Damage) x +0.15 (Cruelty of the Pit) = x1.35 damage
+#   + Vicious Pact/Fel Armory/Pactbound Fury from the demon-damage hook multiply on top
+#   + a shield of 30% demon max HP (Shadowflame Legion) + owner leech 20% of that damage
+#   + duration 12s +3s (Unholy Vigor 3) +6s (Supreme Empowerment 2) = 21s, ~20% to refresh.
+# Doombrand (Phase 5) converts all of that boosted demon damage into stored burst — keep the
+# multipliers modest here; ship low, buff later (DESIGN_V2 §10 snowball audit).
+# Unholy Vigor (uv): Demonic Empowerment duration bonus per rank (ms).
+Demonology.UnholyVigor.DurationMsPerRank = 1000
+# Cruelty of the Pit (cotp): empowered demons deal this much extra damage (per rank).
+Demonology.CrueltyOfThePit.DamagePct = 0.05, 0.10, 0.15
+# Ruinous Empowerment (re): empowered demon damage heals the owner (leech), and the buff has
+# a chance to refresh instead of expiring (per rank).
+Demonology.RuinousEmpowerment.LeechPct = 0.07, 0.14, 0.20
+Demonology.RuinousEmpowerment.NoExpirePct = 0.07, 0.14, 0.20
+# Supreme Empowerment (se): duration bonus per rank (ms); also gates Empowerment onto TEMP
+# demons (Wild Imps + the greater demon) — without se, only permanent demons are empowered.
+Demonology.SupremeEmpowerment.DurationMsPerRank = 3000
+# Shadowflame Legion (sl): Empowerment also shields each demon for this fraction of its max HP.
+Demonology.ShadowflameLegion.AbsorbPct = 0.15, 0.30
+
 # --- Command Pool (Phase 1 + Phase 5 Command talents) ---
 # Legionnaire slots before talents (pool slots 1..N; the anchor pet is slot 0).
 # Design: base 0 — with no talents you command no legionnaires. The Command talent

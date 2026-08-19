@@ -1,11 +1,12 @@
 -- spellforge generated spell_script_names
--- generated: 2026-08-19T14:48:05Z  commit: n/a
+-- generated: 2026-08-19T15:03:10Z  commit: n/a
 -- DO NOT EDIT — regenerate with `sf build`
 
-DELETE FROM `spell_script_names` WHERE `spell_id` IN (290013, 290000, 290901, 290502, 290503, 290008, 290007, 290003, 290005, 290002, 290004, 290006, 290001, 290900);
+DELETE FROM `spell_script_names` WHERE `spell_id` IN (290013, 290000, 290500, 290901, 290502, 290503, 290008, 290007, 290003, 290005, 290002, 290004, 290006, 290001, 290900);
 INSERT INTO `spell_script_names` (`spell_id`,`ScriptName`) VALUES
   (290013, 'spell_demonology_command_demon'),
   (290000, 'spell_demonology_demonic_empowerment'),
+  (290500, 'spell_demonology_empowerment_buff'),
   (290901, 'spell_demonology_doom_bolt'),
   (290502, 'spell_demonology_empowered_lash'),
   (290503, 'spell_demonology_infernal_command_pulse'),

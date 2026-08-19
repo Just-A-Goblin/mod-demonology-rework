@@ -146,6 +146,49 @@ namespace Demonology
         return 0.0f;
     }
 
+    // --- Phase 4: Demonic Empowerment spine ---
+    // Unholy Vigor (uv): extra empowerment duration in ms.
+    inline uint32 UnholyVigorDurationMs(Player* owner)
+    {
+        return TalentRank(owner, SPELL_TALENT_UNHOLY_VIGOR, 3) * gConfig.UnholyVigorDurationMsPerRank;
+    }
+    // Cruelty of the Pit (cotp): extra empowered-demon damage (fraction).
+    inline float CrueltyOfThePitDamage(Player* owner)
+    {
+        if (uint8 r = TalentRank(owner, SPELL_TALENT_CRUELTY_OF_THE_PIT, 3))
+            return gConfig.CrueltyOfThePitDamagePct[r - 1];
+        return 0.0f;
+    }
+    // Ruinous Empowerment (re): owner leech fraction + buff refresh (no-expire) chance.
+    inline float RuinousEmpowermentLeech(Player* owner)
+    {
+        if (uint8 r = TalentRank(owner, SPELL_TALENT_RUINOUS_EMPOWERMENT, 3))
+            return gConfig.RuinousEmpowermentLeechPct[r - 1];
+        return 0.0f;
+    }
+    inline float RuinousEmpowermentNoExpire(Player* owner)
+    {
+        if (uint8 r = TalentRank(owner, SPELL_TALENT_RUINOUS_EMPOWERMENT, 3))
+            return gConfig.RuinousEmpowermentNoExpirePct[r - 1];
+        return 0.0f;
+    }
+    // Supreme Empowerment (se): extra duration in ms; and whether temp demons are empowered.
+    inline uint32 SupremeEmpowermentDurationMs(Player* owner)
+    {
+        return TalentRank(owner, SPELL_TALENT_SUPREME_EMPOWERMENT, 2) * gConfig.SupremeEmpowermentDurationMsPerRank;
+    }
+    inline bool SupremeEmpowermentTrained(Player* owner)
+    {
+        return TalentRank(owner, SPELL_TALENT_SUPREME_EMPOWERMENT, 2) > 0;
+    }
+    // Shadowflame Legion (sl): empowerment shield as a fraction of the demon's max HP.
+    inline float ShadowflameLegionAbsorb(Player* owner)
+    {
+        if (uint8 r = TalentRank(owner, SPELL_TALENT_SHADOWFLAME_LEGION, 2))
+            return gConfig.ShadowflameLegionAbsorbPct[r - 1];
+        return 0.0f;
+    }
+
     // Cruel Master (cm): trained rank (0/1/2).
     inline uint8 CruelMasterRank(Player* owner)
     {
