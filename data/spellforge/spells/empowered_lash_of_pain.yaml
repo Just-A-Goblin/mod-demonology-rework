@@ -1,0 +1,11 @@
+# Empowered Lash of Pain — the Succubus legionnaire echo (DESIGN_V2 §5.3/§5.6). A
+# heavier Lash of Pain fired at the anchor's target; carries the extra weight that keeps
+# a succubus press within ~15-20% of a felguard press. Cloned from Lash of Pain (7814);
+# the C++ script adds owner-SP scaling live at cast (like Doom Bolt / Firebolt), and Fel
+# Blood boosts it in Phase 6.
+key: demonology.empowered_lash_of_pain
+clone_from: 7814
+name: Empowered Lash of Pain
+description: "A vicious lash that deals heavy shadow damage, empowered by your command."
+server:
+  script: spell_demonology_empowered_lash

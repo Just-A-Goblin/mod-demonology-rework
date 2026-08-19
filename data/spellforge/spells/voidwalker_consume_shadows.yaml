@@ -1,0 +1,14 @@
+# Voidwalker Consume Shadows — the Voidwalker legionnaire echo (DESIGN_V2 §5.3). A small
+# instant SELF-shield (Consume-Shadows-flavored), NOT a taunt — multiple taunts scatter
+# aggro, so only the anchor Voidwalker owns aggro. The C++ dispatcher has each Voidwalker
+# legionnaire cast this on itself; the absorb amount is set in C++. Cloned from Demonic
+# Empowerment (47193).
+key: demonology.voidwalker_consume_shadows
+clone_from: 47193
+icon: "Spell_Shadow_ShadowWard"
+name: Consume Shadows
+description: "The Voidwalker wreathes itself in shadow, absorbing incoming damage."
+duration: 8s
+range: 0yd
+effects:
+  - {effect: apply_aura, aura: school_absorb, base_points: 300, target_a: unit_caster, misc: 127}

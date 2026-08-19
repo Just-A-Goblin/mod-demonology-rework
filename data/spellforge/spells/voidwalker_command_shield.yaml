@@ -1,0 +1,15 @@
+# Voidwalker Command Shield — the Voidwalker anchor signature's owner absorb (DESIGN_V2
+# §5.2, "Sacrifice-style absorb on the OWNER"). A school-absorb shield the C++ dispatcher
+# applies to the WARLOCK on a Voidwalker Command press (paired with the Suffering AoE
+# taunt). The absorb amount is set dynamically in C++ (CastCustomSpell / SetAmount) off
+# the owner's stats; base_points here is only a floor. Cloned from Demonic Empowerment
+# (47193) so it reads as a clean buff with no projectile.
+key: demonology.voidwalker_command_shield
+clone_from: 47193
+icon: "Spell_Shadow_AntiShadow"
+name: Voidwalker Command Shield
+description: "The Voidwalker interposes itself, absorbing incoming damage."
+duration: 10s
+range: 0yd
+effects:
+  - {effect: apply_aura, aura: school_absorb, base_points: 500, target_a: unit_caster, misc: 127}

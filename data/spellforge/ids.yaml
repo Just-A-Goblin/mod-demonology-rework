@@ -21,7 +21,13 @@ spells:
   demonology.soul_harvest_r1: 290010       # player: passive rank 1
   demonology.soul_harvest_r2: 290011       # player: passive rank 2
   demonology.soul_harvest_r3: 290012       # player: passive rank 3
+  demonology.command_demon: 290013         # player: Phase 3 baseline Command Demon button
   demonology.demonic_empowerment_buff: 290500  # internal: the buff applied to demons
+  demonology.enthralling_presence: 290501  # internal: Succubus signature enemy debuff
+  demonology.empowered_lash_of_pain: 290502 # internal: Succubus echo nuke
+  demonology.infernal_command_pulse: 290503 # internal: Infernal greater-demon response (fire AoE)
+  demonology.voidwalker_command_shield: 290506 # internal: Voidwalker signature owner absorb
+  demonology.voidwalker_consume_shadows: 290507 # internal: Voidwalker echo self-shield
   demonology.wild_imp_firebolt: 290900     # pet: Wild Imp Firebolt
   demonology.doom_bolt: 290901             # pet: Doomguard Doom Bolt
 

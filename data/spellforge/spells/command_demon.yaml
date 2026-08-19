@@ -1,0 +1,20 @@
+# Command Demon — the Phase 3 baseline Demonology button (DESIGN_V2 §5). Instant, on
+# GCD, 45s cooldown, costs 1 Soul Shard (charged in C++ like the summons). It's a thin
+# dummy shell: the C++ dispatcher (spell_demonology_command_demon -> CommandPool) reads
+# the anchor's victim and fires the anchor signature + per-type echoes + greater-demon
+# responses. Cloned from Demonic Empowerment (47193) so it never dismisses the anchor pet.
+key: demonology.command_demon
+clone_from: 47193
+icon: "Spell_Shadow_DemonicEmpathy"
+name: Command Demon
+description: "Command your anchor demon to unleash its signature ability; every legionnaire of that type echoes a lesser version. Costs 1 Soul Shard."
+cast_time: 0s
+cooldown: 45s
+range: 0yd
+effects:
+  - {effect: dummy, target_a: unit_caster}
+server:
+  script: spell_demonology_command_demon
+learn:
+  class: warlock
+  skill_line: 354   # appear in the Demonology spellbook tab
