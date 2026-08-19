@@ -77,10 +77,10 @@ namespace
     // Enthralling Presence (Succubus signature): apply the debuff (290501) to every enemy
     // within radius of the anchor's target, and imperatively drop the owner's + every pooled
     // demon's threat on each (§5.5). Skips units the owner has charmed (manual Seduction).
-    void EnthrallingPresence(Player* owner, Unit* anchor, Unit* target, CommandPool* pool)
+    uint32 EnthrallingPresence(Player* owner, Unit* anchor, Unit* target, CommandPool* pool)
     {
         if (!owner || !anchor || !target)
-            return;
+            return 0;
 
         std::list<Unit*> enemies;
         Acore::AnyUnfriendlyUnitInObjectRangeCheck check(target, owner, gConfig.EnthrallingPresenceRadius);
@@ -101,6 +101,7 @@ namespace
                 mine.push_back(gd);
         }
 
+        uint32 affected = 0;
         for (Unit* e : enemies)
         {
             if (!e || !e->IsAlive())
@@ -111,78 +112,86 @@ namespace
             for (Unit* u : mine)
                 if (u)
                     e->GetThreatMgr().ModifyThreatByPercent(u, -gConfig.EnthrallingThreatDropPct);
+            ++affected;
         }
+        return affected;
     }
 
-    // --- Anchor signatures (fire once, from the anchor) ---
-    void AnchorSignature(Player* owner, Unit* anchor, Unit* target, CommandPool* pool, std::string& log)
+    // --- Anchor signatures (fire once, from the anchor). Returns a summary. ---
+    std::string AnchorSignature(Player* owner, Unit* anchor, Unit* target, CommandPool* pool)
     {
+        bool const hasTarget = target && target->IsAlive();
         switch (anchor->GetEntry())
         {
             case NPC_BASE_FELGUARD:
+                if (!hasTarget) return "Felguard: (no target)";
                 anchor->CastSpell(target, gTop.intercept, TRIG);
                 anchor->CastSpell(target, gTop.cleave, TRIG);
-                log = "Felguard: Intercept + Cleave";
-                break;
+                return "Felguard: Intercept + Cleave";
             case NPC_BASE_FELHUNTER:
+                if (!hasTarget) return "Felhound: (no target)";
                 anchor->CastSpell(target, gTop.spellLock, TRIG);
-                log = "Felhound: Spell Lock";
-                break;
-            case NPC_BASE_VOIDWALKER:
+                return "Felhound: Spell Lock";
+            case NPC_BASE_VOIDWALKER:                       // no target needed
             {
                 anchor->CastSpell(anchor, gTop.suffering, TRIG);   // AoE taunt around the VW
                 int32 const absorb = int32(float(owner->GetMaxHealth()) * gConfig.VoidwalkerOwnerAbsorbPctOfHp);
                 owner->CastCustomSpell(SPELL_VOIDWALKER_COMMAND_SHIELD, SPELLVALUE_BASE_POINT0, absorb, owner, TRIG);
-                log = "Voidwalker: Suffering taunt + owner shield";
-                break;
+                return "Voidwalker: Suffering taunt + owner shield " + std::to_string(absorb);
             }
             case NPC_BASE_SUCCUBUS:
-                EnthrallingPresence(owner, anchor, target, pool);
-                log = "Succubus: Enthralling Presence (slow + threat drop)";
-                break;
+            {
+                if (!hasTarget) return "Succubus: (no target)";
+                uint32 n = EnthrallingPresence(owner, anchor, target, pool);
+                return "Succubus: Enthralling Presence on " + std::to_string(n) + " enemy(ies) (-" + std::to_string(gConfig.EnthrallingThreatDropPct) + "% threat)";
+            }
             case NPC_BASE_IMP:
+                if (!hasTarget) return "Imp: (no target)";
                 for (int i = 0; i < 3; ++i)
                     anchor->CastSpell(target, gTop.firebolt, TRIG);
-                log = "Imp: Firebolt volley x3";
-                break;
+                return "Imp: Firebolt volley x3";
             default:
-                log = "anchor: (no signature for this demon)";
-                break;
+                return "anchor entry " + std::to_string(anchor->GetEntry()) + ": (no signature)";
         }
     }
 
-    // --- Legionnaire echoes (per own type; free) ---
-    void LegionnaireEcho(Player* owner, Unit* anchor, Creature* leg, Unit* target)
+    // --- Legionnaire echoes (per own type; free). Returns a short tag or "" if it no-oped. ---
+    std::string LegionnaireEcho(Player* owner, Unit* anchor, Creature* leg, Unit* target)
     {
+        bool const hasTarget = target && target->IsAlive();
         switch (leg->GetEntry())
         {
             case NPC_BASE_FELGUARD:
+                if (!hasTarget) return "";
                 leg->CastSpell(target, gTop.cleave, TRIG);
-                break;
+                return "Cleave";
             case NPC_BASE_FELHUNTER:                        // Devour Magic — deterministic, no AI
-                if (target && RemoveFirstMagicAura(target, /*wantPositive=*/true))
-                    break;                                  // purged a buff from the target
+                if (hasTarget && RemoveFirstMagicAura(target, /*wantPositive=*/true))
+                    return "Devour(purge)";                 // purged a buff from the target
                 if (RemoveFirstMagicAura(owner, false))     // else cleanse a magic debuff: owner -> anchor -> self
-                    break;
+                    return "Devour(cleanse owner)";
                 if (anchor && RemoveFirstMagicAura(anchor, false))
-                    break;
-                RemoveFirstMagicAura(leg, false);
-                break;
-            case NPC_BASE_VOIDWALKER:
+                    return "Devour(cleanse anchor)";
+                if (RemoveFirstMagicAura(leg, false))
+                    return "Devour(cleanse self)";
+                return "Devour(nothing to dispel)";
+            case NPC_BASE_VOIDWALKER:                       // self-shield — NO target needed
             {
                 int32 const absorb = int32(float(leg->GetMaxHealth()) * gConfig.VoidwalkerSelfAbsorbPctOfHp);
                 leg->CastCustomSpell(SPELL_VOIDWALKER_CONSUME_SHADOWS, SPELLVALUE_BASE_POINT0, absorb, leg, TRIG);
-                break;
+                return "self-shield " + std::to_string(absorb);
             }
             case NPC_BASE_SUCCUBUS:
+                if (!hasTarget) return "";
                 leg->CastSpell(target, SPELL_EMPOWERED_LASH_OF_PAIN, TRIG);
-                break;
+                return "Empowered Lash";
             case NPC_BASE_IMP:
+                if (!hasTarget) return "";
                 leg->CastSpell(target, gTop.firebolt, TRIG);
                 leg->CastSpell(target, gTop.firebolt, TRIG);
-                break;
+                return "Firebolt x2";
             default:
-                break;
+                return "";
         }
     }
 }
@@ -200,17 +209,25 @@ void Demonology::CommandDemonPress(Player* owner)
     Unit* target = anchor->GetVictim();
     CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID());
 
-    std::string sig;
-    AnchorSignature(owner, anchor, target, pool, sig);
+    std::string const sig = AnchorSignature(owner, anchor, target, pool);
 
+    // Echoes fire for every legionnaire (NOT gated on a target — the Voidwalker self-shield
+    // and Devour Magic's self-cleanse need none; the target-requiring echoes no-op cleanly).
+    std::string echoLog;
     uint32 echoes = 0;
-    if (pool && target)
+    if (pool)
         for (ObjectGuid guid : pool->Legionnaires())
             if (Creature* c = ObjectAccessor::GetCreature(*owner, guid))
             {
-                LegionnaireEcho(owner, anchor, c, target);
-                ++echoes;
+                std::string const tag = LegionnaireEcho(owner, anchor, c, target);
+                if (!tag.empty())
+                {
+                    echoLog += (echoes ? ", " : "") + tag;
+                    ++echoes;
+                }
             }
+    if (echoLog.empty())
+        echoLog = "none";
 
     std::string resp = "none";
     if (pool)
@@ -233,7 +250,10 @@ void Demonology::CommandDemonPress(Player* owner)
         pool->TriggerLegionBuff(0.0f, gConfig.DarkCommandHastePct, gConfig.DarkCommandHasteDurationMs);
 
     g_lastPress[owner->GetGUID()] =
-        sig + " | echoes: " + std::to_string(echoes) + " | greater: " + resp;
+        std::string("anchor[") + std::to_string(anchor->GetEntry()) + "] " + sig
+        + " | target:" + (target ? "yes" : "NONE")
+        + " | echoes(" + std::to_string(echoes) + "): " + echoLog
+        + " | greater: " + resp;
 }
 
 std::string Demonology::GetLastCommandPress(ObjectGuid owner)
