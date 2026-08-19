@@ -3,18 +3,18 @@
 # apply to the control halves for free. Applied by the C++ dispatcher to each enemy within
 # 8yd of the anchor's target; the imperative threat drop (owner + pooled demons) is done
 # in C++, not here. Single-target aura carrier — C++ handles the 8yd spread.
-# Shows in the DEBUFF slot because BOTH effects are negative auras (AuraApplication::_InitFlags
-# decides buff/debuff per-effect via IsPositiveEffect). The attack-speed reduction MUST use
-# MELEE_SLOW (193) — mod_melee_haste (even at a negative value) reads as a positive haste aura
-# and flips the whole thing to a hidden enemy "buff". Cloned from Demonic Empowerment (47193),
-# which is normally castable so the aura actually lands.
+# Cloned from Concussive Shot (5116) — a real, castable, non-curse SNARE debuff — and kept to
+# a SINGLE move-slow effect. Earlier two-effect versions failed: mod_melee_haste read as a
+# positive haste (buff), and MELEE_SLOW (193) stopped the aura applying at all. A lone
+# mod_decrease_speed is what Curse of Exhaustion / Concussive Shot use, so it applies and lands
+# in the debuff slot reliably. The threat drop + move slow carry the ability; an attack-speed
+# slow can be re-added later via a proven aura.
 key: demonology.enthralling_presence
-clone_from: 47193
+clone_from: 5116
 icon: "Spell_Shadow_Charm"
 name: Enthralling Presence
-description: "Enthralled by the Succubus: attack and movement speed reduced."
+description: "Enthralled by the Succubus: movement speed reduced."
 duration: 4s
 range: 30yd
 effects:
   - {effect: apply_aura, aura: mod_decrease_speed, base_points: -30, target_a: unit_target_enemy, mechanic: snare}
-  - {effect: apply_aura, aura: melee_slow,         base_points: -27, target_a: unit_target_enemy, mechanic: daze}

@@ -1,5 +1,5 @@
 -- spellforge generated spell_script_names
--- generated: 2026-08-19T14:23:00Z  commit: n/a
+-- generated: 2026-08-19T14:48:05Z  commit: n/a
 -- DO NOT EDIT — regenerate with `sf build`
 
 DELETE FROM `spell_script_names` WHERE `spell_id` IN (290013, 290000, 290901, 290502, 290503, 290008, 290007, 290003, 290005, 290002, 290004, 290006, 290001, 290900);
