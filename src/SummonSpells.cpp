@@ -237,60 +237,8 @@ class spell_demonology_summon_greater_demon : public SpellScript
         Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
         if (!caster)
             return;
-
-        bool const isDoomguard = (GetSpellInfo()->Id == SPELL_SUMMON_DOOMGUARD);
-        uint32 const entry      = isDoomguard ? NPC_BASE_DOOMGUARD : NPC_BASE_INFERNAL;
-        uint32 const durationMs = isDoomguard ? gConfig.DoomguardDurationMs : gConfig.InfernalDurationMs;
-        uint8 const  slotCost   = isDoomguard ? gConfig.DoomguardCommandSlots : gConfig.InfernalCommandSlots;
-
-        // These spells are ES-gated (CheckCast), so they are always the PERMANENT version —
-        // permanent guardian instead of a timed one. (Cooldown trim to 60s is in AfterCast.)
-        bool const permanent = caster->HasTalent(SPELL_TALENT_ETERNAL_SERVITUDE, caster->GetActiveSpec());
-
-        float const angle = caster->GetOrientation();
-        float const dist  = 3.0f;
-        float const x = caster->GetPositionX() + std::cos(angle) * dist;
-        float const y = caster->GetPositionY() + std::sin(angle) * dist;
-
-        TempSummon* demon = caster->SummonCreature(entry, x, y, caster->GetPositionZ(), caster->GetOrientation(),
-            permanent ? TEMPSUMMON_MANUAL_DESPAWN : TEMPSUMMON_TIMED_DESPAWN, permanent ? 0 : durationMs);
-        if (!demon)
-            return;
-
-        demon->SetOwnerGUID(caster->GetGUID());
-        demon->SetCreatorGUID(caster->GetGUID());          // client attributes its damage to the owner
-        demon->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);
-        demon->SetFaction(caster->GetFaction());
-        demon->SetLevel(caster->GetLevel());
-        demon->SetReactState(REACT_DEFENSIVE);
-
-        PetScaling::ApplyInheritance(caster, demon);        // scale health + melee off owner SP
-
-        // Reserve its command slots (Infernal 2 / Doomguard 3): despawns any prior greater
-        // demon and evicts the oldest legionnaires to fit, so it can't stack on a full legion.
-        sCommandPoolMgr->GetOrCreate(caster->GetGUID()).RegisterGreaterDemon(caster, demon, slotCost);
-
-        if (!isDoomguard && gConfig.InfernalScale > 0.0f)   // the Infernal model is oversized
-            demon->SetObjectScale(gConfig.InfernalScale);
-
-        // autoAssist: attack the owner's target and re-engage whatever the owner
-        // fights next. Doomguard holds at range and casts SP-scaling Doom Bolt.
-        if (isDoomguard)
-            demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true, SPELL_DOOM_BOLT, /*castCooldownMs=*/3000));
-        else
-            demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true));
-
-        // Engage the caster's current foe immediately (its victim, else its selected
-        // target) — like Wild Imps. If there's nothing to fight, follow the caster so
-        // it isn't left standing idle; autoAssist re-engages when combat starts.
-        Unit* target = caster->GetVictim();
-        if (!target)
-            target = caster->GetSelectedUnit();
-
-        if (target && target->IsAlive() && demon->IsAlive() && demon->AI() && !demon->IsFriendlyTo(target))
-            demon->AI()->AttackStart(target);
-        else
-            demon->GetMotionMaster()->MoveFollow(caster, 2.0f, demon->GetFollowAngle());
+        uint32 const entry = (GetSpellInfo()->Id == SPELL_SUMMON_DOOMGUARD) ? NPC_BASE_DOOMGUARD : NPC_BASE_INFERNAL;
+        Demonology::SummonGreaterDemon(caster, entry);     // shared with the cross-map restore
     }
 
     void Register() override
@@ -299,6 +247,65 @@ class spell_demonology_summon_greater_demon : public SpellScript
         OnEffectHit += SpellEffectFn(spell_demonology_summon_greater_demon::HandleSummon, EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };
+
+// Shared greater-demon summon (used by the spell above + the cross-map teleport restore in
+// CommandPool). Full setup: owner attribution, stat inheritance, command-slot reservation,
+// AI (Doomguard = ranged Doom Bolt caster, Infernal = melee), engage-or-follow.
+Creature* Demonology::SummonGreaterDemon(Player* owner, uint32 entry)
+{
+    if (!owner)
+        return nullptr;
+
+    bool const isDoomguard = (entry == NPC_BASE_DOOMGUARD);
+    uint32 const durationMs = isDoomguard ? gConfig.DoomguardDurationMs : gConfig.InfernalDurationMs;
+    uint8 const  slotCost   = isDoomguard ? gConfig.DoomguardCommandSlots : gConfig.InfernalCommandSlots;
+
+    // ES-gated in practice, so permanent when Eternal Servitude is trained; else timed.
+    bool const permanent = owner->HasTalent(SPELL_TALENT_ETERNAL_SERVITUDE, owner->GetActiveSpec());
+
+    float const angle = owner->GetOrientation();
+    float const dist  = 3.0f;
+    float const x = owner->GetPositionX() + std::cos(angle) * dist;
+    float const y = owner->GetPositionY() + std::sin(angle) * dist;
+
+    TempSummon* demon = owner->SummonCreature(entry, x, y, owner->GetPositionZ(), owner->GetOrientation(),
+        permanent ? TEMPSUMMON_MANUAL_DESPAWN : TEMPSUMMON_TIMED_DESPAWN, permanent ? 0 : durationMs);
+    if (!demon)
+        return nullptr;
+
+    demon->SetOwnerGUID(owner->GetGUID());
+    demon->SetCreatorGUID(owner->GetGUID());               // client attributes its damage to the owner
+    demon->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);
+    demon->SetFaction(owner->GetFaction());
+    demon->SetLevel(owner->GetLevel());
+    demon->SetReactState(REACT_DEFENSIVE);
+
+    PetScaling::ApplyInheritance(owner, demon);             // scale health + melee off owner SP
+
+    // Reserve its command slots (Infernal 2 / Doomguard 3): despawns any prior greater demon
+    // and evicts the oldest legionnaires to fit, so it can't stack on a full legion.
+    sCommandPoolMgr->GetOrCreate(owner->GetGUID()).RegisterGreaterDemon(owner, demon, slotCost);
+
+    if (!isDoomguard && gConfig.InfernalScale > 0.0f)       // the Infernal model is oversized
+        demon->SetObjectScale(gConfig.InfernalScale);
+
+    if (isDoomguard)
+        demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true, SPELL_DOOM_BOLT, /*castCooldownMs=*/3000));
+    else
+        demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true));
+
+    // Engage the owner's current foe immediately; else follow so it isn't left idle.
+    Unit* target = owner->GetVictim();
+    if (!target)
+        target = owner->GetSelectedUnit();
+
+    if (target && target->IsAlive() && demon->IsAlive() && demon->AI() && !demon->IsFriendlyTo(target))
+        demon->AI()->AttackStart(target);
+    else
+        demon->GetMotionMaster()->MoveFollow(owner, 2.0f, demon->GetFollowAngle());
+
+    return demon;
+}
 
 // Doom Bolt (290901) — the Doomguard's nuke. Same live SP-inheritance as Wild Imp
 // Firebolt: adds owner_SP * Doomguard.DoomBoltSPCoefficient to the hit (PLAN §8).

@@ -405,6 +405,41 @@ void CommandPool::DoRestore(Player* owner)
     _restoreTimer = 0;
 }
 
+void CommandPool::StashForTeleport(Player* owner, uint32 targetMapId)
+{
+    // Only a cross-map teleport orphans our summons (the core anchor pet follows either
+    // way). Intra-map teleports leave the legion where it is — the mirror re-forms it.
+    if (!owner || targetMapId == owner->GetMapId())
+        return;
+
+    // Legionnaires: capture entry + health%, then despawn (reachable — still on the old
+    // map here), so they resummon on the new map instead of lingering as idle orphans.
+    for (ObjectGuid guid : _legionnaires)
+        if (Creature* c = ObjectAccessor::GetCreature(*owner, guid))
+        {
+            float const hp = c->GetMaxHealth() ? float(c->GetHealth()) / float(c->GetMaxHealth()) : 1.0f;
+            _restore.push_back({ c->GetEntry(), hp });
+            c->DespawnOrUnsummon();
+        }
+    _legionnaires.clear();
+
+    // Greater demon: stash its entry and despawn it too (was previously left behind as a
+    // "zombie" that reappeared on return). It resummons first on the new map (slots first).
+    if (!_greaterDemonGuid.IsEmpty())
+    {
+        if (Creature* gd = ObjectAccessor::GetCreature(*owner, _greaterDemonGuid))
+        {
+            _restoreGreaterDemonEntry = gd->GetEntry();
+            gd->DespawnOrUnsummon();
+        }
+        _greaterDemonGuid.Clear();
+        _greaterDemonSlots = 0;
+    }
+
+    _restoreTimer = 0;
+    OnPoolChanged();
+}
+
 void CommandPool::Update(uint32 diff)
 {
     Player* owner = ObjectAccessor::FindPlayer(_owner);
@@ -420,21 +455,6 @@ void CommandPool::Update(uint32 diff)
         ReconcileDemonSpells(owner);
         PetScaling::ReapplyAll(owner);          // a respec changed fc/vp/si/fa — re-scale demons
     }
-
-    // Cross-map teleport: legionnaires are map-local summons, so changing maps orphans
-    // them on the old map (only the core anchor pet follows). Detect the map change and
-    // requeue the last known roster so they resummon on the new map via the restore path.
-    uint32 const mapId = owner->GetMapId();
-    if (_lastMapId != 0 && mapId != _lastMapId && !_lastRoster.empty())
-    {
-        _legionnaires.clear();                  // stale guids (creatures are on the old map)
-        _restore = _lastRoster;                 // resummon this composition on the new map
-        _restoreTimer = 0;
-        _lastMapId = mapId;
-        OnPoolChanged();
-        return;                                 // let the restore block below resummon them
-    }
-    _lastMapId = mapId;
 
     // Free the greater demon's reserved command slots once it's gone (timed despawn,
     // death, or dismiss). Our permanent greater demon is ES-gated, so also dismiss it if
@@ -474,13 +494,21 @@ void CommandPool::Update(uint32 diff)
         return;
     }
 
-    // Restore queued legionnaires a couple of seconds after login (summoning during
-    // the login sequence is fragile — PLAN §3.4).
-    if (!_restore.empty())
+    // Restore queued demons a couple of seconds after login / a cross-map teleport
+    // (summoning during the transition is fragile — PLAN §3.4). The greater demon goes
+    // first so it reserves its command slots before the legionnaires fill the rest.
+    if (!_restore.empty() || _restoreGreaterDemonEntry)
     {
         _restoreTimer += diff;
         if (_restoreTimer >= 2000)
+        {
+            if (_restoreGreaterDemonEntry)
+            {
+                Demonology::SummonGreaterDemon(owner, _restoreGreaterDemonEntry);
+                _restoreGreaterDemonEntry = 0;
+            }
             DoRestore(owner);
+        }
         return;
     }
 
@@ -596,8 +624,6 @@ void CommandPool::Mirror(Player* owner)
 
     std::vector<ObjectGuid> alive;
     alive.reserve(_legionnaires.size());
-    std::vector<PendingDemon> roster;       // live composition, for cross-map resummon
-    roster.reserve(_legionnaires.size());
     uint32 slot = 0;
 
     for (ObjectGuid guid : _legionnaires)
@@ -606,10 +632,6 @@ void CommandPool::Mirror(Player* owner)
         if (!c || !c->IsAlive())
             continue;                       // prune despawned/dead
         alive.push_back(guid);
-        {
-            float const hp = c->GetMaxHealth() ? float(c->GetHealth()) / float(c->GetMaxHealth()) : 1.0f;
-            roster.push_back({ c->GetEntry(), hp });
-        }
 
         if (resync)
             PetScaling::ApplyInheritance(owner, c);
@@ -648,7 +670,6 @@ void CommandPool::Mirror(Player* owner)
         OnPoolChanged();
     }
     _lastFormationCount = _legionnaires.size();
-    _lastRoster.swap(roster);               // remember the live roster for a cross-map resummon
 }
 
 void CommandPool::OnPoolChanged()
@@ -851,6 +872,17 @@ public:
     void OnPlayerTalentsReset(Player* player, bool /*noCost*/) override
     {
         sCommandPoolMgr->GetOrCreate(player->GetGUID()).QueueReconcile();
+    }
+
+    // Fires BEFORE a teleport, while the legion is still on the old map and reachable. A
+    // cross-map teleport orphans our summons (only the core anchor pet follows), so stash +
+    // despawn the whole legion here; CommandPool::Update resummons it on the new map.
+    bool OnPlayerBeforeTeleport(Player* player, uint32 mapid, float /*x*/, float /*y*/, float /*z*/,
+        float /*orientation*/, uint32 /*options*/, Unit* /*target*/) override
+    {
+        if (CommandPool* pool = sCommandPoolMgr->Find(player->GetGUID()))
+            pool->StashForTeleport(player, mapid);
+        return true;                                    // never block the teleport
     }
 
     // Learning/unlearning a base pet-summon spell (trainer/quest) changes which legionnaire

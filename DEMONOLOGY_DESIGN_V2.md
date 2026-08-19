@@ -84,6 +84,8 @@ with talent markers):**
 - `290502` Empowered Lash of Pain (succubus legionnaire echo) ⬜
 - `290503` Infernal Command Pulse ⬜
 - `290504` Doombrand debuff ⬜ · `290505` Doombrand detonation ⬜
+- `290506` Voidwalker Command Shield (owner absorb — VW signature) ⬜
+- `290507` Voidwalker Consume Shadows (self-shield — VW echo) ⬜
 
 **Pet/guardian abilities (2909xx, existing):** `290900` Wild Imp Firebolt ·
 `290901` Doom Bolt · `40878` Doom Blast (capped).

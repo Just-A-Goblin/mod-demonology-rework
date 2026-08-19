@@ -35,6 +35,10 @@ namespace Demonology
     // owner's pool for the demon-death consumers (Demonic Rebirth + Bound by Blood).
     void NotifyDemonDeath(Player* owner, Creature* dead);
 
+    // Summon a greater demon (Infernal/Doomguard) for the owner with full setup + slot
+    // reservation. Shared by the summon SpellScript and the cross-map teleport restore.
+    Creature* SummonGreaterDemon(Player* owner, uint32 entry);
+
     class CommandPool
     {
     public:
@@ -65,6 +69,11 @@ namespace Demonology
         // Persistence (character_legion_slots).
         void Save() const;
         void QueueRestore(uint32 entry, float healthPct);                  // applied ~2s after login
+
+        // Cross-map teleport: despawn + stash the whole legion (legionnaires + greater
+        // demon) while still on the old map, so they resummon on the new map (no orphans).
+        // No-op for an intra-map teleport (targetMapId == current map).
+        void StashForTeleport(Player* owner, uint32 targetMapId);
 
         void Update(uint32 diff);                                          // batched mirroring tick
         void QueueReconcile() { _reconcileTalents = true; }                // re-sync Felguard spells next tick (after a respec)
@@ -108,14 +117,9 @@ namespace Demonology
         uint8 _greaterDemonSlots = 0;                                      // command slots it occupies (0 = none out)
         std::vector<uint32> _esRemoved;                                    // vanilla summons ES stripped (to restore on respec)
         bool _esRemovedLoaded = false;                                     // _esRemoved lazy-loaded from DB yet?
-        std::vector<PendingDemon> _restore;                                // queued login restore
+        std::vector<PendingDemon> _restore;                                // queued login/teleport restore (legionnaires)
+        uint32 _restoreGreaterDemonEntry = 0;                              // greater demon to resummon after a cross-map teleport (0 = none)
         uint32 _restoreTimer = 0;
-
-        // Cross-map teleport handling: legionnaires are map-local summons, so a map change
-        // orphans them. We keep the live roster (entry + health%) and the last map id, and
-        // on a map change requeue the roster to resummon on the new map (via _restore).
-        uint32 _lastMapId = 0;
-        std::vector<PendingDemon> _lastRoster;
 
         // Bound by Blood survivor buff (transient; getMSTime-based expiry) + its cooldown.
         float _legionBuffDmg = 0.0f;
