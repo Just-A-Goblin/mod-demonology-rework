@@ -111,6 +111,10 @@ namespace
         bool const felguard = player->HasTalent(SPELL_TALENT_SUMMON_FELGUARD, spec);
         bool const eternal  = player->HasTalent(SPELL_TALENT_ETERNAL_SERVITUDE, spec);
 
+        // Command Demon (baseline Demonology, Phase 3): hybrid-learned once the Command
+        // spine is opened (Expanded Command) — "Demonology enough" per the §5 decision.
+        SyncSpell(player, SPELL_COMMAND_DEMON, command);
+
         // Felguard is special: the PET itself is gated behind the Summon Felguard talent.
         SyncSpell(player, SPELL_SUMMON_FELGUARD_PET, felguard);
 

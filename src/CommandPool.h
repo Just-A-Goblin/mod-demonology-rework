@@ -15,6 +15,7 @@
 #include "Define.h"
 #include "ObjectGuid.h"
 
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -38,6 +39,12 @@ namespace Demonology
     // Summon a greater demon (Infernal/Doomguard) for the owner with full setup + slot
     // reservation. Shared by the summon SpellScript and the cross-map teleport restore.
     Creature* SummonGreaterDemon(Player* owner, uint32 entry);
+
+    // Command Demon (§5): dispatch a press (anchor signature + echoes + greater response).
+    // Called by the 290013 SpellScript and by `.legion command`. GetLastCommandPress returns
+    // a human summary of the last press for `.legion dumpstats`.
+    void CommandDemonPress(Player* owner);
+    std::string GetLastCommandPress(ObjectGuid owner);
 
     class CommandPool
     {

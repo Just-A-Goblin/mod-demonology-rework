@@ -100,6 +100,18 @@ public:
         LoadFloatList("Demonology.OverlordsPresence.HastePct",  gConfig.OverlordsPresenceHastePct,  3);
         LoadFloatList("Demonology.CursedVitality.OwnerStaminaPct", gConfig.CursedVitalityOwnerStaminaPct, 2);
         gConfig.LegionAuraMinDemons          = sConfigMgr->GetOption<uint32>("Demonology.LegionAura.MinDemons", 1);
+        // --- Command Demon (Phase 3) ---
+        gConfig.CommandDemonCooldownMs       = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.CooldownMs", 45000);
+        gConfig.CommandDemonShardCost        = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.ShardCost", 1);
+        gConfig.DarkCommandCdReductionMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.DarkCommand.CdReductionMsPerRank", 5000);
+        gConfig.DarkCommandHastePct          = sConfigMgr->GetOption<float>("Demonology.DarkCommand.HastePct", 0.10f);
+        gConfig.DarkCommandHasteDurationMs   = sConfigMgr->GetOption<uint32>("Demonology.DarkCommand.HasteDurationMs", 6000);
+        gConfig.EnthrallingPresenceRadius    = sConfigMgr->GetOption<float>("Demonology.EnthrallingPresence.Radius", 8.0f);
+        gConfig.EnthrallingThreatDropPct     = sConfigMgr->GetOption<int32>("Demonology.EnthrallingPresence.ThreatDropPct", 35);
+        gConfig.VoidwalkerOwnerAbsorbPctOfHp = sConfigMgr->GetOption<float>("Demonology.Voidwalker.OwnerAbsorbPctOfHp", 0.15f);
+        gConfig.VoidwalkerSelfAbsorbPctOfHp  = sConfigMgr->GetOption<float>("Demonology.Voidwalker.SelfAbsorbPctOfHp", 0.10f);
+        gConfig.EmpoweredLashSPCoefficient   = sConfigMgr->GetOption<float>("Demonology.EmpoweredLash.SPCoefficient", 0.30f);
+        gConfig.InfernalCommandPulseSPCoefficient = sConfigMgr->GetOption<float>("Demonology.InfernalCommandPulse.SPCoefficient", 0.40f);
         gConfig.DebugLogShardIncome          = sConfigMgr->GetOption<bool>("Demonology.Debug.LogShardIncome", false);
     }
 };

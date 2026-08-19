@@ -22,6 +22,9 @@ void AddSC_demonology_empowerment_spells();
 // Phase 1
 void AddSC_demonology_command_pool();
 
+// Phase 3 — Command Demon
+void AddSC_demonology_command_demon();
+
 void Addmod_demonology_reworkScripts()
 {
     AddSC_demonology_config();
@@ -32,4 +35,6 @@ void Addmod_demonology_reworkScripts()
     AddSC_demonology_empowerment_spells();
 
     AddSC_demonology_command_pool();
+
+    AddSC_demonology_command_demon();
 }

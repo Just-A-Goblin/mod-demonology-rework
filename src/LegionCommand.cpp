@@ -49,6 +49,7 @@ public:
             { "summon",    HandleSummonCommand,    SEC_GAMEMASTER, Console::No },
             { "shards",    HandleShardsCommand,    SEC_GAMEMASTER, Console::No },
             { "dumpstats", HandleDumpStatsCommand, SEC_GAMEMASTER, Console::No },
+            { "command",   HandleCommandCommand,   SEC_GAMEMASTER, Console::No },
         };
 
         static ChatCommandTable commandTable =
@@ -170,6 +171,16 @@ public:
 
         handler->PSendSysMessage("[legion] Soul Shards (item {}): {}.",
             SOUL_SHARD_ITEM, player->GetItemCount(SOUL_SHARD_ITEM));
+        return true;
+    }
+
+    static bool HandleCommandCommand(ChatHandler* handler)
+    {
+        Player* player = handler->GetSession()->GetPlayer();
+        if (!player)
+            return false;
+        Demonology::CommandDemonPress(player);
+        handler->PSendSysMessage("[legion] Command Demon press -> {}", Demonology::GetLastCommandPress(player->GetGUID()));
         return true;
     }
 
@@ -296,6 +307,13 @@ public:
             Demonology::DemonSimCritChance(player) * 100.0f,
             Demonology::gConfig.CruelMasterProcChanceMult,
             Demonology::gConfig.CruelMasterIcdMultOnCrit);
+
+        // Phase 3 Command Demon: Dark Command rank + last-press breakdown.
+        handler->PSendSysMessage("[legion] Command Demon: Dark Command rank {} (CD {}s) | last press: {}",
+            uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_DARK_COMMAND, 3)),
+            (Demonology::gConfig.CommandDemonCooldownMs
+                - Demonology::TalentRank(player, Demonology::SPELL_TALENT_DARK_COMMAND, 3) * Demonology::gConfig.DarkCommandCdReductionMsPerRank) / 1000,
+            Demonology::GetLastCommandPress(player->GetGUID()));
         return true;
     }
 };

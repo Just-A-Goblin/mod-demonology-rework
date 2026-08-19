@@ -111,6 +111,24 @@ namespace Demonology
         // (DESIGN_V2 §8.1: >=1 commanded demon). Amounts reuse LegionAura.DamagePct/HastePct.
         uint32 LegionAuraMinDemons          = 1;
 
+        // --- Command Demon (Phase 3, §5) ---
+        uint32 CommandDemonCooldownMs       = 45000;
+        uint32 CommandDemonShardCost        = 1;
+        // Dark Command (dc): CD reduction per rank + a short haste buff on responders.
+        uint32 DarkCommandCdReductionMsPerRank = 5000;   // -5/10/15s at ranks 1/2/3
+        float  DarkCommandHastePct          = 0.10f;     // responder attack-speed buff (fraction)
+        uint32 DarkCommandHasteDurationMs   = 6000;
+        // Enthralling Presence (Succubus signature): 8yd around the anchor's target; the
+        // debuff (290501) is applied per enemy; the threat drop is imperative here.
+        float  EnthrallingPresenceRadius    = 8.0f;
+        int32  EnthrallingThreatDropPct     = 35;        // reduce owner+demon threat by this %
+        // Voidwalker absorbs (fraction of max health): owner shield (signature) + self (echo).
+        float  VoidwalkerOwnerAbsorbPctOfHp = 0.15f;
+        float  VoidwalkerSelfAbsorbPctOfHp  = 0.10f;
+        // Echo / response SP scaling (added live at cast, like Firebolt / Doom Bolt).
+        float  EmpoweredLashSPCoefficient   = 0.30f;
+        float  InfernalCommandPulseSPCoefficient = 0.40f;
+
         bool  DebugLogShardIncome        = false;
     };
 

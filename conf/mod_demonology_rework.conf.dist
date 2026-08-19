@@ -125,5 +125,23 @@ Demonology.CursedVitality.OwnerStaminaPct = 0.03, 0.06
 # Legion Aura (Grand Warlock's Design groundwork): party aura toggles on at this pool size.
 Demonology.LegionAura.MinDemons = 1
 
+# --- Command Demon (Phase 3, §5) ---
+Demonology.CommandDemon.CooldownMs = 45000
+Demonology.CommandDemon.ShardCost = 1
+# Dark Command (dc): Command Demon cooldown reduction per rank + a short responder haste.
+Demonology.DarkCommand.CdReductionMsPerRank = 5000
+Demonology.DarkCommand.HastePct = 0.10
+Demonology.DarkCommand.HasteDurationMs = 6000
+# Enthralling Presence (Succubus signature): AoE radius around the anchor's target and the
+# imperative threat drop (% reduction of owner + pooled-demon threat).
+Demonology.EnthrallingPresence.Radius = 8.0
+Demonology.EnthrallingPresence.ThreatDropPct = 35
+# Voidwalker absorbs as a fraction of max health: owner shield (signature) + self (echo).
+Demonology.Voidwalker.OwnerAbsorbPctOfHp = 0.15
+Demonology.Voidwalker.SelfAbsorbPctOfHp = 0.10
+# Echo / greater-demon-response SP scaling (added live at cast).
+Demonology.EmpoweredLash.SPCoefficient = 0.30
+Demonology.InfernalCommandPulse.SPCoefficient = 0.40
+
 # Log every shard gain to the server log (noisy; for tuning only).
 Demonology.Debug.LogShardIncome = 0

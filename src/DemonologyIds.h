@@ -24,9 +24,23 @@ namespace Demonology
     constexpr uint32 SPELL_SOUL_HARVEST_R1     = 290010;
     constexpr uint32 SPELL_SOUL_HARVEST_R2     = 290011;
     constexpr uint32 SPELL_SOUL_HARVEST_R3     = 290012;
+    constexpr uint32 SPELL_COMMAND_DEMON       = 290013;  // Phase 3 baseline Command Demon button
 
     // Internal/hidden spells (290500-290899)
-    constexpr uint32 SPELL_DEMONIC_EMPOWERMENT_BUFF = 290500;
+    constexpr uint32 SPELL_DEMONIC_EMPOWERMENT_BUFF   = 290500;
+    constexpr uint32 SPELL_ENTHRALLING_PRESENCE       = 290501;  // Succubus signature enemy debuff
+    constexpr uint32 SPELL_EMPOWERED_LASH_OF_PAIN     = 290502;  // Succubus echo nuke
+    constexpr uint32 SPELL_INFERNAL_COMMAND_PULSE     = 290503;  // Infernal greater-demon response (fire AoE)
+    constexpr uint32 SPELL_VOIDWALKER_COMMAND_SHIELD  = 290506;  // Voidwalker signature owner absorb
+    constexpr uint32 SPELL_VOIDWALKER_CONSUME_SHADOWS = 290507;  // Voidwalker echo self-shield
+
+    // Vanilla pet/demon abilities the Command dispatcher casts (rank-1 chain anchors — the
+    // TOP rank is resolved from spell_dbc at startup, never hardcoded; see CommandDemon.cpp).
+    constexpr uint32 SPELL_VANILLA_INTERCEPT_R1  = 30151;  // Felguard signature (charge + stun)
+    constexpr uint32 SPELL_VANILLA_CLEAVE_R1     = 30213;  // Felguard signature + echo
+    constexpr uint32 SPELL_VANILLA_SPELL_LOCK_R1 = 19244;  // Felhound signature (interrupt/silence)
+    constexpr uint32 SPELL_VANILLA_SUFFERING_R1  = 17735;  // Voidwalker signature (AoE taunt)
+    constexpr uint32 SPELL_VANILLA_IMP_FIREBOLT_R1 = 3110; // Imp signature (volley) + echo
 
     // Pet ability spells (290900-291199)
     constexpr uint32 SPELL_WILD_IMP_FIREBOLT = 290900;
@@ -56,6 +70,7 @@ namespace Demonology
     // consecutive ids so TalentRank reads the trained rank). All read via HasTalent.
     constexpr uint32 SPELL_TALENT_PACTBOUND_FURY        = 290917;  // pf  [2,4,6]% demon crit (damage hook)
     constexpr uint32 SPELL_TALENT_DEMONIC_REBIRTH       = 290940;  // dr  50/100% instant resummon, 60s ICD
+    constexpr uint32 SPELL_TALENT_DARK_COMMAND          = 290942;  // dc  Command Demon CD -5/10/15s + responder haste
     constexpr uint32 SPELL_TALENT_OVERLORDS_PRESENCE    = 290956;  // op  per commanded demon: owner +HP/+haste
     constexpr uint32 SPELL_TALENT_BOUND_BY_BLOOD        = 290974;  // bbb on demon death: survivors +dmg/haste, refund 1 shard
     constexpr uint32 SPELL_TALENT_GRAND_WARLOCKS_DESIGN = 290976;  // gwd capstone (Legion Aura groundwork here; full rider Phase 5)
