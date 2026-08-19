@@ -3,17 +3,16 @@
 # the Infernal cast it on a Command press and adds owner-SP scaling live at cast. Kept to
 # roughly one echo's worth of value. Cloned from Demonic Empowerment (47193, no projectile
 # visual); school overridden to fire, effect is a source-area fire hit.
+# Cloned directly from Fire Nova (1535) so it inherits the fire-nova burst visual (the earlier
+# visual.copy_from on a Demonic-Empowerment shell did not take). Effects overridden to our
+# source-area fire hit; the Infernal casts it triggered so Fire Nova's cast requirements don't apply.
 key: demonology.infernal_command_pulse
-clone_from: 47193
+clone_from: 1535
 icon: "Spell_Fire_Immolation"
 name: Infernal Command Pulse
 description: "The Infernal slams the ground, searing nearby enemies with fel fire."
 school: [fire]
 range: 0yd
-# Borrow Fire Nova's (1535) look so it reads as a fire nova burst, not the shadow
-# self-cast inherited from the Demonic Empowerment shell.
-visual:
-  copy_from: 1535
 effects:
   - {effect: school_damage, base_points: 150, target_a: unit_src_area_enemy, radius: 8yd}
 server:

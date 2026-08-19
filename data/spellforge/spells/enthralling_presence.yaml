@@ -3,11 +3,13 @@
 # apply to the control halves for free. Applied by the C++ dispatcher to each enemy within
 # 8yd of the anchor's target; the imperative threat drop (owner + pooled demons) is done
 # in C++, not here. Single-target aura carrier — C++ handles the 8yd spread.
-# Cloned from Dazed (1604), a real move-slow DEBUFF, so the client files it in the debuff
-# slot (cloning the beneficial Demonic Empowerment made it a hidden enemy "buff" — the slow
-# still worked but showed no debuff icon). Bumped to 4s so the window is visible/useful.
+# Shows in the DEBUFF slot because BOTH effects are negative auras (AuraApplication::_InitFlags
+# decides buff/debuff per-effect via IsPositiveEffect). The attack-speed reduction MUST use
+# MELEE_SLOW (193) — mod_melee_haste (even at a negative value) reads as a positive haste aura
+# and flips the whole thing to a hidden enemy "buff". Cloned from Demonic Empowerment (47193),
+# which is normally castable so the aura actually lands.
 key: demonology.enthralling_presence
-clone_from: 1604
+clone_from: 47193
 icon: "Spell_Shadow_Charm"
 name: Enthralling Presence
 description: "Enthralled by the Succubus: attack and movement speed reduced."
@@ -15,4 +17,4 @@ duration: 4s
 range: 30yd
 effects:
   - {effect: apply_aura, aura: mod_decrease_speed, base_points: -30, target_a: unit_target_enemy, mechanic: snare}
-  - {effect: apply_aura, aura: mod_melee_haste,    base_points: -27, target_a: unit_target_enemy, mechanic: daze}
+  - {effect: apply_aura, aura: melee_slow,         base_points: -27, target_a: unit_target_enemy, mechanic: daze}
