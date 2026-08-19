@@ -10,6 +10,10 @@ name: Infernal Command Pulse
 description: "The Infernal slams the ground, searing nearby enemies with fel fire."
 school: [fire]
 range: 0yd
+# Borrow Fire Nova's (1535) look so it reads as a fire nova burst, not the shadow
+# self-cast inherited from the Demonic Empowerment shell.
+visual:
+  copy_from: 1535
 effects:
   - {effect: school_damage, base_points: 150, target_a: unit_src_area_enemy, radius: 8yd}
 server:

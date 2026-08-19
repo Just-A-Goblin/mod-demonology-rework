@@ -1,19 +1,19 @@
 {
   "artifacts": {
     "dbc/SkillLineAbility.dbc": "4e4a4002b55ff8b73db89e0275061a0d719783e236bdf9855269b1c9f7fd27bd",
-    "dbc/Spell.dbc": "24531904713a8ea7266298a0d61925fafc374895ef6296701e970cef72fcca74",
+    "dbc/Spell.dbc": "f354d9fa2f8bc91af0f123470045ec939a89ce4db029bf57d8257535ce39b595",
     "dbc/Talent.dbc": "322e1e31594624e032746de2d3c041f26875bf0a4f3f9911d1f0f1f1f7d6aeae",
     "dbc/TalentTab.dbc": "4b32ea0dcf5b89aeead630d21996546b4c84123c224448dab666ef57a3299644",
-    "mpq/patch-6.MPQ": "10f4e84b8da1409496d489032306728caf3f3bc26d346223d791273ad53def4c",
-    "sql/db-characters/91_cleanup_characters.sql": "f01ffb332a97bff5b62789b0d1e38d88177b2bed6d0469338b86f5fb0807c4e3",
-    "sql/db-world/00_spell_dbc.sql": "ca7b084b7f14fc0b0df82273bf53f8066fccc8468fc1e1883fd04f4720f0a859",
-    "sql/db-world/10_spell_ranks.sql": "c3168e888f726ed77a1c28123e919e100b7457a7c239f263cfc3ad84af7685fd",
-    "sql/db-world/11_spell_bonus_data.sql": "743f3b957ca3a9c6b3e9f106b15e67e2cbeedcce62231b41f7c99747bcaedcea",
-    "sql/db-world/12_spell_proc.sql": "fdca772d04182478326201155a8c1fcb4469440a20f650402b3e3e9693020b3c",
-    "sql/db-world/13_spell_linked_spell.sql": "f034eb6be02c30450909ff859f86da16b179cef1989eb42b88a9a699829b42e4",
-    "sql/db-world/14_spell_script_names.sql": "cec31980b6878f6e199e657d8da19156c5d8fd64799a6b933b6a1e1d56432ec4",
-    "sql/db-world/20_trainer_spell.sql": "9d2ac751e6adcd9e47239e8bffc6bec63b7b9a479cb6b7171124a647f7e3b662",
-    "sql/db-world/90_cleanup.sql": "a029ec91036fad0eb3f47cdf935f3fdd23a642643937c8b3cac19e18e5c59e94"
+    "mpq/patch-6.MPQ": "d71a3a18d74fc385c742a3691502c41e4a138018d10cd7080ed7fc1bd3eeb06f",
+    "sql/db-characters/91_cleanup_characters.sql": "3fd6692508e4611cc57b85dc44963443c6fda2de768f72fa1a6016413bdb1eb1",
+    "sql/db-world/00_spell_dbc.sql": "49d577ef9a8eb0d0e6b43d3a4d638702277701fc0f0ef8dfd86ae3896f5c7ae2",
+    "sql/db-world/10_spell_ranks.sql": "f4f4f344d0822b71c78524d62269920e95f51d2f22061a951d7071293622c567",
+    "sql/db-world/11_spell_bonus_data.sql": "078ed34d725a4b71dbad0dd7a1e651646ab22948cedaf6d10ffba6caacaa320c",
+    "sql/db-world/12_spell_proc.sql": "44b1dbf66a46ccaea636f233354dbcf5b7e0bcc082e5eb1feecfc296504f11ae",
+    "sql/db-world/13_spell_linked_spell.sql": "7be105246424c662c9cbe837cad907d8705ad52b67fee93071f6910d3d153262",
+    "sql/db-world/14_spell_script_names.sql": "b5f075bcb6fba18de6a184d3330aeca83b2d06b9d404086c5ee92fd4d1655afd",
+    "sql/db-world/20_trainer_spell.sql": "7dac1215c4aa344866345fc73ab23863f7ad8a8b5e79df605d86bbfe3a32f41b",
+    "sql/db-world/90_cleanup.sql": "53513d5a7c282d5f521c5f9fe1339b04558a2405a2d4de67de7789d8511d0056"
   },
   "base_hash": "f450a06d55ad2bbba47a6b98ff18ab7dbeb1fa5ce7950e64d07c7e68c0dc6ae1",
   "index_rows_created": {

@@ -125,6 +125,9 @@ namespace Demonology
         // Voidwalker absorbs (fraction of max health): owner shield (signature) + self (echo).
         float  VoidwalkerOwnerAbsorbPctOfHp = 0.15f;
         float  VoidwalkerSelfAbsorbPctOfHp  = 0.10f;
+        // Voidwalkers off-tank: they generate this multiple of threat from all damage (so what
+        // they hit sticks to them and their shield matters). Command echo also taunts (§ changed).
+        float  VoidwalkerThreatMultiplier   = 4.0f;
         // Echo / response SP scaling (added live at cast, like Firebolt / Doom Bolt).
         float  EmpoweredLashSPCoefficient   = 0.30f;
         float  InfernalCommandPulseSPCoefficient = 0.40f;

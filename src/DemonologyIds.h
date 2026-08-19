@@ -41,6 +41,7 @@ namespace Demonology
     constexpr uint32 SPELL_VANILLA_SPELL_LOCK_R1 = 19244;  // Felhound signature (interrupt/silence)
     constexpr uint32 SPELL_VANILLA_SUFFERING_R1  = 17735;  // Voidwalker signature (AoE taunt)
     constexpr uint32 SPELL_VANILLA_IMP_FIREBOLT_R1 = 3110; // Imp signature (volley) + echo
+    constexpr uint32 SPELL_VANILLA_GROWL_R1        = 2649;  // Voidwalker echo taunt (attack-me)
 
     // Pet ability spells (290900-291199)
     constexpr uint32 SPELL_WILD_IMP_FIREBOLT = 290900;

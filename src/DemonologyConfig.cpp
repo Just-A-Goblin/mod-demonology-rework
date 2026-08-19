@@ -110,6 +110,7 @@ public:
         gConfig.EnthrallingThreatDropPct     = sConfigMgr->GetOption<int32>("Demonology.EnthrallingPresence.ThreatDropPct", 35);
         gConfig.VoidwalkerOwnerAbsorbPctOfHp = sConfigMgr->GetOption<float>("Demonology.Voidwalker.OwnerAbsorbPctOfHp", 0.15f);
         gConfig.VoidwalkerSelfAbsorbPctOfHp  = sConfigMgr->GetOption<float>("Demonology.Voidwalker.SelfAbsorbPctOfHp", 0.10f);
+        gConfig.VoidwalkerThreatMultiplier   = sConfigMgr->GetOption<float>("Demonology.Voidwalker.ThreatMultiplier", 4.0f);
         gConfig.EmpoweredLashSPCoefficient   = sConfigMgr->GetOption<float>("Demonology.EmpoweredLash.SPCoefficient", 0.30f);
         gConfig.InfernalCommandPulseSPCoefficient = sConfigMgr->GetOption<float>("Demonology.InfernalCommandPulse.SPCoefficient", 0.40f);
         gConfig.DebugLogShardIncome          = sConfigMgr->GetOption<bool>("Demonology.Debug.LogShardIncome", false);

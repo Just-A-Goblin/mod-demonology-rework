@@ -45,6 +45,7 @@ namespace
         uint32 spellLock = SPELL_VANILLA_SPELL_LOCK_R1;
         uint32 suffering = SPELL_VANILLA_SUFFERING_R1;
         uint32 firebolt  = SPELL_VANILLA_IMP_FIREBOLT_R1;
+        uint32 growl     = SPELL_VANILLA_GROWL_R1;      // Voidwalker echo taunt
     };
     VanillaTopRanks gTop;
 
@@ -175,10 +176,15 @@ namespace
                 if (RemoveFirstMagicAura(leg, false))
                     return "Devour(cleanse self)";
                 return "Devour(nothing to dispel)";
-            case NPC_BASE_VOIDWALKER:                       // self-shield — NO target needed
+            case NPC_BASE_VOIDWALKER:                       // off-tank: taunt the anchor's target + self-shield
             {
                 int32 const absorb = int32(float(leg->GetMaxHealth()) * gConfig.VoidwalkerSelfAbsorbPctOfHp);
                 leg->CastCustomSpell(SPELL_VOIDWALKER_CONSUME_SHADOWS, SPELLVALUE_BASE_POINT0, absorb, leg, TRIG);
+                if (hasTarget && target->GetTypeId() == TYPEID_UNIT)   // Growl taunts the same (anchor's) target — no scatter
+                {
+                    leg->CastSpell(target, gTop.growl, TRIG);
+                    return "taunt + self-shield " + std::to_string(absorb);
+                }
                 return "self-shield " + std::to_string(absorb);
             }
             case NPC_BASE_SUCCUBUS:
@@ -387,6 +393,7 @@ public:
         gTop.spellLock = top(SPELL_VANILLA_SPELL_LOCK_R1);
         gTop.suffering = top(SPELL_VANILLA_SUFFERING_R1);
         gTop.firebolt  = top(SPELL_VANILLA_IMP_FIREBOLT_R1);
+        gTop.growl     = top(SPELL_VANILLA_GROWL_R1);
     }
 };
 

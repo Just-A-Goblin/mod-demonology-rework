@@ -139,6 +139,9 @@ Demonology.EnthrallingPresence.ThreatDropPct = 35
 # Voidwalker absorbs as a fraction of max health: owner shield (signature) + self (echo).
 Demonology.Voidwalker.OwnerAbsorbPctOfHp = 0.15
 Demonology.Voidwalker.SelfAbsorbPctOfHp = 0.10
+# Voidwalkers off-tank: threat multiple from all their damage (so aggro sticks to them);
+# the Command echo also taunts the anchor's target.
+Demonology.Voidwalker.ThreatMultiplier = 4.0
 # Echo / greater-demon-response SP scaling (added live at cast).
 Demonology.EmpoweredLash.SPCoefficient = 0.30
 Demonology.InfernalCommandPulse.SPCoefficient = 0.40

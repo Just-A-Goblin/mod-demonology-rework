@@ -19,6 +19,7 @@
 #include "Log.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "ThreatManager.h"
 #include "Timer.h"
 #include "Util.h"
 
@@ -94,6 +95,12 @@ public:
                         creature->SetLootRecipient(owner);
                     creature->LowerPlayerDamageReq(damage, true);
                 }
+
+        // Voidwalkers off-tank (§ change): they generate extra threat from all their damage
+        // so what they hit sticks to them (their Command self-shield only matters if they're
+        // being attacked). Add the multiplier's surplus on top of the core's own threat.
+        if (victim && attacker->GetEntry() == NPC_BASE_VOIDWALKER && gConfig.VoidwalkerThreatMultiplier > 1.0f)
+            victim->GetThreatMgr().AddThreat(attacker, float(damage) * (gConfig.VoidwalkerThreatMultiplier - 1.0f));
 
         uint8 const rank = SoulHarvestRank(owner);
         if (!rank)
