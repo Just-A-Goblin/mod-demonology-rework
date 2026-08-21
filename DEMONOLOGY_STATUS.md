@@ -1,7 +1,41 @@
 # Demonology Rework — Current State & Redesign Brief
 
-_Living status document. Snapshot as of 2026-08-20. Supersedes the stale ✅/⬜ column in
+_Living status document. Snapshot as of 2026-08-21. Supersedes the stale ✅/⬜ column in
 `DEMONOLOGY_DESIGN_V2.md §4` for tracking purposes — that doc remains the governing design._
+
+## 0. Changelog
+
+### 2026-08-21 — polish pass (built, deployed, live-verified)
+- **Command Demon** — cost now follows the standard spell formula: **2 Soul Shards as a native reagent**
+  (item 6265 ×2, shown in the tooltip + consumed by the core) **+ 10% base mana** (DBC `ManaCostPct`, up
+  from 5%). Removed the old C++ item charge and the `Demonology.CommandDemon.ShardCost` config knob
+  (mirrors how the legionnaire summons already work).
+- **Summon Wild Imps** — killed the "invisible projectile" summon delay. The 686 (Shadow Bolt) clone
+  carried a projectile `Speed` (~21 yd/s) that deferred the summon until the missile "landed"; the visual
+  was already instant, so it looked like a phantom bolt. Fixed by zeroing the DBC `Speed` field via a new
+  `speed:` authoring field added to SpellForge (`model/spell.py` + `compile/spells.py`).
+- **Shard economy (glut fix)** — `Demonology.SoulHarvest.InternalCooldownMs` **1000 → 4000**. The ICD is
+  the income ceiling (a full legion fills nearly every window), so this cuts sustained shard income ~4×
+  (~15/min) to roughly match what the war machine spends. Per-rank chance unchanged.
+- **Summon "ding" removed** — Wild Imps, legionnaires, and greater demons no longer play the client
+  level-up animation on summon (`SetLevel(owner->GetLevel(), false)` — `showLevelChange=false`).
+- **Wrath of the Legion** — description now states "Each additional imp costs 5% of your base mana to
+  manifest" (matches `WrathOfTheLegion.ManaCostPct`).
+- **Legionnaire summon visual** — no longer flashes the Demonic Empowerment over-head skull. All 5
+  legionnaire summons override `SpellVisualID` (47193's `13422`) with `visual: {copy_from: 697}` = `4054`
+  (Summon Voidwalker's purple summon flash). `SpellVisualID` is client-only, so this shipped via the
+  client patch with no server restart. Command Demon + Infernal/Doomguard summons still inherit the
+  skull (not flagged; easy to change the same way).
+- **Summon Wild Imps — 1.5s cast time** (`cast_time: 1.5s`, `CastingTimeIndex 16`). A deliberate
+  **mobility nerf**: Demonology's throughput was too high for a spec that could summon its whole pack
+  while kiting; the pack now roots you like a real summon. `Speed=0` is preserved, so the imps still
+  appear the instant the cast completes. Cast time is server-enforced, so this needed the server DBC +
+  a restart (plus the client patch for the cast bar).
+- **Wild Imps despawn on player death** — Wild Imps are plain `SummonCreature` guardians (not in
+  `m_Controlled`), so the core never dismissed them; the pack kept fighting after you died. Added
+  `Demonology::DespawnWildImps(owner)` (SummonSpells.cpp, grid-search owned `NPC_WILD_IMP` + clears the
+  wotl chain-budget map) wired to `OnPlayerJustDied` in `demonology_pool_playerscript`. Scoped to Wild
+  Imps only — the persistent legionnaires + greater demon are the standing army and survive death by design.
 
 ## 1. Where the module stands
 

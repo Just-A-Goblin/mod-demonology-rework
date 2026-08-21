@@ -239,7 +239,7 @@ talents:
       name: "Wrath of the Legion"
       icon: "Spell_Fire_FelFire"
       aura: dummy
-      description: "Your Wild Imp Firebolts have a 10/20/30% chance to summon an additional Wild Imp (no more than 2 from a single cast)."
+      description: "Your Wild Imp Firebolts have a 10/20/30% chance to summon an additional Wild Imp (no more than 2 from a single cast). Each additional imp costs 5% of your base mana to manifest."
       per_rank_base_points: [10, 20, 30]
   - key: demonology.gb
     row: 6

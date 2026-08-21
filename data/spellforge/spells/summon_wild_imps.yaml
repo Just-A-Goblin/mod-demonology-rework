@@ -8,9 +8,15 @@ icon: "Spell_Shadow_DarkSummoning"   # the Track Undead icon (dark summoning cir
 name: Summon Wild Imps
 rank: ""                             # single-rank ability — no "Rank 1" label (clears the cloned rank)
 description: "Hurls imps at the enemy: summons 3 Wild Imps to attack the target for 20 sec. Costs 1 Soul Shard and 30% of base mana (reduced by Improved Legion)."
-cast_time: 0s
+# 1.5s cast (2026-08-21): a deliberate MOBILITY nerf — Demonology's throughput was too high for a
+# spec that could summon its whole pack while kiting. The cast roots you like a real summon.
+cast_time: 1.5s
 cooldown: 6s
 range: 30yd
+# speed: 0 zeroes the DBC projectile Speed (~21 yd/s inherited from the 686/Shadow Bolt clone) so the
+# imps appear the INSTANT the 1.5s cast completes — no extra "invisible missile" travel delay on top of
+# the cast (the visual is already instant, below).
+speed: 0
 # Replace Shadow Bolt's cast+projectile SpellVisual with a standard instant shadow cast (Corruption,
 # 172) — a shadow flourish on the target, NO flying shadow bolt (the cloned 686 missile was off-theme
 # for a summon). copy_from swaps the whole SpellVisual; school/family/effects are unchanged.

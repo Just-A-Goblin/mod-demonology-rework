@@ -364,7 +364,7 @@ Creature* CommandPool::Recruit(Player* owner, uint32 entry, float healthPct)
     c->SetCreatorGUID(owner->GetGUID());                   // client attributes its damage to the owner
     c->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);           // shows in the owner's combat log / floating text
     c->SetFaction(owner->GetFaction());
-    c->SetLevel(owner->GetLevel());                        // sets raw creature-tier stats
+    c->SetLevel(owner->GetLevel(), false);                 // sets raw creature-tier stats; false = no "level-up" ding on summon
     c->SetReactState(REACT_DEFENSIVE);
 
     // No-evade guardian AI with a per-type damage identity:
@@ -946,6 +946,15 @@ public:
         ReconcileDemonSpells(player);
     }
 
+    // On death, dismiss the temporary Wild Imp pack (retail behaviour). They are plain
+    // SummonCreature guardians, so the core won't clean them up — do it here. The persistent
+    // legionnaires / greater demon are the standing army and deliberately survive death.
+    void OnPlayerJustDied(Player* player) override
+    {
+        if (player->getClass() == CLASS_WARLOCK)
+            Demonology::DespawnWildImps(player);
+    }
+
     void OnPlayerLogout(Player* player) override
     {
         if (CommandPool* pool = sCommandPoolMgr->Find(player->GetGUID()))
@@ -967,6 +976,31 @@ public:
         Demonology::PetScaling::ReapplyAll(player);
     }
 };
+
+// ---------------------------------------------------------------------------
+// Bot-AI bridge (read-only). mod-playerbots weak-links this symbol to drive demo
+// bots' legion pool without duplicating pool math or hard-coupling its build: on a
+// server WITHOUT this module the symbol is absent and playerbots stays byte-for-byte
+// stock. Lives in this TU (not a new file) because it is force-linked via
+// AddSC_demonology_command_pool, so the linker never dead-strips it from the archive.
+// extern "C" => stable, unmangled name for the weak reference on the other side.
+//
+// Returns false when the player has no Command Pool. On true:
+//   *outCount = current legionnaires, *outCap = legionnaire capacity
+//   (base + Expanded Command/II + Legion Commander, minus any active greater demon).
+extern "C" bool Demonology_BotLegionStatus(Player* owner, uint8* outCount, uint8* outCap)
+{
+    if (!owner)
+        return false;
+    Demonology::CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID());
+    if (!pool)
+        return false;
+    if (outCount)
+        *outCount = static_cast<uint8>(pool->Count());
+    if (outCap)
+        *outCap = pool->LegionnaireCap();
+    return true;
+}
 
 void AddSC_demonology_command_pool()
 {

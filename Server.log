@@ -1,0 +1,1770 @@
+AzerothCore rev. dfae3da86149+ 2026-06-12 07:22:05 -0700 (Playerbot branch) (Unix, RelWithDebInfo, Static) (worldserver-daemon)
+<Ctrl-C> to stop.
+
+   █████╗ ███████╗███████╗██████╗  ██████╗ ████████╗██╗  ██╗
+  ██╔══██╗╚══███╔╝██╔════╝██╔══██╗██╔═══██╗╚══██╔══╝██║  ██║
+  ███████║  ███╔╝ █████╗  ██████╔╝██║   ██║   ██║   ███████║
+  ██╔══██║ ███╔╝  ██╔══╝  ██╔══██╗██║   ██║   ██║   ██╔══██║
+  ██║  ██║███████╗███████╗██║  ██║╚██████╔╝   ██║   ██║  ██║
+  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
+                                 ██████╗ ██████╗ ██████╗ ███████╗
+                                ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+                                ██║     ██║   ██║██████╔╝█████╗
+                                ██║     ██║   ██║██╔══██╗██╔══╝
+                                ╚██████╗╚██████╔╝██║  ██║███████╗
+                                 ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
+     AzerothCore 3.3.5a  -  www.azerothcore.org
+
+> Using configuration file       /home/leo/WOW-BACKUP-8-11-26/wow/server/etc/worldserver.conf
+> Using SSL version:             OpenSSL 3.5.5 27 Jan 2026 (library: OpenSSL 3.5.5 27 Jan 2026)
+> Using Boost version:           1.90.0
+ 
+ 
+Loading Modules Configuration...
+ 
+Using modules configuration:
+> cmangos_ahbot.conf
+> mod_demonology_rework.conf
+> duelreset.conf
+> mod_customserver.conf
+> individualProgression.conf
+> individual_xp.conf
+> instance-reset.conf
+> low_level_rbg.conf
+> morphsummon.conf
+> npc_enchanter.conf
+> playerbots.conf
+> QueueListCache.conf
+> transmog.conf
+ 
+Initializing Scripts...
+> Loading C++ scripts
+ 
+Opening DatabasePool 'acore_auth'. Asynchronous connections: 1, synchronous connections: 1.
+DatabasePool 'acore_auth' opened successfully. 2 total connections running.
+ 
+Opening DatabasePool 'acore_characters'. Asynchronous connections: 1, synchronous connections: 1.
+DatabasePool 'acore_characters' opened successfully. 2 total connections running.
+ 
+Opening DatabasePool 'acore_world'. Asynchronous connections: 1, synchronous connections: 1.
+DatabasePool 'acore_world' opened successfully. 2 total connections running.
+ 
+Updating Auth database...
+>> Auth database is up-to-date! Containing 15 new and 2 archived updates.
+ 
+Updating Character database...
+>> Character database is up-to-date! Containing 17 new and 15 archived updates.
+ 
+Updating World database...
+>> World database is up-to-date! Containing 1293 new and 1563 archived updates.
+ 
+Opening DatabasePool 'acore_playerbots'. Asynchronous connections: 1, synchronous connections: 1.
+DatabasePool 'acore_playerbots' opened successfully. 2 total connections running.
+ 
+Updating Playerbots database...
+>> Playerbots database is up-to-date! Containing 26 new and 0 archived updates.
+ 
+Loading World Information...
+> RealmID:              1
+> Version DB world:     ACDB 335.17-dev
+> Config: Bad value defined for name 'CMangosAHBot.Craft.Margin.CooldownBonus', going to use '150' instead
+> Config: Bad value defined for name 'CMangosAHBot.Craft.CooldownPerCrafter', going to use '1.000000' instead
+> Config: Missing property CMangosAHBot.Craft.Diagnostics in config file /home/leo/WOW-BACKUP-8-11-26/wow/server/etc/worldserver.conf or module config, add "CMangosAHBot.Craft.Diagnostics = 0" to this file or define 'AC_CMANGOS_AHBOT_CRAFT_DIAGNOSTICS' as an environment variable.
+CMangosAHBot: config loaded (enable=1 account=222 guid=2180 progression=1/src1 tickComp=3 craft=1/seed0)
+Loading Quest XP cache....
+Loaded 5657 quest XP values into cache
+> System loaded
+Client cache version set to: 17
+Will clear `logs` table of entries older than 1209600 seconds every 10 minutes.
+Using DataDir /home/leo/WOW-BACKUP-8-11-26/wow/server/data/
+WORLD: VMap support included. LineOfSight:true, getHeight:true, indoorCheck:true PetLOS:true
+ 
+Loading Acore Strings...
+>> Loaded 1309 Acore Strings in 6 ms
+ 
+Loading Module Strings...
+>> Loaded 45 Module Strings in 1 ms
+ 
+Loading Module Strings Locale...
+>> Loaded 344 Module Strings Locales in 2 ms
+ 
+Initialize Data Stores...
+>> Initialized 112 Data Stores in 319 ms
+ 
+Using enUS DBC Locale As Default. All Available DBC locales: enUS 
+ 
+>> Loading Cinematic Camera files
+>> Loaded 14 Cinematic Waypoint Sets in 4 ms
+ 
+Loading Player race data...
+Loading IP Location Database...
+ 
+Loading Game Graveyard...
+>> Loaded 685 Graveyard in 2 ms
+ 
+Initializing PlayerDump Tables...
+>> Initialized Tables For PlayerDump in 9 ms.
+ 
+Loading SpellInfo Store...
+>> Loaded Spell Custom Attributes in 30 ms
+ 
+Loading Spell Cooldown Overrides...
+>> Loaded 1064 Spell Cooldown Overrides entries in 2 ms
+ 
+Loading SpellInfo Data Corrections...
+>> Loading spell dbc data corrections  in 3 ms
+ 
+Loading Spell Rank Data...
+>> Loaded 3570 spell rank records in 4 ms
+ 
+Loading Spell Specific And Aura State...
+>> Loaded Spell Specific And Aura State in 4 ms
+ 
+Loading SkillLineAbilityMultiMap Data...
+>> Loaded 10259 SkillLineAbility MultiMap Data in 0 ms
+ 
+Loading SpellInfo Custom Attributes...
+>> Loaded 412 spell custom attributes from DB in 1 ms
+>> Loaded SpellInfo Custom Attributes in 13 ms
+ 
+Loading Spell Jump Distances...
+>> Loaded 2 spell jump distances in 1 ms
+ 
+Loading SpellInfo Immunity infos...
+>> Loaded SpellInfo immunity infos in 3 ms
+Loading Player Totem models...
+>> Loaded 20 player totem model records in 0 ms
+ 
+Loading Player Shapeshift models...
+>> Loaded 112 player totem model records in 1 ms
+ 
+Loading GameObject Models...
+>> Loaded 2324 GameObject Models in 1 ms
+ 
+Loading Script Names...
+>> Loaded 3413 ScriptNames in 645 ms
+ 
+Loading Instance Template...
+>> Loaded 85 Instance Templates in 0 ms
+ 
+Loading Character Cache...
+>> Loaded Character Infos For 5623 Characters in 14 ms
+ 
+Loading Instances...
+>> Loaded Instances And Binds in 7 ms
+ 
+Loading Broadcast Texts...
+>> Loaded 73039 Broadcast Texts in 95 ms
+>> Loaded 583570 Broadcast Text Locales in 440 ms
+ 
+Loading Localization Strings...
+>> Loaded 27513 Creature Locale Strings in 111 ms
+>> Loaded 20586 Gameobject Locale Strings in 84 ms
+>> Loaded 44745 Item Locale Strings in 184 ms
+>> Loaded 2481 Item Set Name Locale Strings in 20 ms
+>> Loaded 9463 Quest Locale Strings in 167 ms
+>> Loaded 13569 Quest Offer Reward Locale Strings in 71 ms
+>> Loaded 7503 Quest Request Items Locale Strings in 42 ms
+>> Loaded 8368 Npc Text Locale Strings in 51 ms
+>> Loaded 1974 Page Text Locale Strings in 36 ms
+>> Loaded 5038 Gossip Menu Option Locale Strings in 38 ms
+>> Loaded 453 Points Of Interest Locale Strings in 4 ms
+>> Loaded 106 Pet Name Locales Parts in 1 ms
+ 
+>> Localization Strings loaded in 809 ms
+ 
+Loading Account Roles and Permissions...
+>> Loaded 634 RBAC permissions and 633 linked permissions in 1 ms
+ 
+>> Loaded 4 RBAC default permissions in 2 ms
+ 
+Loading Page Texts...
+>> Loaded 1951 Page Texts in 13 ms
+ 
+Loading Game Object Templates...
+>> Loaded 21585 Game Object Templates in 73 ms
+ 
+Loading Game Object Template Addons...
+>> Loaded 21493 Game Object Template Addons in 29 ms
+ 
+Loading Transport Templates...
+>> Loaded 30 Transport Templates in 3 ms
+ 
+Loading Spell Required Data...
+>> Loaded 50 Spell Required Records in 0 ms
+ 
+Loading Spell Group Types...
+>> Loaded 567 spell group Definitions in 1 ms
+ 
+Loading Spell Learn Skills...
+>> Loaded 103 Spell Learn Skills From DBC in 1 ms
+ 
+Loading Spell Proc Conditions and Data...
+>> Loaded 893 spell proc conditions and data in 3 ms
+ 
+Generating spell proc data from SpellMap...
+>> Generated spell proc data for 1344 spells in 3 ms
+ 
+Loading Spell Bonus Data...
+>> Loaded 1270 Extra Spell Bonus Data in 4 ms
+ 
+Loading Aggro Spells Definitions...
+>> Loaded 106 SpellThreatEntries in 1 ms
+ 
+Loading Mixology Bonuses...
+>> Loaded 21 Mixology Bonuses in 0 ms
+ 
+Loading Spell Group Stack Rules...
+>> Loaded 69 spell group stack rules in 0 ms
+ 
+>> Loaded 20 SPELL_GROUP_STACK_RULE_EXCLUSIVE_SAME_EFFECT stack rules in 1 ms
+ 
+Loading NPC Texts...
+>> Loaded 8379 Npc Texts in 57 ms
+ 
+Loading Enchant Spells Proc Datas...
+>> Loaded 42 Enchant Proc Data Definitions in 1 ms
+ 
+Loading Item Random Enchantments Table...
+>> Loaded 28725 Item Enchantment Definitions in 22 ms
+ 
+Loading Disables
+>> Loaded 763 Disables in 2 ms
+ 
+Loading Items...
+>> Loaded 46096 Item Templates in 319 ms
+ 
+Loading Item Set Names...
+>> Loaded 2481 Item Set Names in 4 ms
+ 
+Loading Creature Model Based Info Data...
+>> Loaded 24143 Creature Model Based Info in 23 ms
+ 
+Loading Creature Custom IDs Config...
+Loading Creature Templates...
+>> Loaded 40568 creature template models in 48 ms
+>> Loaded 4520 Creature Template Resistances in 5 ms
+ 
+>> Loaded 9587 Creature Template Spells in 9 ms
+ 
+>> Loaded 30186 Creature Definitions in 477 ms
+ 
+Loading Equipment Templates...
+>> Loaded 10936 Equipment Templates in 11 ms
+ 
+Loading Creature Template Addons...
+>> Loaded 12086 Creature Template Addons in 15 ms
+ 
+Loading Reputation Reward Rates...
+>> Loaded 16 Reputation Reward Rate in 1 ms
+ 
+Loading Creature Reputation OnKill Data...
+>> Loaded 2077 Creature Award Reputation Definitions in 3 ms
+ 
+Loading Reputation Spillover Data...
+>> Loaded 26 Reputation Spillover Template in 0 ms
+ 
+Loading Points Of Interest Data...
+>> Loaded 463 Points of Interest Definitions in 2 ms
+ 
+Loading Creature Base Stats...
+>> Loaded 400 Creature Base Stats in 2 ms
+ 
+Loading Spawn Group Templates...
+>> Loaded 6 spawn group templates in 1 ms
+ 
+Loading Creature Data...
+>> Loaded 155929 Creatures in 555 ms
+ 
+Loading Creature sparring...
+>> Loaded 0 sparring data. DB table `creature_sparring` is empty.
+ 
+Loading Temporary Summon Data...
+>> Loaded 1256 Temporary Summons in 3 ms
+ 
+Loading Gameobject Summon Data...
+>> Loaded 52 Gameobject Summons in 1 ms
+ 
+Loading Pet Levelup Spells...
+>> Loaded 993 Pet Levelup And Default Spells For 39 Families in 0 ms
+ 
+Loading Pet default Spells additional to Levelup Spells...
+>> Loaded Addition Spells For 113 Pet Spell Data Entries in 1 ms
+ 
+Loading Summonable Creature Templates...
+>> Loaded 471 Summonable Creature emplates in 2 ms
+ 
+Loading Creature Addon Data...
+>> Loaded 35713 Creature Addons in 43 ms
+ 
+Loading Creature Movement Overrides...
+>> Loaded 10 Movement Overrides in 1 ms
+ 
+Loading Gameobject Data...
+>> Loaded 97421 Gameobjects in 322 ms
+ 
+Loading Spawn Group Data...
+>> Loaded 43 spawn group members in 4 ms
+ 
+Loading GameObject Addon Data...
+>> Loaded 109 Gameobject Addons in 1 ms
+ 
+Loading GameObject Quest Items...
+>> Loaded 863 Gameobject Quest Items in 2 ms
+ 
+Loading Creature Quest Items...
+>> Loaded 4441 Creature Quest Items in 5 ms
+ 
+Loading Creature Linked Respawn...
+>> Loaded 4273 Linked Respawns In 5 ms
+ 
+Loading Weather Data...
+>> Loaded 35 Weather Definitions in 0 ms
+ 
+Loading Quests...
+>> Loaded 9505 Quests Definitions in 156 ms
+ 
+Checking Quest Disables
+>> Checked 543 Quest Disables in 0 ms
+ 
+Loading Quest POI
+>> Loaded 18774 Quest POI definitions in 72 ms
+ 
+Loading Quests Starters and Enders...
+Loading GO Start Quest Data...
+>> Loaded 460 Quest Relations From gameobject_queststarter in 1 ms
+ 
+Loading GO End Quest Data...
+>> Loaded 459 Quest Relations From gameobject_questender in 1 ms
+ 
+Loading Creature Start Quest Data...
+>> Loaded 7705 Quest Relations From creature_queststarter in 8 ms
+ 
+Loading Creature End Quest Data...
+>> Loaded 8155 Quest Relations From creature_questender in 8 ms
+ 
+Loading Quest Greetings...
+>> Loaded 206 quest_greeting in 1 ms
+ 
+Loading Quest Greeting Locales...
+>> Loaded 75 quest greeting Locale Strings in 1 ms
+ 
+Loading Quest Money Rewards...
+>> Loaded 800 Quest Money Rewards in 1 ms
+ 
+Loading Objects Pooling Data...
+>> Loaded 9310 Objects Pools In 13 ms
+ 
+Loading Creatures Pooling Data...
+>> Loaded 1792 Creatures In Pools in 1 ms
+ 
+Loading Gameobjects Pooling Data...
+>> Loaded 33522 Gameobjects In Pools in 11 ms
+ 
+Loading Mother Pooling Data...
+>> Loaded 6476 Pools In Mother Pools in 10 ms
+ 
+Loading Quest Pooling Data...
+>> Loaded 174 Quests In Pools in 0 ms
+ 
+Starting Objects Pooling System...
+ 
+Loading Game Event Data...
+>> Loaded 100 Holiday Dates (100 dynamic, 0 game_event overrides) in 1 ms
+Loading Game Events...
+>> Loaded 181 Game Events in 0 ms
+ 
+Loading Game Event Saves Data...
+>> Loaded 0 Game Event Saves In Game Events. DB Table `game_event_save` Is Empty.
+ 
+Loading Game Event Prerequisite Data...
+>> Loaded 0 Game Rvent Prerequisites in Game Events. DB Table `game_event_prerequisite` Is Empty.
+ 
+Loading Game Event Creature Data...
+>> Loaded 11447 Creatures In Game Events in 5 ms
+ 
+Loading Game Event GO Data...
+>> Loaded 32363 Gameobjects In Game Events in 5 ms
+ 
+Loading Game Event Model/Equipment Change Data...
+>> Loaded 0 Model/Equipment Changes In Game Events. DB Table `game_event_model_equip` Is Empty.
+ 
+Loading Game Event Quest Data...
+>> Loaded 223 Quests Additions In Game Events in 0 ms
+ 
+Loading Game Event GO Quest Data...
+>> Loaded 78 Quests Additions In Game Events in 0 ms
+ 
+Loading Game Event Quest Condition Data...
+>> Loaded 0 quest event Conditions In Game Events. DB Table `game_event_quest_condition` Is Empty.
+ 
+Loading Game Event Condition Data...
+>> Loaded 0 Conditions In Game Events. DB table `game_event_condition` Is Empty.
+ 
+Loading Game Event Condition Save Data...
+>> Loaded 0 Condition Saves In Game Events. DB Table `game_event_condition_save` Is Empty.
+ 
+Loading Game Event NPCflag Data...
+>> Loaded 5 Npcflags In Game Events In 1 ms
+ 
+Loading Game Event Seasonal Quest Relations...
+>> Loaded 694 Quests Additions In Game Events in 0 ms
+ 
+Loading Game Event Vendor Additions Data...
+>> Loaded 14 Vendor Additions In Game Events in 1 ms
+ 
+Loading Game Event Battleground Data...
+>> Loaded 6 Battleground Holidays In Game Events in 0 ms
+ 
+Loading Game Event Pool Data...
+>> Loaded 8 Pools For Game Events in 0 ms
+ 
+Loading UNIT_NPC_FLAG_SPELLCLICK Data...
+>> Loaded 334 Spellclick Definitions in 2 ms
+ 
+Loading Vehicle Template Accessories...
+>> Loaded 196 Vehicle Template Accessories in 1 ms
+ 
+Loading Vehicle Accessories...
+>> Loaded 1 Vehicle Accessories in 0 ms
+ 
+Loading Vehicle Seat Addon Data...
+>> Loaded 32 Vehicle Seat Addon entries in 0 ms
+Loading SpellArea Data...
+>> Using ICC Buff Horde: 73822
+>> Using ICC Buff Alliance: 73828
+>> Loaded 724 Spell Area Requirements in 2 ms
+ 
+Loading Area Trigger Definitions
+>> Loaded 1217 Area Trigger Definitions in 3 ms
+ 
+Loading Area Trigger Teleport Definitions...
+>> Loaded 272 Area Trigger Teleport Definitions in 1 ms
+ 
+Loading Access Requirements...
+>> Loaded 123 Rows From dungeon_access_template And 35 Rows From dungeon_access_requirements in 15 ms
+ 
+Loading Quest Area Triggers...
+>> Loaded 57 Quest Trigger Points in 1 ms
+ 
+Loading Tavern Area Triggers...
+>> Loaded 113 Tavern Triggers in 0 ms
+ 
+Loading AreaTrigger Script Names...
+>> Loaded 185 Areatrigger Scripts in 2 ms
+ 
+Loading LFG Entrance Positions...
+>> Loaded 22 LFG Entrance Positions in 0 ms
+ 
+Loading Dungeon Boss Data...
+>> Loaded 628 Instance Encounters in 1 ms
+ 
+Loading LFG Rewards...
+Level 64 specified for dungeon 259 in table `lfg_dungeon_rewards` can never be reached!
+Level 70 specified for dungeon 259 in table `lfg_dungeon_rewards` can never be reached!
+Level 70 specified for dungeon 260 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 261 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 262 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 285 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 286 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 287 in table `lfg_dungeon_rewards` can never be reached!
+Level 80 specified for dungeon 288 in table `lfg_dungeon_rewards` can never be reached!
+>> Loaded 15 LFG Dungeon Rewards in 1 ms
+ 
+Loading Graveyard-Zone Links...
+>> Loaded 704 Graveyard-Zone Links in 1 ms
+ 
+Loading Spell Pet Auras...
+>> Loaded 49 Spell Pet Auras in 1 ms
+ 
+Loading Spell Target Coordinates...
+>> Loaded 685 Spell Teleport Coordinates in 1 ms
+ 
+Loading Spell Cone definitions...
+>> Loaded 76 Spell Cone definitions in 1 ms
+ 
+Loading Enchant Custom Attributes...
+>> Loaded 49 Custom Enchant Attributes in 1 ms
+ 
+Loading linked Spells...
+>> Loaded 610 Linked Spells in 1 ms
+ 
+Loading Player Create Data...
+>> Loaded 62 Player Create Definitions in 0 ms
+ 
+Loading Player Create Items Data...
+>> Loaded 1 Custom Player Create Items in 1 ms
+ 
+Loading Player Create Skill Data...
+>> Loaded 1020 Player Create Skills in 1 ms
+ 
+Loading Player Create Spell Data...
+>> Loaded 0 player create spells. DB table `playercreateinfo_spell_custom` is empty.
+Loading Player Create Cast Spell Data...
+>> Loaded 19 Player Create Cast Spells in 0 ms
+ 
+Loading Player Create Action Data...
+>> Loaded 358 Player Create Actions in 1 ms
+ 
+Loading Player Create Level Stats Data...
+>> Loaded 546 Level Stats Definitions in 2 ms
+ 
+Loading Player Create XP Data...
+>> Loaded 79 XP For Level Definitions in 1 ms
+ 
+Loading Exploration BaseXP Data...
+>> Loaded 80 BaseXP Definitions in 0 ms
+ 
+Loading Pet Name Parts...
+>> Loaded 312 Pet Name Parts in 1 ms
+ 
+Loading The Max Pet Number...
+>> Loaded The Max Pet Number: 20525 in 0 ms
+ 
+Loading Pet Level Stats...
+>> Loaded 2800 Level Pet Stats Definitions in 4 ms
+ 
+Loading Player Level Dependent Mail Rewards...
+>> Loaded 2 Level Dependent Mail Rewards in 1 ms
+ 
+Load Mail Server definitions...
+>> Loaded 0 server mail rewards. DB table `mail_server_template` is empty.
+ 
+Loading Creature Loot Templates...
+>> Loaded 96781 Creature Loot Templates in 105 ms
+ 
+Loading Fishing Loot Templates...
+>> Loaded 251 Fishing Loot Templates in 1 ms
+ 
+Loading Gameobject Loot Templates...
+>> Loaded 18026 Gameobject Loot Templates in 29 ms
+ 
+Loading Item Loot Templates...
+>> Loaded 3282 item loot templates in 8 ms
+ 
+Loading Mail Loot Templates...
+>> Loaded 112 mail loot templates in 1 ms
+ 
+Loading Milling Loot Templates...
+>> Loaded 45 milling loot templates in 2 ms
+ 
+Loading Pickpocketing Loot Templates...
+>> Loaded 13525 pickpocketing loot templates in 26 ms
+ 
+Loading Skinning Loot Templates...
+>> Loaded 1982 skinning loot templates in 5 ms
+ 
+Loading Disenchanting Loot Templates...
+>> Loaded 123 disenchanting loot templates in 2 ms
+ 
+Loading Prospecting Loot Templates...
+>> Loaded 47 prospecting loot templates in 2 ms
+ 
+Loading Spell Loot Templates...
+>> Loaded 163 spell loot templates in 2 ms
+ 
+Loading Reference Loot Templates...
+>> Loaded reference loot templates in 40 ms
+ 
+Loading Player Loot Templates...
+>> Loaded 28 player loot templates in 0 ms
+ 
+Loading Skill Discovery Table...
+>> Loaded 347 skill discovery definitions in 2 ms
+ 
+Loading Skill Extra Item Table...
+>> Loaded 227 spell specialization definitions in 1 ms
+ 
+Loading Skill Perfection Data Table...
+>> Loaded 72 spell perfection definitions in 0 ms
+ 
+Loading Skill Fishing Base Level Requirements...
+>> Loaded 94 areas for fishing base skill level in 1 ms
+ 
+Loading Achievements...
+>> Loaded 43 achievement references in 0 ms
+ 
+Loading Achievement Criteria Lists...
+>> Loaded 7494 achievement criteria in 1 ms
+ 
+Loading Achievement Criteria Data...
+>> Loaded 2816 additional achievement criteria data in 5 ms
+ 
+Loading Achievement Rewards...
+>> Loaded 116 achievement rewards in 1 ms
+ 
+Loading Achievement Reward Locales...
+>> Loaded 102 Achievement Reward Locale Strings in 2 ms
+ 
+Loading Completed Achievements...
+>> Loaded 43 completed achievements in 74 ms
+ 
+Loading Item Auctions...
+>> Loaded 60369 auction items in 416 ms
+ 
+Loading Auctions...
+>> Loaded 60369 auctions in 197 ms
+ 
+Loading Guilds Definitions...
+>> Loaded 20 guild definitions in 1 ms
+ 
+Loading Guild Ranks...
+>> Loaded 100 guild ranks in 1 ms
+ 
+Loading Guild Members...
+>> Loaded 300 guild members int 24 ms
+ 
+Loading Bank Tab Rights...
+>> Loaded 0 guild bank tab rights. DB table `guild_bank_right` is empty.
+ 
+Loading Guild Event Logs...
+>> Loaded 448 guild event logs in 2 ms
+ 
+Loading Guild Bank Event Logs...
+>> Loaded 0 guild bank event logs. DB table `guild_bank_eventlog` is empty.
+ 
+Loading Guild Bank Tabs...
+>> Loaded 0 guild bank tabs. DB table `guild_bank_tab` is empty.
+ 
+Filling bank tabs with items...
+>> Loaded 0 guild bank tab items. DB table `guild_bank_item` or `item_instance` is empty.
+ 
+Validating data of loaded guilds...
+>> Validated data of loaded guilds in 0 ms
+ 
+Loading ArenaTeams...
+>> Loaded 0 arena teams. DB table `arena_team` is empty!
+ 
+Loading Groups...
+>> Loaded 1 group definitions in 3 ms
+ 
+Loading Group Members...
+>> Loaded 2 group members in 0 ms
+ 
+Loading Reserved Names...
+>> Loaded 0 reserved names. DB table `reserved_name` is empty!
+>> Loaded 16330 reserved names from DBC in 3 ms
+ 
+Loading Profanity Names...
+>> Loaded 0 profanity names. DB table `profanity_name` is empty!
+>> Loaded 8267 profanity names from DBC in 2 ms
+ 
+Loading Chat Filter...
+>> Loaded 0 chat filter words. DB table `chat_filter` is empty!
+ 
+Loading GameObjects for Quests...
+>> Loaded 1820 GameObjects for quests in 1 ms
+ 
+Loading BattleMasters...
+>> Loaded 146 battlemaster entries in 3 ms
+ 
+Loading GameTeleports...
+>> Loaded 1989 GameTeleports in 4 ms
+ 
+Loading Trainers...
+>> Loaded 152 Trainers in 13 ms
+Loading Creature default trainers...
+>> Loaded 855 default trainers in 2 ms
+Loading Gossip Menu...
+>> Loaded 6122 gossip_menu entries in 5 ms
+ 
+Loading Gossip Menu Options...
+>> Loaded 4782 gossip_menu_option entries in 13 ms
+ 
+Loading Vendors...
+>> Loaded 42010 Vendors in 55 ms
+ 
+Loading Waypoints...
+>> Loaded 155537 waypoints in 193 ms
+ 
+Loading Waypoint Addons...
+>> Loaded 0 waypoint addon data. DB table `waypoint_data_addon` is empty!
+ 
+Loading SmartAI Waypoints...
+>> Loaded 855 SmartAI waypoint paths (total 13814 waypoints) in 24 ms
+ 
+Loading Creature Formations...
+>> Loaded 7265 Creatures In Formations in 17 ms
+ 
+Loading WorldStates...
+>> Loaded 248 World States in 0 ms
+ 
+Loading Conditions...
+>> Loaded 18283 conditions in 73 ms
+ 
+Loading Faction Change Achievement Pairs...
+>> Loaded 124 faction change achievement pairs in 1 ms
+ 
+Loading Faction Change Spell Pairs...
+>> Loaded 113 faction change spell pairs in 1 ms
+ 
+Loading Faction Change Item Pairs...
+>> Loaded 1395 faction change item pairs in 3 ms
+ 
+Loading Faction Change Reputation Pairs...
+>> Loaded 15 faction change reputation pairs in 0 ms
+ 
+Loading Faction Change Title Pairs...
+>> Loaded 22 faction change title pairs in 1 ms
+ 
+Loading Faction Change Quest Pairs...
+>> Loaded 293 faction change quest pairs in 1 ms
+ 
+Loading GM Tickets...
+>> Loaded 0 GM tickets. DB table `gm_ticket` is empty!
+Loading GM Surveys...
+>> Loaded GM Survey count from database in 1 ms
+ 
+Loading Client Addons...
+>> Loaded 23 known addons in 0 ms
+ 
+Deleting Invalid Mail Items...
+ 
+Returning Old Mails...
+ 
+Loading Autobroadcasts...
+Loading Motd...
+Loading Motd locale...
+>> Loaded 0 motd locale definitions. DB table `motd_localized` is empty for this realm!
+ 
+>> Loaded 0 motd locale definitions in 0 ms
+>> Loaded motd definitions in 1 ms
+ 
+Loading spell_scripts...
+>> Loaded 130 script definitions in 1 ms
+ 
+Loading event_scripts...
+>> Loaded 476 script definitions in 2 ms
+ 
+Loading waypoint_scripts...
+>> Loaded 570 script definitions in 2 ms
+ 
+Loading Spell Script Names...
+>> Loaded 2942 spell script names in 8 ms
+ 
+Loading Creature Texts...
+>> Loaded 19047 Creature Texts For 4255 Creatures in 60 ms
+ 
+Loading Creature Text Locales...
+>> Loaded 14027 Creature Text Locale in 37 ms
+ 
+Loading Scripts...
+Loading Script Waypoints For 60 Creature(s)...
+>> Loaded 2083 Script Waypoint nodes in 5 ms
+>> Loaded 3541 C++ scripts in 36 ms
+ 
+Validating Spell Scripts...
+>> Validated 3435 scripts in 5 ms
+ 
+Loading SmartAI Scripts...
+>> Loaded 14604 SmartAI scripts in 250 ms
+ 
+Loading Calendar Data...
+>> Loaded 0 calendar events
+>> Loaded 0 calendar invites
+ 
+Initializing SpellInfo Precomputed Data...
+ 
+Initialize Commands...
+Initialize Game Time and Timers
+ 
+Starting Map System
+ 
+Starting Game Event system...
+ 
+Loading WorldState...
+Player::DeleteOldChars: Deleting all characters which have been deleted 30 days before...
+ 
+Initializing Opcodes...
+Loading Arena Season Rewards...
+>> Loaded 39 arena season rewards in 1 ms
+ 
+Loading Active Arena Season...
+Arena Season 8 loaded...
+ 
+Starting Battleground System
+>> Loaded 13 battlegrounds in 1 ms
+ 
+Starting Outdoor PvP System
+>> Loaded 7 outdoor PvP definitions in 0 ms
+ 
+Starting Battlefield System
+Battlefield: Wintergrasp successfully initiated.
+ 
+Loading Transports...
+>> Spawned 21 continent motion transports in 354 ms
+Loading Warden Checks...
+>> Loaded 793 warden checks.
+ 
+Loading Warden Action Overrides...
+>> Loaded 1 warden action overrides.
+ 
+Deleting Expired Bans...
+Calculate Next Daily Quest Reset Time...
+Calculate Next Weekly Quest Reset Time...
+Calculate Next Monthly Quest Reset Time...
+Calculate Random Battleground Reset Time...
+Calculate Deletion Of Old Calendar Events Time...
+Calculate Guild Cap Reset Time...
+ 
+Load Petitions...
+>> Loaded 0 Petitions!
+ 
+Load Petition Signs...
+>> Loaded 0 Petition signs!
+ 
+Load Stored Loot Items...
+>> Loaded 0 stored items!
+ 
+Load Channel Rights...
+>> Loaded 0 Channel Rights!
+ 
+Load Channels...
+>> Loaded 0 channels. DB table `channels` is empty.
+Loading AntiDos opcode policies
+>> Loaded 102 AntiDos Opcode Policies in 0 ms
+ 
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║              AzerothCore Playerbots Module               ║
+║                                                          ║
+╟──────────────────────────────────────────────────────────╢
+║     mod-playerbots is a community-driven open-source     ║
+║  project based on AzerothCore, licensed under AGPLv3.0   ║
+╟──────────────────────────────────────────────────────────╢
+║      https://github.com/mod-playerbots/mod-playerbots    ║
+╚══════════════════════════════════════════════════════════╝
+ 
+Load Playerbots Config...
+Initializing mod-playerbots, based on AI Playerbots by ike3 and the original Playerbots by blueboy
+Loading TalentSpecs...
+>> 550 random bot accounts with 5613 characters available
+Building ammo cache for 60 levels
+Cached 808 ammo
+Building food cache for 60 levels
+Cached 14 types of food
+Building trade cache for 60 levels
+Cached 7 trade items
+Loading random item cache
+Equipment cache loaded from 12677 records
+Loaded 6647 BiS entries across 18 item levels
+Loading playerbots dungeon suggestions...
+88 playerbots dungeon suggestions loaded in 1 ms
+---------------------------------------
+       mod-playerbots initialized      
+---------------------------------------
+>> Loaded playerbots config in 6466 ms
+ 
+Playerbots World Thread Processor initialized
+ 
+WORLD: World Initialized In 0 Minutes 14 Seconds
+ 
+AzerothCore rev. dfae3da86149+ 2026-06-12 07:22:05 -0700 (Playerbot branch) (Unix, RelWithDebInfo, Static) (worldserver-daemon) ready...
+> Config: Bad value defined for name 'CMangosAHBot.Craft.Margin.CooldownBonus', going to use '150' instead
+> Config: Bad value defined for name 'CMangosAHBot.Craft.CooldownPerCrafter', going to use '1.000000' instead
+> Config: Missing property CMangosAHBot.Craft.Diagnostics in config file /home/leo/WOW-BACKUP-8-11-26/wow/server/etc/worldserver.conf or module config, add "CMangosAHBot.Craft.Diagnostics = 0" to this file or define 'AC_CMANGOS_AHBOT_CRAFT_DIAGNOSTICS' as an environment variable.
+CMangosAHBot: config loaded (enable=1 account=222 guid=2180 progression=1/src1 tickComp=3 craft=1/seed0)
+CMangosAHBot: vendor item set = 8175
+CMangosAHBot: classified sources — creature[N/R/E/RE/WB]=3972/288/1954/138/156 go=951 fishing=218 skin=482 (unresolved creature=1342 go=169)
+CMangosAHBot: item->expansion map = 8590 items (1252 TBC, 1538 WotLK), plurality-classified for reagent-era gating
+CMangosAHBot: profession item pool = 3202 (low thousands expected on stock WotLK)
+CMangosAHBot: disenchant loot ids = 56
+CMangosAHBot: overrides loaded = 0
+CMangosAHBot[craft]: recipe graph built — 2885 recipes in 0.09s (skipped: noReagent=0 product=239) cooldownRecipes=1
+CMangosAHBot[craft]: graph ready (seed=0). Legacy Items.Profession path remains active until craft production lands (C3).
+CMangosAHBot[craft]: mask recomputed for state 0 — available 1088/2885 recipes (JC=0 Inscription=0).
+CMangosAHBot: progression 0 -> 0 (maxExp=0 ilvlCap=66 skillCap=300). Vectors: creN=2122 creR=262 creE=1089 creRE=112 creWB=54 go=531 fish=142 skin=402 disen=39 prof=3202
+CMangosAHBot[craft]: demand weights parsed (vanilla FLASK=20 GEAR=15 INTERMEDIATE=8; stateBoosts=0). Note: SCROLL has no create-item supply (enchant-on-vellum) — weight inert.
+CMangosAHBot[craft]: population rolled — 120 crafters (cap=300 leveling=78 producers=42 atCapFrac=0.40 beta=2.0/3.0).
+CMangosAHBot: initialized (ready=true state=0 maxExp=0 ilvlCap=66).
+Loading Queue cache...
+> System loaded
+Loading transmog appearance collection cache....
+Loaded 141594 collected appearances into cache
+Calendar deletion of old events.
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+Player::_LoadInventory: player (GUID Full: 0x0000000000000985 Type: Player Low: 2437, name: 'Tonugs') has item (GUID Full: 0x400000002bbe7c9d Type: Item Low: 733904029, entry: 44817) which can't be loaded into inventory (Bag GUID: 0, slot: 3) by reason 20. Item will be sent by mail.
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Update time diff: 114ms with 0 players online
+Last 500 diffs summary:
+|- Mean: 49ms
+|- Median: 27ms
+|- Percentiles (95, 99, max): 126ms, 149ms, 185ms
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Update time diff: 183ms with 1 players online
+Last 500 diffs summary:
+|- Mean: 57ms
+|- Median: 30ms
+|- Percentiles (95, 99, max): 151ms, 178ms, 191ms
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+Update time diff: 152ms with 1 players online
+Last 500 diffs summary:
+|- Mean: 60ms
+|- Median: 32ms
+|- Percentiles (95, 99, max): 149ms, 176ms, 199ms
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+HasItemFitToSpellRequirements: Not handled spell requirement for item class 0
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e6e Type: Creature Entry: 19311  Low: 24174
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130004b6f005e68 Type: Creature Entry: 19311  Low: 24168
+Update time diff: 150ms with 1 players online
+Last 500 diffs summary:
+|- Mean: 72ms
+|- Median: 38ms
+|- Percentiles (95, 99, max): 173ms, 188ms, 213ms
+MoveSplineInitArgs::Validate: expression 'velocity > 0.01f' failed for GUID Full: 0xf130001d0f00040f Type: Creature Entry: 7439  Low: 1039
+Race (0) not found in DBC: wrong DBC files?
+Race (0) not found in DBC: wrong DBC files?
+Update time diff: 147ms with 0 players online
+Last 500 diffs summary:
+|- Mean: 66ms
+|- Median: 35ms
+|- Percentiles (95, 99, max): 167ms, 189ms, 208ms
+Halting process...
+Closing down DatabasePool 'acore_characters'. Waiting for 12172 queries to finish...
+Asynchronous connections on DatabasePool 'acore_characters' terminated. Proceeding with synchronous connections.
+All connections on DatabasePool 'acore_characters' closed.
+Closing down DatabasePool 'acore_world'. Waiting for 0 queries to finish...
+Asynchronous connections on DatabasePool 'acore_world' terminated. Proceeding with synchronous connections.
+All connections on DatabasePool 'acore_world' closed.
+Closing down DatabasePool 'acore_auth'. Waiting for 0 queries to finish...
+Asynchronous connections on DatabasePool 'acore_auth' terminated. Proceeding with synchronous connections.
+All connections on DatabasePool 'acore_auth' closed.
+Closing down DatabasePool 'acore_playerbots'. Waiting for 0 queries to finish...
+Asynchronous connections on DatabasePool 'acore_playerbots' terminated. Proceeding with synchronous connections.
+All connections on DatabasePool 'acore_playerbots' closed.

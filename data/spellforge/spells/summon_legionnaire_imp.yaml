@@ -7,6 +7,10 @@ key: demonology.summon_legionnaire_imp
 clone_from: 47193
 icon: "Spell_Shadow_SummonImp"
 name: Summon Imp Legionnaire
+# No over-head skull: override the inherited Demonic Empowerment (47193) SpellVisual (its state kit
+# is the flaming skull on the caster) with the classic warlock demon-summon visual (Summon Voidwalker,
+# 697). SpellVisualID is client-only, so this is a client-patch change — the server never renders it.
+visual: {copy_from: 697}
 description: "Summons an Imp to serve in your legion, fighting alongside your other demons."
 cast_time: 1.5s
 cooldown: 0s

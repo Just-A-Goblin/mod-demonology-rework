@@ -6,6 +6,9 @@ key: demonology.summon_legionnaire_felguard
 clone_from: 47193
 icon: "Spell_Shadow_SummonFelGuard"
 name: Summon Felguard Legionnaire
+# No over-head skull: override the inherited Demonic Empowerment (47193) SpellVisual with the classic
+# warlock demon-summon visual (Summon Voidwalker, 697). SpellVisualID is client-only (client patch).
+visual: {copy_from: 697}
 description: "Summons a Felguard to serve in your legion, fighting alongside your other demons."
 cast_time: 1.5s
 cooldown: 0s

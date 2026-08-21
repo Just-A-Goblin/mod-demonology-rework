@@ -1,16 +1,22 @@
 # Command Demon — the Phase 3 baseline Demonology button (DESIGN_V2 §5). Instant, on
-# GCD, 45s cooldown, costs 1 Soul Shard (charged in C++ like the summons). It's a thin
-# dummy shell: the C++ dispatcher (spell_demonology_command_demon -> CommandPool) reads
+# GCD, 45s cooldown. Costs 2 Soul Shards (a NATIVE reagent — item 6265, shown in the tooltip
+# and consumed by the core, like the legionnaire summons) + 10% of base mana (a real DBC cost).
+# It's a thin dummy shell: the C++ dispatcher (spell_demonology_command_demon -> CommandPool) reads
 # the anchor's victim and fires the anchor signature + per-type echoes + greater-demon
 # responses. Cloned from Demonic Empowerment (47193) so it never dismisses the anchor pet.
 key: demonology.command_demon
 clone_from: 47193
 icon: "Spell_Shadow_DemonicEmpathy"
 name: Command Demon
-description: "Command your anchor demon to unleash its signature ability; every legionnaire of that type echoes a lesser version. Costs 1 Soul Shard."
+description: "Command your anchor demon to unleash its signature ability; every legionnaire of that type echoes a lesser version."
 cast_time: 0s
 cooldown: 45s
 range: 0yd
+# 10% of BASE mana (scales with level), enforced/shown by the core. Cloned 47193 carried no mana cost.
+power: {type: mana, percent_of_base: 10}
+# Soul Shard cost as a native reagent (tooltip-visible + core-consumed on cast), matching the
+# legionnaire summons. Replaces the old C++ item charge (removed from spell_demonology_command_demon).
+reagents: [{item: 6265, count: 2}]   # 2x Soul Shard
 effects:
   - {effect: dummy, target_a: unit_caster}
 server:

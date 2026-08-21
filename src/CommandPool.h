@@ -41,6 +41,10 @@ namespace Demonology
     // reservation. Shared by the summon SpellScript and the cross-map teleport restore.
     Creature* SummonGreaterDemon(Player* owner, uint32 entry);
 
+    // Despawn all of the owner's temporary Wild Imps (they are plain SummonCreature guardians
+    // not in m_Controlled, so the core never auto-cleans them). Called on the owner's death.
+    void DespawnWildImps(Player* owner);
+
     // Command Demon (§5): dispatch a press (anchor signature + echoes + greater response).
     // Called by the 290013 SpellScript and by `.legion command`. GetLastCommandPress returns
     // a human summary of the last press for `.legion dumpstats`.

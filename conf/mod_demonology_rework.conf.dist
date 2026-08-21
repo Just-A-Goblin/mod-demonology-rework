@@ -13,8 +13,11 @@ Demonology.Enable = 1
 # --- Soul Harvest (T1): the shard-economy throttle ---
 # Proc chance per rank of Soul Harvest (0.04 = 4% -> 4/8/12% at ranks 1/2/3).
 Demonology.SoulHarvest.ChancePerRank = 0.04
-# Per-player internal cooldown between shard procs, in ms.
-Demonology.SoulHarvest.InternalCooldownMs = 1000
+# Per-player internal cooldown between shard procs, in ms. This is the CEILING on shard income:
+# with a full legion the 12% roll fills nearly every window, so income ~= 1 shard / ICD. Raised
+# 1000 -> 4000 (2026-08-21) to stop the shard glut — the war machine now actually spends shards
+# roughly as fast as Soul Harvest makes them (Wild Imps 1/6s + Command Demon 2/45s + re-summons).
+Demonology.SoulHarvest.InternalCooldownMs = 4000
 
 # --- Cruel Master (T2): demon crits accelerate Soul Harvest ---
 # The crit is simulated in the Soul Harvest proc (no server hook reports a crit result):
@@ -229,7 +232,8 @@ Demonology.CursedVitality.OwnerStaminaPct = 0.03, 0.06
 
 # --- Command Demon (Phase 3, §5) ---
 Demonology.CommandDemon.CooldownMs = 45000
-Demonology.CommandDemon.ShardCost = 1
+# Command Demon's cost — 2 Soul Shards + 10% base mana — is now baked into spell 290013 itself
+# (a native reagent + DBC mana cost), so there's no shard-cost config knob here anymore.
 # Dark Command (dc): Command Demon cooldown reduction per rank + a short responder haste.
 Demonology.DarkCommand.CdReductionMsPerRank = 5000
 Demonology.DarkCommand.HastePct = 0.10

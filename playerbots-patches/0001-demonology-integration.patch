@@ -1,0 +1,613 @@
+diff --git a/src/Ai/Class/Warlock/Strategy/DemonologyWarlockStrategy.cpp b/src/Ai/Class/Warlock/Strategy/DemonologyWarlockStrategy.cpp
+index 6bb4e9d..2a6a610 100644
+--- a/src/Ai/Class/Warlock/Strategy/DemonologyWarlockStrategy.cpp
++++ b/src/Ai/Class/Warlock/Strategy/DemonologyWarlockStrategy.cpp
+@@ -5,6 +5,7 @@
+ 
+ #include "DemonologyWarlockStrategy.h"
+ #include "Playerbots.h"
++#include "WarlockTriggers.h"
+ 
+ // ===== Action Node Factory =====
+ class DemonologyWarlockStrategyActionNodeFactory : public NamedObjectFactory<ActionNode>
+@@ -58,6 +59,11 @@ DemonologyWarlockStrategy::DemonologyWarlockStrategy(PlayerbotAI* botAI) : Gener
+ // ===== Default Actions =====
+ std::vector<NextAction> DemonologyWarlockStrategy::getDefaultActions()
+ {
++    // mod-demonology-rework: a ranged pet commander — filler is Shadow Bolt then wand Shoot; the
++    // command/brand/empower loop lives in the rework triggers below.
++    if (IsReworkDemonology(botAI->GetBot()))
++        return { NextAction("shadow bolt", 5.2f), NextAction("shoot", 5.0f) };
++
+     return {
+        NextAction("corruption", 5.5f),
+        NextAction("immolate", 5.4f),
+@@ -71,6 +77,24 @@ void DemonologyWarlockStrategy::InitTriggers(std::vector<TriggerNode*>& triggers
+ {
+     GenericWarlockStrategy::InitTriggers(triggers);
+ 
++    // mod-demonology-rework rotation (ranged): Corruption uptime feeds the shard economy; the loop is
++    // Doombrand -> Command Demon (held to a brand window) -> Demonic Empowerment -> Wild Imps (overflow
++    // spender above the shard reserve). Fillers come from getDefaultActions (shadow bolt -> shoot).
++    if (IsReworkDemonology(botAI->GetBot()))
++    {
++        triggers.push_back(new TriggerNode("doombrand ready", { NextAction("doombrand", 24.0f) }));
++        triggers.push_back(new TriggerNode("command demon window", { NextAction("command demon", 23.0f) }));
++        triggers.push_back(new TriggerNode("empower demons ready", { NextAction("empower demons", 22.0f) }));
++        // Fill the PERSISTENT legionnaire army IN COMBAT (Soul Harvest earns shards here) — above Wild
++        // Imps (the temporary overflow) but below brand/command which fire first when ready.
++        triggers.push_back(new TriggerNode("legion pool not full", { NextAction("summon imp legionnaire", 21.5f) }));
++        triggers.push_back(new TriggerNode("wild imps affordable", { NextAction("wild imps", 21.0f) }));
++        triggers.push_back(new TriggerNode("corruption", { NextAction("corruption", 20.0f) }));
++        triggers.push_back(new TriggerNode("life tap glyph buff", { NextAction("life tap", 29.5f) }));
++        triggers.push_back(new TriggerNode("life tap", { NextAction("life tap", 19.0f) }));
++        return;
++    }
++
+     // High priority cooldowns
+     triggers.push_back(
+         new TriggerNode(
+diff --git a/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.cpp b/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.cpp
+index d22abe3..b75b2f5 100644
+--- a/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.cpp
++++ b/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.cpp
+@@ -152,6 +152,30 @@ void SummonFelguardStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
+     triggers.push_back(new TriggerNode("wrong pet", { NextAction("summon felguard", 29.0f) }));
+ }
+ 
++// mod-demonology-rework anchor: identical to the stock SummonFelguardStrategy (proven working) —
++// "summon felguard" is an ActionNode that falls through felguard -> ... -> imp via its alternatives
++// when the top choice is uncastable, so a pre-sfg or shardless bot still ends up with a pet.
++SummonLegionAnchorStrategy::SummonLegionAnchorStrategy(PlayerbotAI* ai) : NonCombatStrategy(ai) {}
++
++void SummonLegionAnchorStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
++{
++    // Anchor pet (Felguard->Voidwalker->Imp) AND legionnaire pool fill are handled by THIS single
++    // strategy. They must NOT be two separate strategies in the pet context: pet strategies are
++    // mutually-exclusive siblings, so adding a second one would evict this one (that was the pet bug).
++    triggers.push_back(new TriggerNode("no pet", { NextAction("summon legion anchor", 29.0f) }));
++    triggers.push_back(new TriggerNode("wrong pet", { NextAction("summon legion anchor", 29.0f) }));
++    triggers.push_back(new TriggerNode("legion pool not full", { NextAction("summon imp legionnaire", 26.0f) }));
++}
++
++// mod-demonology-rework legion pool: fill/refill Imp legionnaire slots while a slot is free and a
++// shard is available (the trigger enforces both).
++LegionPoolStrategy::LegionPoolStrategy(PlayerbotAI* ai) : NonCombatStrategy(ai) {}
++
++void LegionPoolStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
++{
++    triggers.push_back(new TriggerNode("legion pool not full", { NextAction("summon imp legionnaire", 26.0f) }));
++}
++
+ // Non-combat strategy for selecting themselves to receive soulstone
+ // Disabled by default
+ // To enable, type "nc +ss self"
+diff --git a/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.h b/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.h
+index 0da7973..21beaac 100644
+--- a/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.h
++++ b/src/Ai/Class/Warlock/Strategy/GenericWarlockNonCombatStrategy.h
+@@ -69,6 +69,26 @@ public:
+     void InitTriggers(std::vector<TriggerNode*>& triggers) override;
+ };
+ 
++// mod-demonology-rework: anchor pet = Felguard if trained, else the tankier Voidwalker (leveling
++// survivability), else Imp. Assigned to rework demo bots in place of "felguard".
++class SummonLegionAnchorStrategy : public NonCombatStrategy
++{
++public:
++    SummonLegionAnchorStrategy(PlayerbotAI* ai);
++    virtual std::string const getName() override { return "legion anchor"; }
++    void InitTriggers(std::vector<TriggerNode*>& triggers) override;
++};
++
++// mod-demonology-rework: keeps the Command Pool topped up with Imp legionnaires (also resummons a
++// killed one) whenever a slot is free and a soul shard is available.
++class LegionPoolStrategy : public NonCombatStrategy
++{
++public:
++    LegionPoolStrategy(PlayerbotAI* ai);
++    virtual std::string const getName() override { return "legion pool"; }
++    void InitTriggers(std::vector<TriggerNode*>& triggers) override;
++};
++
+ class SoulstoneSelfStrategy : public NonCombatStrategy
+ {
+ public:
+diff --git a/src/Ai/Class/Warlock/WarlockActions.cpp b/src/Ai/Class/Warlock/WarlockActions.cpp
+index 2deafd0..20cc099 100644
+--- a/src/Ai/Class/Warlock/WarlockActions.cpp
++++ b/src/Ai/Class/Warlock/WarlockActions.cpp
+@@ -21,6 +21,60 @@
+ 
+ const int ITEM_SOUL_SHARD = 6265;
+ 
++// mod-demonology-rework: ID-pinned cast (see WarlockActions.h). The rotation triggers already gate
++// "when"; here we just resolve the target and cast the specific spell id.
++Unit* CastReworkSpellAction::CastTarget() { return onSelf ? static_cast<Unit*>(bot) : GetTarget(); }
++
++bool CastReworkSpellAction::Execute(Event /*event*/) { return botAI->CastSpell(reworkSpellId, CastTarget()); }
++
++bool CastReworkSpellAction::isPossible()
++{
++    return reworkSpellId && botAI->CanCastSpell(reworkSpellId, CastTarget());
++}
++
++bool CastReworkSpellAction::isUseful()
++{
++    if (onSelf)
++        return bot->IsInCombat();
++    Unit* t = GetTarget();
++    return t && t->IsInWorld() && t->GetMapId() == bot->GetMapId();
++}
++
++// mod-demonology-rework: fills a Command Pool slot with an Imp legionnaire (the single-target comp).
++bool CastSummonImpLegionnaireAction::isPossible()
++{
++    // The summon is self-cast (unit_caster) but inherited 47193's pet-target flags, so an EXPLICIT
++    // player target (what CanCastSpell/CastSpell(bot) sets) trips SPELL_FAILED_TARGET_IS_PLAYER. We
++    // cast it targetless in Execute (like a real player), so here we only check knowledge + cooldown;
++    // the free slot + soul shard are already enforced by LegionPoolNotFullTrigger.
++    return bot->HasSpell(290002) && !bot->HasSpellCooldown(290002) && !bot->IsNonMeleeSpellCast(false);
++}
++
++bool CastSummonImpLegionnaireAction::Execute(Event /*event*/)
++{
++    // Targetless cast => implicit unit_caster, avoiding the player-target rejection. Non-triggered so
++    // the soul-shard reagent + mana are still consumed (the Path-B economy stays intact).
++    bot->CastSpell(static_cast<Unit*>(nullptr), 290002, false);
++    return true;
++}
++
++// mod-demonology-rework: anchor pet = Felguard if trained/castable, else Voidwalker, else Imp. These
++// stock pet summons (30146/697/688) accept the caster as an explicit target, so casting on self works.
++bool CastLegionAnchorAction::isPossible()
++{
++    return bot->GetPet() == nullptr;
++}
++
++bool CastLegionAnchorAction::Execute(Event /*event*/)
++{
++    for (uint32 id : {30146u, 697u, 688u})   // Felguard -> Voidwalker -> Imp
++    {
++        if (bot->HasSpell(id) && botAI->CanCastSpell(id, bot) && botAI->CastSpell(id, bot))
++            return true;
++    }
++    return false;
++}
++
+ // Checks if the bot has less than 26 soul shards, and if so, allows casting Drain Soul
+ bool CastDrainSoulAction::isUseful() { return AI_VALUE2(uint32, "item count", "soul shard") < 26; }
+ 
+diff --git a/src/Ai/Class/Warlock/WarlockActions.h b/src/Ai/Class/Warlock/WarlockActions.h
+index 8fca0fd..f5e9fa4 100644
+--- a/src/Ai/Class/Warlock/WarlockActions.h
++++ b/src/Ai/Class/Warlock/WarlockActions.h
+@@ -158,6 +158,49 @@ class CastSummonSuccubusAction : public CastBuffSpellAction
+ public:
+     CastSummonSuccubusAction(PlayerbotAI* botAI) : CastBuffSpellAction(botAI, "summon succubus") {}
+ };
++
++// mod-demonology-rework: fills a Command Pool slot with an Imp legionnaire (the single-target comp).
++// Name is unique to the module, so name resolution is unambiguous; the cast's own castable check
++// enforces the 1-soul-shard reagent + Expanded Command knowledge.
++class CastSummonImpLegionnaireAction : public Action
++{
++public:
++    CastSummonImpLegionnaireAction(PlayerbotAI* botAI) : Action(botAI, "summon imp legionnaire") {}
++    bool Execute(Event event) override;
++    bool isPossible() override;
++    bool isUseful() override { return true; }
++};
++
++// mod-demonology-rework: cast a specific spell BY ID at the chosen target — bypasses name lookup so
++// it is immune to name collisions (our Demonic Empowerment 290000 vs stock 47193). onSelf routes
++// self-cast spells (Demonic Empowerment, Command Demon) to the bot; others to the current target.
++// The action name is just the registry key; the ID is what gets cast.
++class CastReworkSpellAction : public CastSpellAction
++{
++public:
++    CastReworkSpellAction(PlayerbotAI* botAI, std::string const name, uint32 spellId, bool onSelf = false)
++        : CastSpellAction(botAI, name), reworkSpellId(spellId), onSelf(onSelf) {}
++
++    bool Execute(Event event) override;
++    bool isPossible() override;
++    bool isUseful() override;
++
++protected:
++    Unit* CastTarget();
++    uint32 reworkSpellId;
++    bool onSelf;
++};
++// mod-demonology-rework: instrumented anchor summon. Casts Felguard -> Voidwalker -> Imp BY ID and
++// LOGS each decision to the worldserver log, so we can see exactly why (or whether) the summon fires.
++class CastLegionAnchorAction : public Action
++{
++public:
++    CastLegionAnchorAction(PlayerbotAI* botAI) : Action(botAI, "summon legion anchor") {}
++    bool Execute(Event event) override;
++    bool isPossible() override;
++    bool isUseful() override { return true; }
++};
++
+ class CastFelDominationAction : public CastBuffSpellAction
+ {
+ public:
+diff --git a/src/Ai/Class/Warlock/WarlockAiObjectContext.cpp b/src/Ai/Class/Warlock/WarlockAiObjectContext.cpp
+index 27b9166..49ad7dc 100644
+--- a/src/Ai/Class/Warlock/WarlockAiObjectContext.cpp
++++ b/src/Ai/Class/Warlock/WarlockAiObjectContext.cpp
+@@ -71,6 +71,8 @@ public:
+         creators["succubus"] = &WarlockPetStrategyFactoryInternal::succubus;
+         creators["felhunter"] = &WarlockPetStrategyFactoryInternal::felhunter;
+         creators["felguard"] = &WarlockPetStrategyFactoryInternal::felguard;
++        creators["legion anchor"] = &WarlockPetStrategyFactoryInternal::legion_anchor;
++        creators["legion pool"] = &WarlockPetStrategyFactoryInternal::legion_pool;
+     }
+ 
+ private:
+@@ -79,6 +81,8 @@ private:
+     static Strategy* succubus(PlayerbotAI* ai) { return new SummonSuccubusStrategy(ai); }
+     static Strategy* felhunter(PlayerbotAI* ai) { return new SummonFelhunterStrategy(ai); }
+     static Strategy* felguard(PlayerbotAI* ai) { return new SummonFelguardStrategy(ai); }
++    static Strategy* legion_anchor(PlayerbotAI* ai) { return new SummonLegionAnchorStrategy(ai); }
++    static Strategy* legion_pool(PlayerbotAI* ai) { return new LegionPoolStrategy(ai); }
+ };
+ 
+ class WarlockSoulstoneStrategyFactoryInternal : public NamedObjectContext<Strategy>
+@@ -147,6 +151,11 @@ public:
+         creators["unending breath on party"] = &WarlockTriggerFactoryInternal::unending_breath_on_party;
+         creators["no soul shard"] = &WarlockTriggerFactoryInternal::no_soul_shard;
+         creators["too many soul shards"] = &WarlockTriggerFactoryInternal::too_many_soul_shards;
++        creators["legion pool not full"] = &WarlockTriggerFactoryInternal::legion_pool_not_full;
++        creators["doombrand ready"] = &WarlockTriggerFactoryInternal::doombrand_ready;
++        creators["command demon window"] = &WarlockTriggerFactoryInternal::command_demon_window;
++        creators["empower demons ready"] = &WarlockTriggerFactoryInternal::empower_demons_ready;
++        creators["wild imps affordable"] = &WarlockTriggerFactoryInternal::wild_imps_affordable;
+         creators["no healthstone"] = &WarlockTriggerFactoryInternal::HasHealthstone;
+         creators["no firestone"] = &WarlockTriggerFactoryInternal::HasFirestone;
+         creators["no spellstone"] = &WarlockTriggerFactoryInternal::HasSpellstone;
+@@ -195,6 +204,11 @@ private:
+     static Trigger* unending_breath_on_party(PlayerbotAI* botAI) { return new UnendingBreathOnPartyTrigger(botAI); }
+     static Trigger* no_soul_shard(PlayerbotAI* botAI) { return new OutOfSoulShardsTrigger(botAI); }
+     static Trigger* too_many_soul_shards(PlayerbotAI* botAI) { return new TooManySoulShardsTrigger(botAI); }
++    static Trigger* legion_pool_not_full(PlayerbotAI* botAI) { return new LegionPoolNotFullTrigger(botAI); }
++    static Trigger* doombrand_ready(PlayerbotAI* botAI) { return new DoombrandReadyTrigger(botAI); }
++    static Trigger* command_demon_window(PlayerbotAI* botAI) { return new CommandDemonWindowTrigger(botAI); }
++    static Trigger* empower_demons_ready(PlayerbotAI* botAI) { return new DemonicEmpowermentWindowTrigger(botAI); }
++    static Trigger* wild_imps_affordable(PlayerbotAI* botAI) { return new WildImpsAffordableTrigger(botAI); }
+     static Trigger* HasHealthstone(PlayerbotAI* botAI) { return new HasHealthstoneTrigger(botAI); }
+     static Trigger* HasFirestone(PlayerbotAI* botAI) { return new HasFirestoneTrigger(botAI); }
+     static Trigger* HasSpellstone(PlayerbotAI* botAI) { return new HasSpellstoneTrigger(botAI); }
+@@ -262,6 +276,12 @@ public:
+         creators["summon felguard"] = &WarlockAiObjectContextInternal::summon_felguard;
+         creators["summon felhunter"] = &WarlockAiObjectContextInternal::summon_felhunter;
+         creators["summon succubus"] = &WarlockAiObjectContextInternal::summon_succubus;
++        creators["summon imp legionnaire"] = &WarlockAiObjectContextInternal::summon_imp_legionnaire;
++        creators["summon legion anchor"] = &WarlockAiObjectContextInternal::summon_legion_anchor;
++        creators["doombrand"] = &WarlockAiObjectContextInternal::doombrand;
++        creators["command demon"] = &WarlockAiObjectContextInternal::command_demon;
++        creators["empower demons"] = &WarlockAiObjectContextInternal::empower_demons;
++        creators["wild imps"] = &WarlockAiObjectContextInternal::wild_imps;
+         creators["summon imp"] = &WarlockAiObjectContextInternal::summon_imp;
+         creators["fel domination"] = &WarlockAiObjectContextInternal::fel_domination;
+         creators["immolate"] = &WarlockAiObjectContextInternal::immolate;
+@@ -338,6 +358,12 @@ private:
+     static Action* summon_felhunter(PlayerbotAI* botAI) { return new CastSummonFelhunterAction(botAI); }
+     static Action* summon_imp(PlayerbotAI* botAI) { return new CastSummonImpAction(botAI); }
+     static Action* summon_succubus(PlayerbotAI* botAI) { return new CastSummonSuccubusAction(botAI); }
++    static Action* summon_imp_legionnaire(PlayerbotAI* botAI) { return new CastSummonImpLegionnaireAction(botAI); }
++    static Action* summon_legion_anchor(PlayerbotAI* botAI) { return new CastLegionAnchorAction(botAI); }
++    static Action* doombrand(PlayerbotAI* botAI) { return new CastReworkSpellAction(botAI, "doombrand", 290014, false); }
++    static Action* command_demon(PlayerbotAI* botAI) { return new CastReworkSpellAction(botAI, "command demon", 290013, true); }
++    static Action* empower_demons(PlayerbotAI* botAI) { return new CastReworkSpellAction(botAI, "empower demons", 290000, true); }
++    static Action* wild_imps(PlayerbotAI* botAI) { return new CastReworkSpellAction(botAI, "wild imps", 290001, false); }
+     static Action* fel_domination(PlayerbotAI* botAI) { return new CastFelDominationAction(botAI); }
+     static Action* corruption(PlayerbotAI* botAI) { return new CastCorruptionAction(botAI); }
+     static Action* corruption_on_attacker(PlayerbotAI* botAI) { return new CastCorruptionOnAttackerAction(botAI); }
+diff --git a/src/Ai/Class/Warlock/WarlockTriggers.cpp b/src/Ai/Class/Warlock/WarlockTriggers.cpp
+index 52af8b0..8be64d1 100644
+--- a/src/Ai/Class/Warlock/WarlockTriggers.cpp
++++ b/src/Ai/Class/Warlock/WarlockTriggers.cpp
+@@ -4,10 +4,14 @@
+  */
+ 
+ #include "WarlockTriggers.h"
++#include "AiFactory.h"
++#include "Config.h"
+ #include "GenericTriggers.h"
++#include "Pet.h"
+ #include "Playerbots.h"
+ #include "PlayerbotAI.h"
+ #include "Player.h"
++#include "SpellMgr.h"
+ 
+ static const uint32 SOUL_SHARD_ITEM_ID = 6265;
+ 
+@@ -16,6 +20,35 @@ uint32 GetSoulShardCount(Player* bot)
+     return bot->GetItemCount(SOUL_SHARD_ITEM_ID, false);  // false = only bags
+ }
+ 
++// mod-demonology-rework integration ------------------------------------------------------------
++// ID-pinned rework spells (Phase 2: "Demonic Empowerment" collides with stock 47193 by name, so the
++// combat actions cast by ID). 290504 is the Doombrand debuff read to detect an active brand.
++static constexpr uint32 SPELL_REWORK_DEMONIC_EMPOWERMENT      = 290000;
++static constexpr uint32 SPELL_REWORK_SUMMON_WILD_IMPS         = 290001;
++static constexpr uint32 SPELL_REWORK_COMMAND_DEMON            = 290013;
++static constexpr uint32 SPELL_REWORK_DOOMBRAND                = 290014;
++static constexpr uint32 SPELL_REWORK_DEMONIC_EMPOWERMENT_BUFF = 290500;
++static constexpr uint32 SPELL_REWORK_DOOMBRAND_DEBUFF         = 290504;
++
++// Weak reference to the rework's read-only pool bridge (defined in mod-demonology-rework's
++// CommandPool.cpp). Resolves to that strong symbol when the module is linked in; otherwise null.
++extern "C" bool __attribute__((weak)) Demonology_BotLegionStatus(Player* owner, uint8* outCount, uint8* outCap);
++
++// Command Demon (290013) exists only when the module is installed, so this is a runtime presence
++// gate: on a stock server it is always false and every rework-specific behavior stays off, leaving
++// bot behavior byte-for-byte stock.
++bool IsReworkDemonology(Player* bot)
++{
++    if (!bot || bot->getClass() != CLASS_WARLOCK)
++        return false;
++    if (!sSpellMgr->GetSpellInfo(SPELL_REWORK_COMMAND_DEMON))
++        return false;
++    return AiFactory::GetPlayerSpecTab(bot) == WARLOCK_TAB_DEMONOLOGY;
++}
++
++// Playerbots-side tuning knobs (documented + defaulted in playerbots-demonology.conf.fragment).
++static uint32 ReworkCfg(char const* key, uint32 def) { return sConfigMgr->GetOption<uint32>(key, def, false); }
++
+ // List of all Soulstone item IDs
+ static const std::vector<uint32> soulstoneItemIds = {
+     5232,   // Minor Soulstone
+@@ -46,7 +79,96 @@ bool WarlockConjuredItemTrigger::IsActive()
+ 
+ bool OutOfSoulShardsTrigger::IsActive() { return GetSoulShardCount(botAI->GetBot()) == 0; }
+ 
+-bool TooManySoulShardsTrigger::IsActive() { return GetSoulShardCount(botAI->GetBot()) >= 26; }
++bool TooManySoulShardsTrigger::IsActive()
++{
++    // Path B economy: soul shards are the rework's fuel (uncapped, hoarding is intended), so never
++    // destroy them for a rework demo warlock. Stock warlocks still cap at 26.
++    if (IsReworkDemonology(botAI->GetBot()))
++        return false;
++    return GetSoulShardCount(botAI->GetBot()) >= 26;
++}
++
++bool LegionPoolNotFullTrigger::IsActive()
++{
++    Player* bot = botAI->GetBot();
++    if (!IsReworkDemonology(bot) || !Demonology_BotLegionStatus)
++        return false;
++    uint8 count = 0, cap = 0;
++    if (!Demonology_BotLegionStatus(bot, &count, &cap))
++        return false;
++    // A free legionnaire slot AND a soul shard to pay the summon reagent (Summon Imp Legionnaire).
++    return count < cap && GetSoulShardCount(bot) >= 1;
++}
++
++bool DoombrandReadyTrigger::IsActive()
++{
++    Player* bot = botAI->GetBot();
++    if (!IsReworkDemonology(bot))
++        return false;
++    if (!bot->HasSpell(SPELL_REWORK_DOOMBRAND) || bot->GetSpellCooldownDelay(SPELL_REWORK_DOOMBRAND))
++        return false;
++    if (GetSoulShardCount(bot) < 1)
++        return false;
++    Unit* target = AI_VALUE(Unit*, "current target");
++    if (!target || !target->IsAlive() || !bot->IsValidAttackTarget(target))
++        return false;
++    // Don't brand a target that will die before the sigil is worth detonating.
++    return target->GetHealthPct() >= (float)ReworkCfg("AiPlayerbot.Demonology.DoombrandMinTargetHealthPct", 30);
++}
++
++bool CommandDemonWindowTrigger::IsActive()
++{
++    Player* bot = botAI->GetBot();
++    if (!IsReworkDemonology(bot))
++        return false;
++    if (!bot->HasSpell(SPELL_REWORK_COMMAND_DEMON) || bot->GetSpellCooldownDelay(SPELL_REWORK_COMMAND_DEMON))
++        return false;
++    if (GetSoulShardCount(bot) < 1)
++        return false;
++    Unit* target = AI_VALUE(Unit*, "current target");
++    if (!target || !target->IsAlive() || !bot->IsValidAttackTarget(target))
++        return false;
++    // No Doombrand yet (below the L80 gwd capstone): there is no brand to align to, so just press
++    // Command Demon whenever it's ready. Without this, the align hold below would wait forever.
++    if (!bot->HasSpell(SPELL_REWORK_DOOMBRAND))
++        return true;
++    // Aligned: our brand is already ticking on the target -> press now for the in-brand bonus.
++    if (target->HasAura(SPELL_REWORK_DOOMBRAND_DEBUFF, bot->GetGUID()))
++        return true;
++    // Not branded: hold if a fresh brand is coming within the align window; otherwise stop waiting.
++    uint32 alignMs = ReworkCfg("AiPlayerbot.Demonology.CommandBrandAlignWindowMs", 4000);
++    return bot->GetSpellCooldownDelay(SPELL_REWORK_DOOMBRAND) > alignMs;
++}
++
++bool DemonicEmpowermentWindowTrigger::IsActive()
++{
++    Player* bot = botAI->GetBot();
++    if (!IsReworkDemonology(bot))
++        return false;
++    if (!bot->HasSpell(SPELL_REWORK_DEMONIC_EMPOWERMENT) ||
++        bot->GetSpellCooldownDelay(SPELL_REWORK_DEMONIC_EMPOWERMENT))
++        return false;
++    if (!bot->IsInCombat())
++        return false;
++    Pet* pet = bot->GetPet();
++    // Recast only when the anchor demon isn't already empowered (avoids spamming a no-cooldown buff).
++    return pet && !pet->HasAura(SPELL_REWORK_DEMONIC_EMPOWERMENT_BUFF);
++}
++
++bool WildImpsAffordableTrigger::IsActive()
++{
++    Player* bot = botAI->GetBot();
++    if (!IsReworkDemonology(bot))
++        return false;
++    if (!bot->HasSpell(SPELL_REWORK_SUMMON_WILD_IMPS) ||
++        bot->GetSpellCooldownDelay(SPELL_REWORK_SUMMON_WILD_IMPS))
++        return false;
++    Unit* target = AI_VALUE(Unit*, "current target");
++    if (!target || !target->IsAlive() || !bot->IsValidAttackTarget(target))
++        return false;
++    // Overflow spender: only above the shard reserve so brand/command presses are never starved.
++    return GetSoulShardCount(bot) > ReworkCfg("AiPlayerbot.Demonology.ShardReserve", 2);
++}
+ 
+ bool OutOfSoulstoneTrigger::IsActive() { return GetSoulstoneCount(botAI->GetBot()) == 0; }
+ 
+diff --git a/src/Ai/Class/Warlock/WarlockTriggers.h b/src/Ai/Class/Warlock/WarlockTriggers.h
+index 15991e2..4f4dbca 100644
+--- a/src/Ai/Class/Warlock/WarlockTriggers.h
++++ b/src/Ai/Class/Warlock/WarlockTriggers.h
+@@ -15,6 +15,11 @@
+ #include <set>
+ 
+ class PlayerbotAI;
++class Player;
++
++// mod-demonology-rework: true only for a Demonology warlock on a server running the module (detected
++// via Command Demon 290013). Shared by the triggers here and DemonologyWarlockStrategy.
++bool IsReworkDemonology(Player* bot);
+ 
+ // Buff and Out of Combat Triggers
+ 
+@@ -61,6 +66,50 @@ public:
+     bool IsActive() override;
+ };
+ 
++// mod-demonology-rework: a demo warlock's Command Pool has a free legionnaire slot AND a soul
++// shard to pay the summon reagent. Inactive on a stock server (rework bridge symbol absent).
++class LegionPoolNotFullTrigger : public Trigger
++{
++public:
++    LegionPoolNotFullTrigger(PlayerbotAI* botAI) : Trigger(botAI, "legion pool not full", 2) {}
++    bool IsActive() override;
++};
++
++// mod-demonology-rework combat triggers (all inactive unless IsReworkDemonology). ------------------
++// Doombrand (290014) off cooldown, a shard to spend, and a target worth branding (lives long enough).
++class DoombrandReadyTrigger : public Trigger
++{
++public:
++    DoombrandReadyTrigger(PlayerbotAI* botAI) : Trigger(botAI, "doombrand ready") {}
++    bool IsActive() override;
++};
++
++// Command Demon (290013) ready with a shard, and either the brand is already up on the target or a
++// brand won't come up within the align window (so stop waiting and press).
++class CommandDemonWindowTrigger : public Trigger
++{
++public:
++    CommandDemonWindowTrigger(PlayerbotAI* botAI) : Trigger(botAI, "command demon window") {}
++    bool IsActive() override;
++};
++
++// Demonic Empowerment (290000) off cooldown while at least the anchor demon is out to benefit.
++class DemonicEmpowermentWindowTrigger : public Trigger
++{
++public:
++    DemonicEmpowermentWindowTrigger(PlayerbotAI* botAI) : Trigger(botAI, "empower demons ready") {}
++    bool IsActive() override;
++};
++
++// Summon Wild Imps (290001) is the overflow spender: only above the shard reserve so the brand and
++// command presses are never starved.
++class WildImpsAffordableTrigger : public Trigger
++{
++public:
++    WildImpsAffordableTrigger(PlayerbotAI* botAI) : Trigger(botAI, "wild imps affordable") {}
++    bool IsActive() override;
++};
++
+ class FirestoneTrigger : public BuffTrigger
+ {
+ public:
+diff --git a/src/Bot/Factory/AiFactory.cpp b/src/Bot/Factory/AiFactory.cpp
+index d542449..442b44a 100644
+--- a/src/Bot/Factory/AiFactory.cpp
++++ b/src/Bot/Factory/AiFactory.cpp
+@@ -380,7 +380,14 @@ void AiFactory::AddDefaultCombatStrategies(Player* player, PlayerbotAI* const fa
+             if (tab == WARLOCK_TAB_AFFLICTION)
+                 engine->addStrategiesNoInit("affli", "curse of agony", nullptr);
+             else if (tab == WARLOCK_TAB_DEMONOLOGY)
+-                engine->addStrategiesNoInit("demo", "curse of agony", "meta melee", nullptr);
++            {
++                // mod-demonology-rework: demo is strictly ranged now — no "meta melee" (which runs the
++                // bot into melee for Immolation Aura). Stock demo keeps it.
++                if (sSpellMgr->GetSpellInfo(290013))
++                    engine->addStrategiesNoInit("demo", "curse of agony", nullptr);
++                else
++                    engine->addStrategiesNoInit("demo", "curse of agony", "meta melee", nullptr);
++            }
+             else // if (tab == WARLOCK_TAB_DESTRUCTION)
+                 engine->addStrategiesNoInit("destro", "curse of elements", nullptr);
+ 
+@@ -562,7 +569,17 @@ void AiFactory::AddDefaultNonCombatStrategies(Player* player, PlayerbotAI* const
+             if (tab == WARLOCK_TAB_AFFLICTION)
+                 nonCombatEngine->addStrategiesNoInit("felhunter", "spellstone", nullptr);
+             else if (tab == WARLOCK_TAB_DEMONOLOGY)
+-                nonCombatEngine->addStrategiesNoInit("felguard", "spellstone", nullptr);
++            {
++                // mod-demonology-rework (detected via Command Demon 290013): demo is a ranged pet
++                // commander now — anchor pet (Felguard/Voidwalker) + Imp legionnaire pool instead of
++                // the stock felguard-only pet. Falls back to stock wiring on a server without it.
++                if (sSpellMgr->GetSpellInfo(290013))
++                    // one pet-context strategy only: "legion anchor" also drives the legionnaire pool
++                    // (a second pet strategy would evict it as a sibling).
++                    nonCombatEngine->addStrategiesNoInit("legion anchor", "spellstone", nullptr);
++                else
++                    nonCombatEngine->addStrategiesNoInit("felguard", "spellstone", nullptr);
++            }
+             else if (tab == WARLOCK_TAB_DESTRUCTION)
+                 nonCombatEngine->addStrategiesNoInit("imp", "firestone", nullptr);
+ 
+diff --git a/src/Bot/PlayerbotMgr.cpp b/src/Bot/PlayerbotMgr.cpp
+index 9d9f568..0a70aec 100644
+--- a/src/Bot/PlayerbotMgr.cpp
++++ b/src/Bot/PlayerbotMgr.cpp
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include "PlayerbotMgr.h"
++#include "SpellMgr.h"
+ 
+ #include <cstdio>
+ #include <cstring>
+@@ -606,6 +607,35 @@ void PlayerbotHolder::OnBotLogin(Player* const bot)
+             mixedGearScore = 1;
+         PlayerbotFactory factory(bot, master->GetLevel(), ITEM_QUALITY_LEGENDARY, mixedGearScore);
+         factory.Randomize(false);
++        // mod-demonology-rework: Randomize just (re)applied the spec, but ResetStrategies ran above,
++        // BEFORE it — so the spec-gated demo wiring was chosen from the pre-respec (non-demo) talents.
++        // Re-reset now that talents are final. Gated on the module (Command Demon 290013) => stock
++        // servers are byte-for-byte unaffected.
++        if (sSpellMgr->GetSpellInfo(290013))
++            botAI->ResetStrategies();
++    }
++
++    // mod-demonology-rework: the factory's trainer walk doesn't deliver these custom warlock trainer
++    // baselines to bots, and granting them mid-Randomize doesn't persist. Grant them here at login
++    // (bot fully in-world, like the module's own spell reconcile) so they stick. All warlocks train
++    // them (Summon Wild Imps @10, Demonic Empowerment @50); gated on the module (290013) => stock
++    // servers unaffected.
++    if (bot->getClass() == CLASS_WARLOCK && sSpellMgr->GetSpellInfo(290013))
++    {
++        if (bot->GetLevel() >= 10 && !bot->HasSpell(290001))
++            bot->learnSpell(290001, false);   // Summon Wild Imps
++        if (bot->GetLevel() >= 50 && !bot->HasSpell(290000))
++            bot->learnSpell(290000, false);   // Demonic Empowerment
++
++        // Bootstrap the shard economy for a command-spine demo bot: it can't form its legionnaire army
++        // (1 shard/legionnaire + anchor) before combat earns any, so top up to a floor of 10 soul
++        // shards at login. Gated on the Expanded Command talent (290922) so only command bots get it.
++        if (bot->HasTalent(290922, bot->GetActiveSpec()))
++        {
++            uint32 const have = bot->GetItemCount(6265, false);
++            if (have < 10)
++                bot->AddItem(6265, 10 - have);
++        }
+     }
+ 
+     // bots join World chat if not solo oriented

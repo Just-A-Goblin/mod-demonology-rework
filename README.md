@@ -29,6 +29,7 @@ docs/             ID_RANGES, MCP_NOTES, CORE_PATCHES, DESIGN
 | `./build.sh` | authoring | **yes** | validate YAML → `sf build` → vendor artifacts into `dist/` |
 | `./install.sh [--apply]` | deploy (server) | no | apply core patches, link module, deploy DBC→server + SQL→DBs (dry-run by default) |
 | `./deploy_client.sh [--apply]` | deploy (client) | **yes** | merge our DBCs into the winning client patch (letters outrank numbers, so a plain patch is ignored) |
+| `./install_playerbots.sh [--apply\|--revert]` | deploy (bots) | no | patch mod-playerbots + merge the bot conf fragment (dry-run by default) |
 
 The client patch is a separate, SpellForge-driven step because on a modded 3.3.5
 client our DBCs must be *merged into* the highest-priority patch in place — that
@@ -75,6 +76,37 @@ make -j$(nproc) && make install  # builds + installs the worldserver
 > **Gotcha (talent-tab edits):** any Talent.dbc change that removes/renames a warlock-tab talent must clear
 > orphaned `character_talent` rows before boot or the server crash-loops on load. Simply *moving* a talent
 > (same rank spells) is safe. See the talent-tree memory / `DEMONOLOGY_STATUS.md`.
+
+## Playerbots integration
+
+Teaches [mod-playerbots](https://github.com/liyunfan1223/mod-playerbots) (pinned commit
+`085e127e`) to play the reworked Demonology spec: pick the custom 78-point tree, know every
+rework ability, and run the Command Pool → Doombrand → Command Demon rotation. Everything is
+authored and installed **from inside this repo** — nothing is hand-copied into the playerbots
+checkout — and every behavior is runtime-gated on rework presence (spell `290013`), so a stock
+server without this module is byte-for-byte unaffected.
+
+```
+tools/gen_playerbot_spec_links.py   → conf/playerbots-demonology.conf.fragment   (spec links + tuning)
+playerbots-patches/0001-demonology-integration.patch   (C++ vs the pinned commit; see MANIFEST.md)
+install_playerbots.sh   applies both (dry-run default, --apply / --revert)
+docs/BOT_INTEGRATION_ANALYSIS.md   the build/rotation analysis + as-built notes
+```
+
+Deploy (after the module itself is installed and the client patch is live):
+```
+python3 tools/gen_playerbot_spec_links.py   # regenerate the conf fragment (only if the tree changed)
+./install_playerbots.sh                      # DRY-RUN: preview the patch + conf merge
+./install_playerbots.sh --apply              # patch mod-playerbots + merge the managed conf block
+cd /home/leo/wow/build && make -j$(nproc) worldserver && make install   # rebuild (installer never compiles)
+# restart the worldserver, then dry-run ONE demo bot before fleet exposure (tools/playerbot_talent_check.sql)
+```
+`--revert` reverses the patch and restores the conf byte-for-byte. The installer refuses to apply
+against a playerbots checkout that has drifted from the pin (`git apply --check`).
+
+> **Never hand-write the talent link strings.** `gen_playerbot_spec_links.py` validates the build
+> against the shipped `Talent.dbc` (prereqs, tier gates, point totals) and emits them positionally; a
+> bad string risks the orphaned-`character_talent` crash-loop at fleet scale.
 
 ## Status
 

@@ -17,7 +17,7 @@ namespace Demonology
 
         // Soul Harvest (T1) — shard economy throttle
         float SoulHarvestChancePerRank   = 0.04f;  // 4/8/12% at ranks 1/2/3
-        uint32 SoulHarvestInternalCdMs   = 1000;
+        uint32 SoulHarvestInternalCdMs   = 4000;   // ceiling on shard income: <=1 shard / 4s while the legion is engaged
 
         // Cruel Master (T2) — demon crits accelerate Soul Harvest. The crit is SIMULATED in
         // the Soul Harvest proc (no server hook reports a crit result): roll the demon's crit
@@ -190,7 +190,8 @@ namespace Demonology
 
         // --- Command Demon (Phase 3, §5) ---
         uint32 CommandDemonCooldownMs       = 45000;
-        uint32 CommandDemonShardCost        = 1;
+        // Command Demon's 2 Soul Shard cost is now a native DBC reagent (item 6265) + 10% base mana
+        // on spell 290013 — no config knob (matches the legionnaire summons).
         // Dark Command (dc): CD reduction per rank + a short haste buff on responders.
         uint32 DarkCommandCdReductionMsPerRank = 5000;   // -5/10/15s at ranks 1/2/3
         float  DarkCommandHastePct          = 0.10f;     // responder attack-speed buff (fraction)

@@ -1,0 +1,80 @@
+Creature (Entry: 601016) has invalid unit_class (0) in creature_template. Set to 1 (CLASS_WARRIOR).
+Creature (Entry: 601017) has invalid unit_class (0) in creature_template. Set to 1 (CLASS_WARRIOR).
+Quest 14151 has `RequiredSkillPoints` = 450 but max possible skill is 300, quest can't be done.
+Quest 13571 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13113 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13112 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13107 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13103 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13102 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13101 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13100 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13090 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13089 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13088 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13087 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13004 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13002 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 12963 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12962 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12961 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12960 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12959 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12958 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 12952 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 12918 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 12888 has `RequiredSkillPoints` = 400 but max possible skill is 300, quest can't be done.
+Quest 13148 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 13116 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13115 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13114 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 13041 has `RequiredSkillPoints` = 375 but max possible skill is 300, quest can't be done.
+Quest 10831 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10832 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10833 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10897 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10899 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10902 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10905 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10906 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 10907 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 13265 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 13268 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 13269 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 13270 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 13272 has `RequiredSkillPoints` = 325 but max possible skill is 300, quest can't be done.
+Quest 11016 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 11017 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Quest 11018 has `RequiredSkillPoints` = 350 but max possible skill is 300, quest can't be done.
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (425), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (390), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (420), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (375), skipped
+Skill condition specifies invalid skill value (400), skipped
+Skill condition specifies invalid skill value (375), skipped
+Skill condition specifies invalid skill value (350), skipped
+Skill condition specifies invalid skill value (405), skipped
+Skill condition specifies invalid skill value (425), skipped
+Skill condition specifies invalid skill value (380), skipped
+Skill condition specifies invalid skill value (425), skipped
+SQL(p): INSERT INTO mail_items(mail_id, item_guid, receiver) VALUES (21337, 733904029, 2437)
+ [ERROR]: [1062] Duplicate entry '733904029' for key 'PRIMARY'
+SQL(p): INSERT INTO character_spell (guid, spell, specMask) VALUES (2181, 290005, 255)
+ [ERROR]: [1062] Duplicate entry '2181-290005' for key 'PRIMARY'

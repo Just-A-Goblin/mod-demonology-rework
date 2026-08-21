@@ -58,7 +58,7 @@ namespace
         imp->SetCreatorGUID(owner->GetGUID());              // client attributes its damage to the owner
         imp->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);      // shows in the owner's combat log / floating text
         imp->SetFaction(owner->GetFaction());
-        imp->SetLevel(owner->GetLevel());
+        imp->SetLevel(owner->GetLevel(), false);            // false: no client "level-up" ding on summon
         imp->SetReactState(REACT_PASSIVE);                  // no auto-aggro; the AI drives targeting
         PetScaling::ApplyInheritance(owner, imp);
         imp->AIM_Initialize(new Demonology::GuardianAttackerAI(
@@ -75,6 +75,24 @@ namespace
         for (auto it = g_impChain.begin(); it != g_impChain.end();)
             it = ObjectAccessor::GetCreature(ref, it->first) ? std::next(it) : g_impChain.erase(it);
     }
+}
+
+// Despawn every temporary Wild Imp owned by this player. Wild Imps are plain SummonCreature
+// guardians (not added to m_Controlled), so the core never dismisses them on owner death — the
+// pack would otherwise keep fighting after you die. Called from OnPlayerJustDied; also drops
+// their Wrath-of-the-Legion chain-budget entries so the map doesn't retain stale guids.
+void Demonology::DespawnWildImps(Player* owner)
+{
+    if (!owner)
+        return;
+    std::list<Creature*> imps;
+    owner->GetCreatureListWithEntryInGrid(imps, NPC_WILD_IMP, 100.0f);
+    for (Creature* imp : imps)
+        if (imp && imp->GetOwnerGUID() == owner->GetGUID())
+        {
+            g_impChain.erase(imp->GetGUID());
+            imp->DespawnOrUnsummon();
+        }
 }
 
 class spell_demonology_summon_wild_imps : public SpellScript
@@ -417,7 +435,7 @@ Creature* Demonology::SummonGreaterDemon(Player* owner, uint32 entry)
     demon->SetCreatorGUID(owner->GetGUID());               // client attributes its damage to the owner
     demon->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);
     demon->SetFaction(owner->GetFaction());
-    demon->SetLevel(owner->GetLevel());
+    demon->SetLevel(owner->GetLevel(), false);             // false: no client "level-up" ding on summon
     demon->SetReactState(REACT_DEFENSIVE);
 
     PetScaling::ApplyInheritance(owner, demon);             // scale health + melee off owner SP

@@ -1,0 +1,42 @@
+AzerothCore rev. dfae3da86149+ 2026-06-12 07:22:05 -0700 (Playerbot branch) (Unix, RelWithDebInfo, Static) (authserver)
+<Ctrl-C> to stop.
+
+   █████╗ ███████╗███████╗██████╗  ██████╗ ████████╗██╗  ██╗
+  ██╔══██╗╚══███╔╝██╔════╝██╔══██╗██╔═══██╗╚══██╔══╝██║  ██║
+  ███████║  ███╔╝ █████╗  ██████╔╝██║   ██║   ██║   ███████║
+  ██╔══██║ ███╔╝  ██╔══╝  ██╔══██╗██║   ██║   ██║   ██╔══██║
+  ██║  ██║███████╗███████╗██║  ██║╚██████╔╝   ██║   ██║  ██║
+  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
+                                 ██████╗ ██████╗ ██████╗ ███████╗
+                                ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+                                ██║     ██║   ██║██████╔╝█████╗
+                                ██║     ██║   ██║██╔══██╗██╔══╝
+                                ╚██████╗╚██████╔╝██║  ██║███████╗
+                                 ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
+     AzerothCore 3.3.5a  -  www.azerothcore.org
+
+> Using configuration file       /home/leo/WOW-BACKUP-8-11-26/wow/server/etc/authserver.conf
+> Using SSL version:             OpenSSL 3.5.5 27 Jan 2026 (library: OpenSSL 3.5.5 27 Jan 2026)
+> Using Boost version:           1.90.0
+ 
+Opening DatabasePool 'acore_auth'. Asynchronous connections: 1, synchronous connections: 1.
+MySQL client library: 8.4.10
+MySQL server ver: 11.8.6-MariaDB-5ubuntu0.1 from Ubuntu 
+Connected to MySQL database at 127.0.0.1
+MySQL client library: 8.4.10
+MySQL server ver: 11.8.6-MariaDB-5ubuntu0.1 from Ubuntu 
+Connected to MySQL database at 127.0.0.1
+DatabasePool 'acore_auth' opened successfully. 2 total connections running.
+ 
+Updating Auth database...
+>> Auth database is up-to-date! Containing 15 new and 2 archived updates.
+ 
+Started auth database connection pool.
+Loading IP Location Database...
+ 
+Added realm "AzerothCore" at 127.0.0.1:8085.
+Halting process...
+Closing down DatabasePool 'acore_auth'. Waiting for 0 queries to finish...
+Asynchronous connections on DatabasePool 'acore_auth' terminated. Proceeding with synchronous connections.
+All connections on DatabasePool 'acore_auth' closed.

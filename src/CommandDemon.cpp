@@ -301,8 +301,8 @@ class spell_demonology_command_demon : public SpellScript
                 return SPELL_FAILED_DONT_REPORT;
             }
         }
-        if (caster->GetItemCount(ITEM_SOUL_SHARD) < gConfig.CommandDemonShardCost)
-            return SPELL_FAILED_REAGENTS;
+        // Soul Shard cost is now a native DBC reagent (item 6265 x2 on spell 290013) — the core
+        // checks it here and consumes it on cast, so no C++ shard handling (matches the summons).
         return SPELL_CAST_OK;
     }
 
@@ -311,8 +311,6 @@ class spell_demonology_command_demon : public SpellScript
         Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
         if (!caster)
             return;
-        if (gConfig.CommandDemonShardCost)
-            caster->DestroyItemCount(ITEM_SOUL_SHARD, gConfig.CommandDemonShardCost, true);
         Demonology::CommandDemonPress(caster);
     }
 

@@ -50,7 +50,7 @@ public:
     {
         gConfig.Enable                       = sConfigMgr->GetOption<bool>("Demonology.Enable", true);
         gConfig.SoulHarvestChancePerRank     = sConfigMgr->GetOption<float>("Demonology.SoulHarvest.ChancePerRank", 0.04f);
-        gConfig.SoulHarvestInternalCdMs      = sConfigMgr->GetOption<uint32>("Demonology.SoulHarvest.InternalCooldownMs", 1000);
+        gConfig.SoulHarvestInternalCdMs      = sConfigMgr->GetOption<uint32>("Demonology.SoulHarvest.InternalCooldownMs", 4000);
         gConfig.CruelMasterProcChanceMult    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.ProcChanceMult", 2.0f);
         gConfig.CruelMasterIcdMultOnCrit     = sConfigMgr->GetOption<float>("Demonology.CruelMaster.IcdMultOnCrit", 0.5f);
         gConfig.CruelMasterBaseCritChance    = sConfigMgr->GetOption<float>("Demonology.CruelMaster.BaseCritChance", 0.05f);
@@ -142,7 +142,6 @@ public:
         LoadFloatList("Demonology.CursedVitality.OwnerStaminaPct", gConfig.CursedVitalityOwnerStaminaPct, 2);
         // --- Command Demon (Phase 3) ---
         gConfig.CommandDemonCooldownMs       = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.CooldownMs", 45000);
-        gConfig.CommandDemonShardCost        = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.ShardCost", 1);
         gConfig.DarkCommandCdReductionMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.DarkCommand.CdReductionMsPerRank", 5000);
         gConfig.DarkCommandHastePct          = sConfigMgr->GetOption<float>("Demonology.DarkCommand.HastePct", 0.10f);
         gConfig.DarkCommandHasteDurationMs   = sConfigMgr->GetOption<uint32>("Demonology.DarkCommand.HasteDurationMs", 6000);
