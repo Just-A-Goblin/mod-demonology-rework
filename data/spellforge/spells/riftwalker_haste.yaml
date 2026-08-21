@@ -1,0 +1,13 @@
+# Riftwalker (rw) — the demon speed burst. When the warlock uses Demonic Circle: Teleport, the
+# C++ (PlayerScript) warps every commanded demon to the circle and casts this on them: +30%
+# move speed for 6s so the freshly-teleported legion catches up to you. Amount/duration set live
+# in C++; base_points/duration here are defaults. Cloned from Demonic Empowerment (47193) for a
+# clean, projectile-free buff.
+key: demonology.riftwalker_haste
+clone_from: 47193
+icon: "Spell_Shadow_DemonicCircleTeleport"
+name: Riftwalker
+description: "Surging through the rift — increased movement speed."
+duration: 6s
+effects:
+  - {effect: apply_aura, aura: mod_increase_speed, base_points: 30, target_a: unit_caster}

@@ -1,0 +1,14 @@
+# Warded Legion (wl) — the demon-side ward. An internal buff the C++ (PetScaling) applies to
+# each owned demon when wl is trained: MOD_ATTACKER_SPELL_HIT_CHANCE reduces the chance that
+# harmful spells LAND on the demon (our stand-in for "chance to fully resist"). The amount is
+# set live per rank in C++; base_points here is only a default. The rank-2 Fear/Charm/Poly
+# immunity is applied separately in C++ (ApplySpellImmune), not here. Cloned from Demonic
+# Empowerment (47193) for a clean, projectile-free buff.
+key: demonology.warded_legion
+clone_from: 47193
+icon: "Spell_Shadow_AntiShadow"
+name: Warded Legion
+description: "Warded against hostile magic."
+duration: 3600s
+effects:
+  - {effect: apply_aura, aura: mod_attacker_spell_hit_chance, base_points: -9, target_a: unit_caster}

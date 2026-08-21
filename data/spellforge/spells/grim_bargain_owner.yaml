@@ -1,0 +1,12 @@
+# Grim Bargain (gb) — owner half. A short damage-done buff the C++ proc puts on the WARLOCK
+# when a demon's hit rolls the synergy (demon damage -> you hit harder). Amount set live per
+# rank in C++; base_points is only a default. misc 127 = all schools. Cloned from Demonic
+# Empowerment (47193) for a clean buff icon.
+key: demonology.grim_bargain_owner
+clone_from: 47193
+icon: "Spell_Shadow_DemonicPact"
+name: Grim Bargain
+description: "Your demons' fury sharpens your own."
+duration: 8s
+effects:
+  - {effect: apply_aura, aura: mod_damage_percent_done, base_points: 6, target_a: unit_caster, misc: 127}

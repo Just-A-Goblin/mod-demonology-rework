@@ -106,14 +106,21 @@ namespace
             return;
         reconciling = true;
 
+        // NOTE: Summon Wild Imps (290001) + Demonic Empowerment (290000) are TRAINER-taught now
+        // (base SQL 33_baseline_trainer_spells.sql, warlock TrainerId 31/32), NOT hybrid-learned —
+        // so they are deliberately NOT synced here. Everything below is talent-granted.
         uint8 const spec = player->GetActiveSpec();
         bool const command  = player->HasTalent(SPELL_TALENT_EXPANDED_COMMAND, spec);
         bool const felguard = player->HasTalent(SPELL_TALENT_SUMMON_FELGUARD, spec);
         bool const eternal  = player->HasTalent(SPELL_TALENT_ETERNAL_SERVITUDE, spec);
+        bool const doombrand = player->HasTalent(SPELL_TALENT_GRAND_WARLOCKS_DESIGN, spec);
 
         // Command Demon (baseline Demonology, Phase 3): hybrid-learned once the Command
         // spine is opened (Expanded Command) — "Demonology enough" per the §5 decision.
         SyncSpell(player, SPELL_COMMAND_DEMON, command);
+
+        // Doombrand (Phase 5 capstone): granted by the Grand Warlock's Design talent (§6).
+        SyncSpell(player, SPELL_DOOMBRAND, doombrand);
 
         // Felguard is special: the PET itself is gated behind the Summon Felguard talent.
         SyncSpell(player, SPELL_SUMMON_FELGUARD_PET, felguard);
@@ -360,18 +367,38 @@ Creature* CommandPool::Recruit(Player* owner, uint32 entry, float healthPct)
     c->SetLevel(owner->GetLevel());                        // sets raw creature-tier stats
     c->SetReactState(REACT_DEFENSIVE);
 
-    // No-evade guardian AI. The Imp is a ranged caster (its whole identity is
-    // Firebolt) — give it the caster mode with the SP-scaling Wild Imp Firebolt;
-    // every other demon type melees. (Richer per-type signatures come later.)
-    if (entry == NPC_BASE_IMP)
-        c->AIM_Initialize(new GuardianAttackerAI(c, /*autoAssist=*/false, SPELL_WILD_IMP_FIREBOLT, /*castCooldownMs=*/2000));
-    else
-        c->AIM_Initialize(new GuardianAttackerAI(c));
+    // No-evade guardian AI with a per-type damage identity:
+    //   Imp        — ranged caster (Firebolt, its whole identity);
+    //   Felguard   — melee + Cleave (AoE);  Felhunter — melee + Shadow Bite;  Succubus — melee + Lash;
+    //   Voidwalker — pure-melee OFF-TANK (its "signature" is the high-threat kit + Command taunt).
+    switch (entry)
+    {
+        case NPC_BASE_IMP:
+            c->AIM_Initialize(new GuardianAttackerAI(c, /*autoAssist=*/false, SPELL_WILD_IMP_FIREBOLT, /*castCooldownMs=*/2000));
+            break;
+        case NPC_BASE_FELGUARD:
+            c->AIM_Initialize(new GuardianAttackerAI(c, false, 0, 2000, SPELL_FELGUARD_CLEAVE, gConfig.FelguardCleaveCooldownMs));
+            break;
+        case NPC_BASE_FELHUNTER:
+            c->AIM_Initialize(new GuardianAttackerAI(c, false, 0, 2000, SPELL_FELHUNTER_SHADOWBITE, gConfig.FelhunterShadowBiteCooldownMs));
+            break;
+        case NPC_BASE_SUCCUBUS:
+            c->AIM_Initialize(new GuardianAttackerAI(c, false, 0, 2000, SPELL_SUCCUBUS_LASH, gConfig.SuccubusLashCooldownMs));
+            break;
+        default:   // Voidwalker (off-tank) and any other type: plain melee
+            c->AIM_Initialize(new GuardianAttackerAI(c));
+            break;
+    }
 
     // Stat inheritance (Phase 6): scale health + melee off the owner's spell power,
     // replacing the old flat power clamp so legionnaires track the owner's gear.
     PetScaling::ApplyInheritance(owner, c);
     _lastAppliedSP = PetScaling::OwnerSpellPower(owner);   // seed so the mirror doesn't needlessly re-sync
+    // The summon-time inheritance above sets the demon's health/melee off the owner, but the
+    // creature's first core stat-init can revert its health to the template base (the "870 until
+    // you spend a talent point" bug). Force the mirror to re-apply inheritance for a short window
+    // so the scaling reliably sticks past that init, without waiting for an SP change or respec.
+    _forceResyncUntil = getMSTime() + 2000;
 
     if (healthPct > 0.0f && healthPct < 1.0f)
         c->SetHealth(uint32(float(c->GetMaxHealth()) * healthPct));
@@ -569,8 +596,8 @@ void CommandPool::Mirror(Player* owner)
     // warlock with only a pet (pool created on login); the rest is legionnaire-only.
     PetScaling::ApplyPetMods(owner);
 
-    // Owner auras from the current composition (op per-demon HP/haste, cv owner stamina,
-    // Legion Aura toggle). Runs even for a pet-only warlock, ahead of the empty-return.
+    // Owner auras from the current composition (op per-demon HP/haste, cv owner stamina).
+    // Runs even for a pet-only warlock, ahead of the empty-return.
     OwnerMods::Apply(owner, CommandedDemonCount(owner));
 
     if (_legionnaires.empty())
@@ -635,8 +662,14 @@ void CommandPool::Mirror(Player* owner)
     // trinket procs, talents) — the cached melee/health fields are only re-derived
     // when SP moves, so this stays cheap. (Firebolt damage is already live.)
     int32 const ownerSP = PetScaling::OwnerSpellPower(owner);
-    bool const resync = (ownerSP != _lastAppliedSP);
+    bool const resync = (ownerSP != _lastAppliedSP) || (getMSTime() < _forceResyncUntil);   // force window covers the post-summon clobber
     _lastAppliedSP = ownerSP;
+
+    // The active greater demon isn't in _legionnaires, so re-scale it here on the same resync
+    // (its summon-time inheritance can be clobbered by core stat-init, same as legionnaires).
+    if (resync)
+        if (Creature* gd = ObjectAccessor::GetCreature(*owner, _greaterDemonGuid))
+            PetScaling::ApplyInheritance(owner, gd);
 
     std::vector<ObjectGuid> alive;
     alive.reserve(_legionnaires.size());
@@ -692,8 +725,7 @@ void CommandPool::OnPoolChanged()
 {
     // Single source of truth for everything pool-size-dependent (DESIGN_V2 §8.1).
     // Recompute the owner auras from the new composition: Overlord's Presence
-    // (per-demon owner HP/haste), Cursed Vitality's owner-stamina half, and the
-    // Grand Warlock's Design Legion Aura toggle (groundwork; full rider in Phase 5).
+    // (per-demon owner HP/haste) and Cursed Vitality's owner-stamina half.
     if (Player* owner = ObjectAccessor::FindPlayer(_owner))
         OwnerMods::Apply(owner, CommandedDemonCount(owner));
 }

@@ -22,12 +22,25 @@ spells:
   demonology.soul_harvest_r2: 290011       # player: passive rank 2
   demonology.soul_harvest_r3: 290012       # player: passive rank 3
   demonology.command_demon: 290013         # player: Phase 3 baseline Command Demon button
+  demonology.doombrand: 290014             # player: Phase 5 capstone (granted by Grand Warlock's Design)
   demonology.demonic_empowerment_buff: 290500  # internal: the buff applied to demons
   demonology.enthralling_presence: 290501  # internal: Succubus signature enemy debuff
   demonology.empowered_lash_of_pain: 290502 # internal: Succubus echo nuke
   demonology.infernal_command_pulse: 290503 # internal: Infernal greater-demon response (fire AoE)
   demonology.voidwalker_command_shield: 290506 # internal: Voidwalker signature owner absorb
   demonology.voidwalker_consume_shadows: 290507 # internal: Voidwalker echo self-shield
+  demonology.doombrand_debuff: 290504      # internal: the brand marker/accumulator debuff
+  demonology.doombrand_detonation: 290505  # internal: the stored-damage shadowflame hit
+  demonology.warded_legion: 290508         # internal: Warded Legion demon spell-resist ward (Phase 6)
+  demonology.grim_bargain_owner: 290509    # internal: Grim Bargain owner damage buff (Phase 6)
+  demonology.grim_bargain_demon: 290510    # internal: Grim Bargain demon damage buff (Phase 6)
+  demonology.fel_conduit: 290511           # internal: Fel Conduit instant/free Shadow Bolt charge (Phase 6)
+  demonology.riftwalker_haste: 290512      # internal: Riftwalker demon move-speed burst (Phase 6)
+  demonology.felguard_cleave: 290513       # internal: Felguard legionnaire signature (cleave)
+  demonology.felhunter_shadowbite: 290514  # internal: Felhunter legionnaire signature (shadow nuke)
+  demonology.succubus_lash: 290515         # internal: Succubus legionnaire signature (shadow nuke)
+  demonology.vital_conduit_heal: 290516    # internal: Vital Conduit — Life Tap heals the legion (dead-node redesign A.1)
+  demonology.fervent_standard_icon: 290517 # internal: Fervent Standard cosmetic icon (dead-node redesign A.3)
   demonology.wild_imp_firebolt: 290900     # pet: Wild Imp Firebolt
   demonology.doom_bolt: 290901             # pet: Doomguard Doom Bolt
 

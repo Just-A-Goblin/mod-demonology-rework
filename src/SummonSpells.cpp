@@ -13,26 +13,77 @@
 #include "DemonologyTalents.h"
 #include "PetScaling.h"
 
+#include "Cell.h"
+#include "CellImpl.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "Chat.h"
 #include "SpellScript.h"
 #include "TemporarySummon.h"
+#include "Util.h"
 
 #include <algorithm>
 #include <cmath>
 #include <list>
+#include <unordered_map>
 
 using namespace Demonology;
+
+namespace
+{
+    // Wrath of the Legion chain budget per living Wild Imp (guid -> remaining spawns it may
+    // trigger). Wild imps are short-lived so this stays tiny; swept on each fresh cast.
+    std::unordered_map<ObjectGuid, uint8> g_impChain;
+
+    // Re-entrancy guard: an Improved Wild Imps "2nd target" rebound Firebolt must not itself
+    // roll iwi/wotl (that would chain without bound). Set around the triggered rebound cast.
+    bool g_fireboltRebound = false;
+
+    // Summon one owned Wild Imp with full setup (owner attribution, inheritance, guardian AI)
+    // and record its wotl chain budget. Shared by Summon Wild Imps and wotl's extra-imp spawn.
+    Creature* SummonOneWildImp(Player* owner, Unit* target, float x, float y, float z,
+                               uint32 durationMs, uint8 chainBudget)
+    {
+        TempSummon* imp = owner->SummonCreature(NPC_WILD_IMP, x, y, z, owner->GetOrientation(),
+            TEMPSUMMON_TIMED_DESPAWN, durationMs);
+        if (!imp)
+            return nullptr;
+
+        imp->SetOwnerGUID(owner->GetGUID());
+        imp->SetCreatorGUID(owner->GetGUID());              // client attributes its damage to the owner
+        imp->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);      // shows in the owner's combat log / floating text
+        imp->SetFaction(owner->GetFaction());
+        imp->SetLevel(owner->GetLevel());
+        imp->SetReactState(REACT_PASSIVE);                  // no auto-aggro; the AI drives targeting
+        PetScaling::ApplyInheritance(owner, imp);
+        imp->AIM_Initialize(new Demonology::GuardianAttackerAI(
+            imp, /*autoAssist=*/true, SPELL_WILD_IMP_FIREBOLT, /*castCooldownMs=*/2000));
+        g_impChain[imp->GetGUID()] = chainBudget;
+        if (target && imp->IsAlive() && imp->AI())
+            imp->AI()->AttackStart(target);
+        return imp;
+    }
+
+    // Drop chain-budget entries whose imp is gone (called each Summon Wild Imps cast).
+    void SweepImpChain(WorldObject const& ref)
+    {
+        for (auto it = g_impChain.begin(); it != g_impChain.end();)
+            it = ObjectAccessor::GetCreature(ref, it->first) ? std::next(it) : g_impChain.erase(it);
+    }
+}
 
 class spell_demonology_summon_wild_imps : public SpellScript
 {
     PrepareSpellScript(spell_demonology_summon_wild_imps);
 
-    // Path B: Summon Wild Imps costs Soul Shards (Improved Legion trims the cost).
-    // Block the cast up-front if the player can't afford it, so no shard is wasted.
+    // Path B: Summon Wild Imps costs 1 Soul Shard (C++) + 30% of base mana. The MANA is a real DBC
+    // cost now (Improved Legion trims it via SPELLMOD_COST) — the core checks/deducts it, so we only
+    // gate the shard here. Block the cast up-front if the player can't afford the shard.
     SpellCastResult CheckCast()
     {
         Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
@@ -59,12 +110,16 @@ class spell_demonology_summon_wild_imps : public SpellScript
         // mirror the owner's victim) and a neutral target flips hostile.
         caster->Attack(target, true);
 
-        // Charge the shards now that the summon is going through (CheckCast already
-        // verified affordability; deduct once, here, not per imp).
+        // Charge the shard now that the summon is going through (CheckCast verified it; the mana
+        // cost is handled by the core from the spell's DBC cost). Deduct once, here, not per imp.
         if (uint32 const cost = Demonology::WildImpShardCost(caster))
             caster->DestroyItemCount(ITEM_SOUL_SHARD, cost, true);
 
         uint32 const count = gConfig.WildImpCount;
+        // Improved Wild Imps (iwi) extends the duration; Wrath of the Legion (wotl) lets each
+        // imp's Firebolt spawn more, capped by the per-imp chain budget seeded here.
+        uint32 const dur = gConfig.WildImpDurationMs + Demonology::ImprovedWildImpsDurationMs(caster);
+        SweepImpChain(*caster);
 
         for (uint32 i = 0; i < count; ++i)
         {
@@ -73,30 +128,7 @@ class spell_demonology_summon_wild_imps : public SpellScript
             float const x = caster->GetPositionX() + std::cos(angle) * dist;
             float const y = caster->GetPositionY() + std::sin(angle) * dist;
             float const z = caster->GetPositionZ();
-
-            TempSummon* imp = caster->SummonCreature(NPC_WILD_IMP, x, y, z, caster->GetOrientation(),
-                TEMPSUMMON_TIMED_DESPAWN, gConfig.WildImpDurationMs);
-            if (!imp)
-                continue;
-
-            imp->SetOwnerGUID(caster->GetGUID());
-            imp->SetCreatorGUID(caster->GetGUID());   // client attributes its damage to the owner
-            imp->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);   // shows in the owner's combat log / floating text
-            imp->SetFaction(caster->GetFaction());
-            imp->SetLevel(caster->GetLevel());
-            imp->SetReactState(REACT_PASSIVE);   // no auto-aggro; the AI drives targeting
-
-            // Stat inheritance (Phase 6): scale health/melee off the owner. Firebolt
-            // damage itself scales live at cast time (see the Firebolt SpellScript).
-            PetScaling::ApplyInheritance(caster, imp);
-
-            // No-evade guardian AI, autoAssist + ranged caster: holds at cast range
-            // and casts Firebolt (290900) on the target (hostile OR neutral), and
-            // once its target dies re-engages whatever the owner is fighting.
-            imp->AIM_Initialize(new Demonology::GuardianAttackerAI(
-                imp, /*autoAssist=*/true, SPELL_WILD_IMP_FIREBOLT, /*castCooldownMs=*/2000));
-            if (imp->IsAlive() && imp->AI())
-                imp->AI()->AttackStart(target);
+            SummonOneWildImp(caster, target, x, y, z, dur, gConfig.WrathOfTheLegionMaxChainsPerCast);
         }
     }
 
@@ -126,15 +158,102 @@ class spell_demonology_wild_imp_firebolt : public SpellScript
             return;
 
         // Base SP contribution; Vicious Pact / Fel Armory scale the whole hit in the
-        // demonology_demon_damage UnitScript (uniform for pet + legionnaires + imps).
-        int32 const bonus = int32(float(PetScaling::OwnerSpellPower(owner)) * gConfig.WildImpSPCoefficient);
+        // demonology_demon_damage UnitScript. Wild Imps (temporary burst) and Imp legionnaires
+        // (permanent) both cast this Firebolt but scale off SEPARATE coefficients, so each can be
+        // tuned without touching the other (distinguished by creature entry).
+        float const coef = (caster->GetEntry() == NPC_WILD_IMP)
+            ? gConfig.WildImpSPCoefficient : gConfig.ImpLegionnaireSPCoefficient;
+        int32 const bonus = int32(float(PetScaling::OwnerSpellPower(owner)) * coef);
+        if (bonus > 0)
+            SetHitDamage(GetHitDamage() + bonus);
+
+        // Improved Wild Imps / Wrath of the Legion only roll on a real Firebolt — never on the
+        // iwi rebound (it's a triggered copy of this same spell, which would chain unbounded).
+        if (g_fireboltRebound)
+            return;
+
+        Unit* primary = GetHitUnit();
+
+        // iwi: chance for the bolt to also strike a 2nd enemy near the primary target.
+        if (primary)
+            if (float const ch = Demonology::ImprovedWildImpsSecondTargetChance(owner))
+                if (roll_chance_f(ch * 100.0f))
+                {
+                    std::list<Unit*> nearby;
+                    Acore::AnyUnfriendlyUnitInObjectRangeCheck check(primary, owner, 8.0f);
+                    Acore::UnitListSearcher<Acore::AnyUnfriendlyUnitInObjectRangeCheck> searcher(primary, nearby, check);
+                    Cell::VisitObjects(primary, searcher, 8.0f);
+                    for (Unit* u : nearby)
+                        if (u && u != primary && u->IsAlive())
+                        {
+                            g_fireboltRebound = true;
+                            caster->CastSpell(u, SPELL_WILD_IMP_FIREBOLT, true);
+                            g_fireboltRebound = false;
+                            break;
+                        }
+                }
+
+        // wotl: chance for the Firebolt to spawn an extra Wild Imp, bounded by this imp's
+        // chain budget (so spawned imps can only chain a limited number of times per cast).
+        if (float const ch = Demonology::WrathOfTheLegionSpawnChance(owner))
+        {
+            auto it = g_impChain.find(caster->GetGUID());
+            uint8 const budget = (it != g_impChain.end()) ? it->second : 0;
+            if (budget > 0 && roll_chance_f(ch * 100.0f))
+            {
+                // Each Wrath of the Legion bonus imp drains a slice of the owner's BASE mana on
+                // spawn — a throttle so the Firebolt-proc chain can't snowball for free. No mana,
+                // no bonus imp.
+                uint32 const manaCost = uint32(float(owner->GetCreateMana()) * (gConfig.WrathOfTheLegionManaCostPct / 100.0f));
+                if (owner->GetPower(POWER_MANA) < manaCost)
+                    return;
+                if (manaCost)
+                    owner->ModifyPower(POWER_MANA, -int32(manaCost));
+
+                uint32 const dur = gConfig.WildImpDurationMs + Demonology::ImprovedWildImpsDurationMs(owner);
+                float const x = caster->GetPositionX() + frand(-2.0f, 2.0f);
+                float const y = caster->GetPositionY() + frand(-2.0f, 2.0f);
+                SummonOneWildImp(owner, primary, x, y, caster->GetPositionZ(), dur, uint8(budget - 1));
+            }
+        }
+    }
+
+    void Register() override
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_demonology_wild_imp_firebolt::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
+    }
+};
+
+// Per-type legionnaire SIGNATURES (Felguard Cleave / Felhunter Shadow Bite / Succubus Lash) —
+// the melee legionnaire's periodic identity ability. Like the Wild Imp Firebolt, a plain
+// legionnaire creature gets no owner SP from the core, so we add owner_SP x per-type coefficient
+// live at cast; Vicious Pact / Fel Armory then scale the whole hit in the demon_damage hook.
+class spell_demonology_legion_signature : public SpellScript
+{
+    PrepareSpellScript(spell_demonology_legion_signature);
+
+    void HandleDamage(SpellEffIndex /*effIndex*/)
+    {
+        Unit* caster = GetCaster();
+        Player* owner = caster ? Demonology::WarlockOwnerOfDemon(caster) : nullptr;
+        if (!owner)
+            return;
+        float coef = 0.0f;
+        switch (GetSpellInfo()->Id)
+        {
+            case SPELL_FELGUARD_CLEAVE:      coef = gConfig.FelguardCleaveSPCoef;      break;
+            case SPELL_FELHUNTER_SHADOWBITE: coef = gConfig.FelhunterShadowBiteSPCoef; break;
+            case SPELL_SUCCUBUS_LASH:        coef = gConfig.SuccubusLashSPCoef;        break;
+            default: return;
+        }
+        int32 const bonus = int32(float(PetScaling::OwnerSpellPower(owner)) * coef);
         if (bonus > 0)
             SetHitDamage(GetHitDamage() + bonus);
     }
 
     void Register() override
     {
-        OnEffectHitTarget += SpellEffectFn(spell_demonology_wild_imp_firebolt::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
+        OnEffectHitTarget += SpellEffectFn(spell_demonology_legion_signature::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
     }
 };
 
@@ -180,8 +299,8 @@ class spell_demonology_summon_legionnaire : public SpellScript
             ChatHandler(caster->GetSession()).SendSysMessage("You must train Summon Felguard first.");
             return SPELL_FAILED_DONT_REPORT;
         }
-        if (caster->GetItemCount(ITEM_SOUL_SHARD) < gConfig.SummonLegionnaireShardCost)
-            return SPELL_FAILED_REAGENTS;
+        // Soul Shard cost is now a native DBC Reagent (like the anchor pet summons) — the core
+        // checks it here and consumes it on cast, so no C++ shard handling.
         return SPELL_CAST_OK;
     }
 
@@ -202,9 +321,7 @@ class spell_demonology_summon_legionnaire : public SpellScript
         // the legion, so it's always the first casualty (per playtest).
         pool.DespawnGreaterDemon(caster);
 
-        if (pool.Recruit(caster, entry))                        // spawn + inherit + add (evicts oldest if full)
-            if (gConfig.SummonLegionnaireShardCost > 0)
-                caster->DestroyItemCount(ITEM_SOUL_SHARD, gConfig.SummonLegionnaireShardCost, true);
+        pool.Recruit(caster, entry);                            // spawn + inherit + add (evicts oldest if full); Soul Shard consumed by the core reagent
     }
 
     void Register() override
@@ -248,10 +365,26 @@ class spell_demonology_summon_greater_demon : public SpellScript
         Demonology::SummonGreaterDemon(caster, entry);     // shared with the cross-map restore
     }
 
+    // Beacon of Ruin (bor): trim the summon cooldown by a fraction of its base. SendSpellCooldown
+    // has already applied the DBC cooldown by AfterCast, so we subtract (base × bor) off it.
+    void HandleAfterCast()
+    {
+        Player* caster = GetCaster() ? GetCaster()->ToPlayer() : nullptr;
+        if (!caster)
+            return;
+        if (float const frac = Demonology::BeaconOfRuinCdReduction(caster))
+        {
+            uint32 const baseCd = GetSpellInfo()->RecoveryTime;
+            if (baseCd)
+                caster->ModifySpellCooldown(GetSpellInfo()->Id, -int32(float(baseCd) * frac));
+        }
+    }
+
     void Register() override
     {
         OnCheckCast += SpellCheckCastFn(spell_demonology_summon_greater_demon::CheckCast);
         OnEffectHit += SpellEffectFn(spell_demonology_summon_greater_demon::HandleSummon, EFFECT_0, SPELL_EFFECT_DUMMY);
+        AfterCast += SpellCastFn(spell_demonology_summon_greater_demon::HandleAfterCast);
     }
 };
 
@@ -297,9 +430,12 @@ Creature* Demonology::SummonGreaterDemon(Player* owner, uint32 entry)
         demon->SetObjectScale(gConfig.InfernalScale);
 
     if (isDoomguard)
+        // Doomguard = single-target nuke: pure Doom Bolt caster.
         demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true, SPELL_DOOM_BOLT, /*castCooldownMs=*/3000));
     else
-        demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true));
+        // Infernal = AoE/tank: melees AND pulses its fire nova (290503, source-area) on cooldown.
+        demon->AIM_Initialize(new Demonology::GuardianAttackerAI(demon, /*autoAssist=*/true, 0, 2000,
+            SPELL_INFERNAL_COMMAND_PULSE, gConfig.InfernalPulseCooldownMs));
 
     // Engage the owner's current foe immediately; else follow so it isn't left idle.
     Unit* target = owner->GetVictim();
@@ -423,6 +559,7 @@ void AddSC_demonology_summon_spells()
 {
     RegisterSpellScript(spell_demonology_summon_wild_imps);
     RegisterSpellScript(spell_demonology_wild_imp_firebolt);
+    RegisterSpellScript(spell_demonology_legion_signature);
     RegisterSpellScript(spell_demonology_summon_legionnaire);
     RegisterSpellScript(spell_demonology_summon_greater_demon);
     RegisterSpellScript(spell_demonology_doom_bolt);

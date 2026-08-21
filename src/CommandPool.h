@@ -15,6 +15,7 @@
 #include "Define.h"
 #include "ObjectGuid.h"
 
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -105,6 +106,16 @@ namespace Demonology
         uint32 RebirthReadyInMs() const;        // ms until Demonic Rebirth can proc again (0 = ready)
         uint32 BloodBuffReadyInMs() const;      // ms until the Bound by Blood buff can proc again (0 = ready)
 
+        // Doombrand (§6) accumulator state (one brand at a time — the 20s CD enforces it).
+        // BrandApply sets the target and zeroes the store; the demon-damage hook feeds
+        // BrandAdd (clamped to the SP-scaled cap); the detonation AuraScript reads
+        // BrandStored/BrandTarget and calls BrandClear.
+        void BrandApply(ObjectGuid target)      { _brandTarget = target; _brandStored = 0.0f; }
+        void BrandClear()                        { _brandTarget.Clear(); _brandStored = 0.0f; }
+        ObjectGuid BrandTarget() const           { return _brandTarget; }
+        float BrandStored() const                { return _brandStored; }
+        void BrandAdd(float amount, float cap)   { _brandStored = std::min(cap, _brandStored + amount); }
+
         // Eternal Servitude REMOVES the vanilla Inferno/Ritual of Doom (which are quest-
         // learned) and REMEMBERS them, so a respec restores only what we took — never
         // granting them to a warlock who never had them.
@@ -121,6 +132,7 @@ namespace Demonology
         std::vector<ObjectGuid> _legionnaires;                             // oldest -> newest
         uint32 _mirrorTimer = 0;
         int32 _lastAppliedSP = -1;                                         // owner SP at last inheritance re-sync
+        uint32 _forceResyncUntil = 0;                                      // getMSTime deadline: force inheritance re-sync (a fresh recruit's summon-time scaling can be clobbered by core stat-init)
         ObjectGuid _followTargetGuid;                                      // last follow target (re-issue on change)
         size_t _lastFormationCount = 0;                                    // roster size at last formation re-fan
         bool _reconcileTalents = false;                                    // deferred Felguard-spell re-sync (respec)
@@ -142,6 +154,10 @@ namespace Demonology
         std::vector<uint32> _pendingRebirth;
         uint32 _rebirthReadyAtMs = 0;
         bool _lastLegionBuffActive = false;                                // for one refresh after a bbb window lapses
+
+        // Doombrand (§6): the branded target + damage stored toward the detonation.
+        ObjectGuid _brandTarget;
+        float _brandStored = 0.0f;
     };
 
     class CommandPoolMgr

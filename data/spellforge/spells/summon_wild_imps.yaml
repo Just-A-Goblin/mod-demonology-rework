@@ -2,18 +2,33 @@
 # target and a standard 30yd range (cloned from Shadow Bolt for those defaults).
 # The C++ script (spell_demonology_summon_wild_imps) engages the target so the
 # whole legion responds, then summons 3 Wild Imp guardians onto it for 20s (PLAN §5).
-# TODO(cleanup): cloning Shadow Bolt also inherits its projectile SpellVisual, so
-# the cast fires a (harmless, no-damage) shadowbolt. Suppress it later with a
-# `visual:` override (clear the missile) or by clearing SpellVisual — deferred to
-# avoid a client-patch cycle for a cosmetic.
 key: demonology.summon_wild_imps
 clone_from: 686                 # Shadow Bolt — enemy target, 30yd range, shadow school
+icon: "Spell_Shadow_DarkSummoning"   # the Track Undead icon (dark summoning circle)
 name: Summon Wild Imps
-description: "Hurls imps at the enemy: summons 3 Wild Imps to attack the target for 20 sec."
+rank: ""                             # single-rank ability — no "Rank 1" label (clears the cloned rank)
+description: "Hurls imps at the enemy: summons 3 Wild Imps to attack the target for 20 sec. Costs 1 Soul Shard and 30% of base mana (reduced by Improved Legion)."
 cast_time: 0s
 cooldown: 6s
 range: 30yd
+# Replace Shadow Bolt's cast+projectile SpellVisual with a standard instant shadow cast (Corruption,
+# 172) — a shadow flourish on the target, NO flying shadow bolt (the cloned 686 missile was off-theme
+# for a summon). copy_from swaps the whole SpellVisual; school/family/effects are unchanged.
+visual: {copy_from: 172}
+# Mana cost = 30% of BASE mana (scales with level), enforced/shown by the core. The Soul Shard cost
+# stays C++ (1, fixed). Improved Legion reduces THIS mana via a real SPELLMOD_COST (see the il node).
+power: {type: mana, percent_of_base: 30}
+# OWN family bit (replaces the Shadow Bolt bit0 inherited from the 686 clone): claiming a fresh
+# warlock SpellFamilyFlags bit means Fel Conduit's instant/free modifier (masked to Shadow Bolt's
+# bit0) NO LONGER matches this spell — so casting it doesn't burn a charge — WITHOUT needing
+# IGNORE_CASTER_MODIFIERS. That in turn lets Improved Legion's SPELLMOD_COST (masked to this same
+# bit) reduce the cost properly and show it in the tooltip.
+family: warlock
+family_bits: [demonology.summon_wild_imps]
 effects:
   - {effect: dummy, target_a: unit_target_enemy}
 server:
   script: spell_demonology_summon_wild_imps
+learn:
+  class: warlock
+  skill_line: 354   # sit in the DEMONOLOGY spellbook tab (was defaulting to General)

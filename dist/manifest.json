@@ -1,19 +1,19 @@
 {
   "artifacts": {
-    "dbc/SkillLineAbility.dbc": "4e4a4002b55ff8b73db89e0275061a0d719783e236bdf9855269b1c9f7fd27bd",
-    "dbc/Spell.dbc": "36c9b0b612ff743aa23d0cc244918c3d4b8f71703292315856c54f4853e5eb8c",
-    "dbc/Talent.dbc": "322e1e31594624e032746de2d3c041f26875bf0a4f3f9911d1f0f1f1f7d6aeae",
+    "dbc/SkillLineAbility.dbc": "18333fd0fb8a48d5d8964713889dd503e9a9f19a4c362cc716e2116510a9efac",
+    "dbc/Spell.dbc": "7238148156ec6b0130d0aa8fa3f68214784cf71288dafa207e246d5454e57f3d",
+    "dbc/Talent.dbc": "bf6b67017728c9c244e9e3757d2eae1f0abd1c71b46710553029f1f93002d285",
     "dbc/TalentTab.dbc": "4b32ea0dcf5b89aeead630d21996546b4c84123c224448dab666ef57a3299644",
-    "mpq/patch-6.MPQ": "028e413e6ee575b41093bbab2631a31204cdc4f8cd89cc95a077070d67b41dad",
-    "sql/db-characters/91_cleanup_characters.sql": "8cdeffe9ff5127b043cdf7a363bfdfe22f5f363be34e3022237c0765fae8f6a1",
-    "sql/db-world/00_spell_dbc.sql": "372d1f6458f8c446a8a403ed4343ee512305e4a960808afcfc28b5180a47a247",
-    "sql/db-world/10_spell_ranks.sql": "91f2bc40d839e89276836c48a87ff30f580e5dfb0a25e41a2b0e85eb03ab7976",
-    "sql/db-world/11_spell_bonus_data.sql": "122b71378576849fc587385e7ad42f1de60fd5cc5491fed182d59ae5d1aa96d6",
-    "sql/db-world/12_spell_proc.sql": "562f5cdca9be163df1f6858de22ff0cf4f2167c7d20a8d8ca8491a11c72d761a",
-    "sql/db-world/13_spell_linked_spell.sql": "57a099e85ce4f6b5b18476bd922ef45598e63885fca8507a292e2ac3b0f3c137",
-    "sql/db-world/14_spell_script_names.sql": "41a54a828ae684949045ae8b8f84ac847956f8d3682b116d0570c40da84f626b",
-    "sql/db-world/20_trainer_spell.sql": "49b2fb98bbb936548cdf411cdc61c2015d1747118e04dade173bfaf01c3c3c99",
-    "sql/db-world/90_cleanup.sql": "b8e3f51a91b886b8776a13e091c60594031db9bf3cf1cf2fffa1417c2f84b454"
+    "mpq/patch-6.MPQ": "0d3b6f9294fdfdd5d23765dcf26ab1eada9d86638b0c016b6e1db0b8219fdbe2",
+    "sql/db-characters/91_cleanup_characters.sql": "e4d32bd17eaaee566b7ad029c7f3777e4499dc22c96b3b1b4073bb00fabb4ac0",
+    "sql/db-world/00_spell_dbc.sql": "6e952d1c93ae52fdc33a206d73832ea326af3edd7373dd442ca154cd1b6e9697",
+    "sql/db-world/10_spell_ranks.sql": "9b6444f17287963baf910bf26927e232ac65fcab3b3995dcc3cb0d664882a0a7",
+    "sql/db-world/11_spell_bonus_data.sql": "f35bc6de8ab16d01bd433af5f150344442994510cc572fa3bd062f929c81e2ad",
+    "sql/db-world/12_spell_proc.sql": "654015e6c01991ed8432bbc82ea54710af610a8ed437a41b42adba6157ca89c6",
+    "sql/db-world/13_spell_linked_spell.sql": "8adef67d1591c75435d8f45ac79bcfd2bacb52cc8ea1a76a45c428d1b88269b0",
+    "sql/db-world/14_spell_script_names.sql": "e70ebdd23d9d62abaa1bd37b4ca21f97c5a60139730ca3d88e67e8e7ed209dcb",
+    "sql/db-world/20_trainer_spell.sql": "f31d3ef6e8ac1f588b9b4f68eca7b8b93d4f2eba24d5e6d0cfce09792700ef2e",
+    "sql/db-world/90_cleanup.sql": "3aebabcad5b465e644aeb2be4c30aa1707d329a9724a728ad3db65f06d1dc8d3"
   },
   "base_hash": "f450a06d55ad2bbba47a6b98ff18ab7dbeb1fa5ce7950e64d07c7e68c0dc6ae1",
   "index_rows_created": {
@@ -45,6 +45,24 @@
       "tier": "A"
     },
     {
+      "id": 290014,
+      "key": "demonology.doombrand",
+      "name": "Doombrand",
+      "tier": "A"
+    },
+    {
+      "id": 290504,
+      "key": "demonology.doombrand_debuff",
+      "name": "Doombrand",
+      "tier": "A"
+    },
+    {
+      "id": 290505,
+      "key": "demonology.doombrand_detonation",
+      "name": "Doombrand Detonation",
+      "tier": "A"
+    },
+    {
       "id": 290502,
       "key": "demonology.empowered_lash_of_pain",
       "name": "Empowered Lash of Pain",
@@ -57,9 +75,51 @@
       "tier": "A"
     },
     {
+      "id": 290511,
+      "key": "demonology.fel_conduit",
+      "name": "Fel Conduit",
+      "tier": "A"
+    },
+    {
+      "id": 290513,
+      "key": "demonology.felguard_cleave",
+      "name": "Felguard Cleave",
+      "tier": "A"
+    },
+    {
+      "id": 290514,
+      "key": "demonology.felhunter_shadowbite",
+      "name": "Shadow Bite",
+      "tier": "A"
+    },
+    {
+      "id": 290517,
+      "key": "demonology.fervent_standard_icon",
+      "name": "Fervent Standard",
+      "tier": "A"
+    },
+    {
+      "id": 290510,
+      "key": "demonology.grim_bargain_demon",
+      "name": "Grim Bargain",
+      "tier": "A"
+    },
+    {
+      "id": 290509,
+      "key": "demonology.grim_bargain_owner",
+      "name": "Grim Bargain",
+      "tier": "A"
+    },
+    {
       "id": 290503,
       "key": "demonology.infernal_command_pulse",
       "name": "Infernal Command Pulse",
+      "tier": "A"
+    },
+    {
+      "id": 290512,
+      "key": "demonology.riftwalker_haste",
+      "name": "Riftwalker",
       "tier": "A"
     },
     {
@@ -78,6 +138,12 @@
       "id": 290012,
       "key": "demonology.soul_harvest_r3",
       "name": "Soul Harvest",
+      "tier": "A"
+    },
+    {
+      "id": 290515,
+      "key": "demonology.succubus_lash",
+      "name": "Lash of Pain",
       "tier": "A"
     },
     {
@@ -129,6 +195,12 @@
       "tier": "A"
     },
     {
+      "id": 290516,
+      "key": "demonology.vital_conduit_heal",
+      "name": "Vital Conduit",
+      "tier": "A"
+    },
+    {
       "id": 290506,
       "key": "demonology.voidwalker_command_shield",
       "name": "Voidwalker Command Shield",
@@ -138,6 +210,12 @@
       "id": 290507,
       "key": "demonology.voidwalker_consume_shadows",
       "name": "Consume Shadows",
+      "tier": "A"
+    },
+    {
+      "id": 290508,
+      "key": "demonology.warded_legion",
+      "name": "Warded Legion",
       "tier": "A"
     },
     {

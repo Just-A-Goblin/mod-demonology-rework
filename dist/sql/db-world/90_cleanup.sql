@@ -1,5 +1,5 @@
 -- spellforge generated world cleanup for retired spells
--- generated: 2026-08-19T15:03:10Z  commit: n/a
+-- generated: 2026-08-21T00:41:25Z  commit: n/a
 -- DO NOT EDIT — regenerate with `sf build`
 
 DELETE FROM `spell_bonus_data`    WHERE `entry`    IN (200000);

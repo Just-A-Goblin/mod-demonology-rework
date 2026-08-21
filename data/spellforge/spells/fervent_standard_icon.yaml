@@ -1,0 +1,21 @@
+# Fervent Standard (fs) — cosmetic buff icon on the warlock AND each commanded demon while inside
+# the Demonic Circle's radius. Carries NO math: all of fs's damage/mitigation is direct range checks
+# in C++ (FerventStandard.h). Cloned from Demonic Empowerment (47193) for a clean aura shell.
+#   - INFINITE duration (-1): the icon shows no countdown timer and just "sits there" while present,
+#     so it reads as an aura emanating from the circle. A light C++ ticker adds it on entering the
+#     radius and removes it on leaving (per unit) — but it never re-applies while present, so nothing
+#     flickers or refreshes.
+#   - visual.copy_from 6788 (Weakened Soul, SpellVisualID [0,0]) strips 47193's fel SpellVisual, so
+#     this is a pure buff-bar icon with no world animation (no cast, no over-head skull/flame).
+key: demonology.fervent_standard_icon
+clone_from: 47193
+icon: "Spell_Shadow_DemonicCircleTeleport"
+name: "Fervent Standard"
+description: "Within the Legion's standard: you and your demons fight harder."
+duration: "-1ms"
+visual: {copy_from: 6788}
+# A 0%-magnitude mod_damage_percent_done (aura 79) — same visible aura type as the working Grim
+# Bargain owner buff (290509), so the client is guaranteed to draw the icon. Amount 0 = no gameplay
+# effect (all of fs's real math is the C++ range checks); this effect exists ONLY to carry the icon.
+effects:
+  - {effect: apply_aura, aura: mod_damage_percent_done, base_points: 0, target_a: unit_caster}

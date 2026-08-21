@@ -1,10 +1,16 @@
 # Demonology Rework — Design & Implementation Doc (v2)
 
 **Module:** `mod-demonology-rework` (AzerothCore 3.3.5a, solo server + playerbots)
-**As of:** 2026-08-18
+**As of:** 2026-08-20
 **Supersedes:** DEMONOLOGY_IMPLEMENTATION_STATUS.md (v1)
-**Audience:** implementation by Claude Code. Every ⬜ item is specified to buildable
-detail; open questions are quarantined in §12 and nothing in §12 blocks Phases 1–6.
+**Audience:** implementation by Claude Code.
+
+> **STATUS: COMPLETE & LIVE (2026-08-20).** All 36 talent nodes, both baseline abilities, the
+> Command Demon and Doombrand capstones, and every subsystem are built, deployed, and playtested.
+> A balance pass (FLATTEN) has been applied. This doc has been synced to the shipped module — the
+> `⬜` "not implemented" markers below in §2.2 / §3 are historical (everything there is now built).
+> The always-current node audit is `DEMONOLOGY_STATUS.md`; balance is `docs/balance_model.py` +
+> the balance-model memory. Remaining work is validation only (real 60/80 combat parses).
 
 Legend: ✅ implemented & in-game · 🟡 partial · ⬜ approved design, not implemented ·
 🔶 pending a decision in §12.
@@ -47,21 +53,22 @@ Legend: ✅ implemented & in-game · 🟡 partial · ⬜ approved design, not im
 | Stat inheritance (PetScaling) | %owner HP; SP-derived melee; live re-apply. All owned demons. |
 | Demon damage scaling hook | Talent multipliers applied at hit time to any warlock-owned demon. **Doombrand's accumulator and Pactbound Fury's crit roll both live here (§5, §4).** |
 | Shard economy (Soul Harvest) | Per-player ICD generation on demon damage. Retained under Path B. |
-| Hybrid-learn | Talent/known-pet → summon spells in Demonology tab; removed on respec. |
+| Hybrid-learn | Talent/known-pet → summon spells in Demonology tab; removed on respec. (Applies to the LEGIONNAIRE summons + Command Demon + Doombrand only — those are talent-granted.) |
 | Greater demons | Infernal (2 slots) / Doomguard (3 slots); SP-scaled Doom Bolt/Blast. |
 | Persistence | Legionnaires survive logout (health%); stash on death/mount. Greater demons do NOT persist (see §11). |
-| Demonic Empowerment | Buffs pet + legionnaires + wild imps + active greater demon. |
+| Demonic Empowerment | Buffs pet + legionnaires + wild imps + active greater demon. **TRAINER-taught @ level 50** (warlock trainer 31/32, base SQL `33_baseline_trainer_spells.sql`; matches live WoW's mid-50s). |
+| Summon Wild Imps | Path B core active. **TRAINER-taught @ level 10** (warlock trainer 31/32). Rank-less single ability. Learn = trainers or talents ONLY — no hybrid/level-auto for these two (user directive). |
 | `.legion` GM tooling | pool/dumpstats/recruit/dismiss/summon/shards. Extensions in §5.7, §6.6. |
 | Client tree render | 36 nodes via `DemoTalentFix` addon. |
 
-### 2.2 New systems (⬜, this doc is the spec)
+### 2.2 New systems (all ✅ BUILT & live — this section was the original spec)
 
 | System | Spec | Consumed by |
 |---|---|---|
 | **Command Demon** (dispatch: anchor signature + per-type echoes + greater-demon responses) | §5 | dc talent; signature identity |
 | **Doombrand** (brand → army charges sigil → detonation) | §6 | gwd capstone |
 | **Path B shard costs** (actives spend shards) | §7 | il, cm, bbb re-reads |
-| **`OnPoolChanged` owner-aura driver** | §8.1 | op, gwd's Legion Aura rider, cv owner half |
+| **`OnPoolChanged` owner-aura driver** | §8.1 | op, cv owner half |
 | **Demon-death event hook** | §8.2 | dr, bbb |
 | **Signature autocast wiring** | §8.3 | per-type demon feel; future signature talents |
 | **Enthralling Presence** (succubus signature) | §5.5 | Command Demon |
@@ -69,6 +76,9 @@ Legend: ✅ implemented & in-game · 🟡 partial · ⬜ approved design, not im
 ---
 
 ## 3. Spell & creature ID registry
+
+> All IDs below are BUILT and in `data/spellforge/ids.yaml` (the live allocation). The `⬜` marks
+> here are historical. Redesigns added: `290516` Vital Conduit heal, `290517` Fervent Standard icon.
 
 **Player spells (29001x block):**
 - `290000` Demonic Empowerment · `290001` Summon Wild Imps
@@ -105,58 +115,58 @@ versions unlock at known-pet + Expanded Command.
 
 ---
 
-## 4. Talent tree — 36 nodes, updated statuses & redesigns
+## 4. Talent tree — 36 nodes (ALL ✅ implemented & live)
 
-Tree: 11 tiers, layout `[4,3,4,3,4,3,4,4,3,3,1]`, 78 points, tab 303. Marker = rank-1
-spell read via `HasTalent`. **Redesigned effects below are the approved versions** —
-where v1 said "blocked," the new effect is normative.
+Tab 303, 78 points, marker = rank-1 spell read via `HasTalent`. **The tree was RESHUFFLED
+2026-08-20** — current per-tier layout `[4,3,4,3,4,3,4,4,2,4,1]` (node counts) after moving the
+Soul Harvest cluster to T3, Fel Armory to T1, and Beacon of Ruin to T10. Effects/columns below are
+the SHIPPED versions; `docs/balance_model.py` carries the balance numbers (FLATTEN pass applied).
 
-| Tier | Talent | key | Ranks | Marker | Status | Effect (current design) |
+| Tier | Talent | key | Ranks | Marker | Status | Effect (shipped) |
 |---|---|---|---|---|---|---|
 | T1 | Fel Conditioning | fc | 5/10/15% | 290904 | ✅ | Demon health %. |
-| T1 | Improved Legion | il | 1 | 290902 | ⬜ | Legionnaire summons cast 0.5s faster; **Summon Wild Imps costs 1 less shard** (Path B rework — resummon cost can't absorb a reduction without hitting 0). |
-| T1 | Soul Harvest | sh | R1–3 | — | ✅ | Shard generation on demon damage. Retained (Path B). |
-| T1 | Cursed Vitality | cv | 3/6% | 290907 | 🟡 | Demon stamina→health ✅; owner +3/6% stamina ⬜ (owner-aura, §8.1). |
-| T2 | Rapid Conjuration | rc | 1/2/3 | 290909 | ⬜ | Summon cast −1.5/3/4.5s; R3 castable moving. |
-| T2 | Cruel Master | cm | 1/2 | 290915 | ⬜ | Demon crits double Soul Harvest proc chance / reduce its ICD. Real throughput under Path B. |
-| T2 | Fel Armory | fa | 5/10/15% | 290912 | ✅ | +demon damage under Fel Armor. |
-| T3 | Expanded Command | ec | +1 | 290922 | ✅ | +1 slot. |
-| T3 | Vital Conduit | vc | 20/40% | 290923 | ⬜ | **Promoted from blocked:** hook the existing Health Funnel chain (`755`) via Spell/AuraScript — +efficiency, no self-damage while channeling. No new ability needed. |
-| T3 | Pactbound Fury | pf | 2/4/6% | 290917 | ⬜ | **Solved in the damage hook:** roll talent crit chance at hit time, multiply damage, flag the log entry as crit. No creature-crit setter needed. |
-| T3 | Fel Blood | fb | 15/30% | 290920 | ⬜ | **Redesigned (Fel Lash cut):** succubus Lash of Pain (incl. `290502` echo) +15/30% damage; demon killing blows refresh your Corruption on a nearby target. |
-| T4 | Improved Wild Imps | iwi | 5/10 | 290930 | ⬜ | +imp duration; Firebolt 10/20% chance to hit a 2nd target. |
-| T4 | Shadowflame Legion | sl | 15/30% | 290928 | ⬜ | **Redesigned (HoG cut):** Demonic Empowerment also applies an absorb shield to affected demons (15/30% of the demon's max HP). Part of the Empowerment spine. |
-| T4 | Savage Instincts | si | 4/8/12% | 290925 | 🟡 | Demon melee haste ✅; caster cast-speed half ⬜. |
-| T5 | Expanded Command II | ec2 | +1 | 290932 | ✅ | +1 slot. |
-| T5 | Blood Tithe | bt | 4/8% | 290936 | ⬜ | Demons heal you for % damage dealt (doubled at 3+ demons). |
-| T5 | Warded Legion | wl | 9/18% | 290938 | ⬜ | Demon full spell resist chance; R2 Fear/Charm/Poly immunity. |
-| T5 | Vicious Pact | vp | 8/16/24% | 290933 | ✅ | SP→demon AP + SP→demon spell power. |
-| T6 | Demonic Rebirth | dr | 50/100% | 290940 | ⬜ | On demon death, chance to instantly resummon (60s ICD). Demon-death hook (§8.2). |
-| T6 | Dark Command | dc | 3 ranks | 290942 | ⬜ | **Unblocked by Command Demon:** its CD −5/10/15s; each press grants responding demons a short haste buff. |
-| T6 | Unholy Vigor | uv | 1/2/3 | 290945 | ⬜ | Demonic Empowerment +1/2/3s. |
+| T1 | Improved Legion | il | -15/-30% | 290902 | ✅ | **Mana-efficiency node** (reworked): reduces Summon Wild Imps' mana cost via a real SPELLMOD_COST (needs its own family bit so Fel Conduit can't steal it). No longer cast-time/shard. |
+| T1 | Fel Armory | fa | 5/10/15% | 290912 | ✅ | +demon damage while Demon Skin / Demon Armor / **Fel Armor** is up (first-in-chain check). Melee half is real Attack Power on the anchor pet (shows in the pet tab). |
+| T1 | Cursed Vitality | cv | 3/6% | 290907 | ✅ | Demon stamina→health **and** owner +3/6% stamina (OwnerMods.cpp). Both halves done. |
+| T2 | Vital Conduit | vc | 50/100% | 290923 | ✅ | **REDESIGNED (Addendum A.1):** your Life Tap also heals your commanded demons for 50/100% of the health sacrificed (overheal allowed). Keeps the life-trade flavor. bt's prereq. |
+| T2 | Pactbound Fury | pf | 2/4/6% | 290917 | ✅ | Real demon crit chance (melee outcome roll + spell crit), not an invisible multiply. |
+| T2 | Fel Blood | fb | 15/30% | 290920 | ✅ | Succubus Lash of Pain (echo `290502` + signature `290515` + vanilla chain) +15/30%; demon killing blows refresh your Corruption nearby. |
+| T3 | Expanded Command | ec | +1 | 290922 | ✅ | +1 legionnaire slot. **Fel Conditioning prereq removed** (user). |
+| T3 | Cruel Master | cm | 1/2 | 290915 | ✅ | Demon crits accelerate Soul Harvest (2× proc / −ICD). **Requires Soul Harvest** (T3, left of it). |
+| T3 | Soul Harvest | sh | R1–3 | 290010-12 | ✅ | Shard generation on demon damage (Path B). Moved to **T3**, flanked by cm/rc. Hidden from spellbook (do_not_display). |
+| T3 | Fel Corruption | rc | 33/66/100% | 290909 | ✅ | **REDESIGNED (Addendum A.2, was Rapid Conjuration):** your Corruption's periodic damage counts as demon damage for Soul Harvest + Doombrand (½ weight) at rank effectiveness. **Requires Soul Harvest** (right of it). |
+| T4 | Improved Wild Imps | iwi | 5/10 | 290930 | ✅ | +imp duration; Firebolt 10/20% chance to hit a 2nd target. |
+| T4 | Shadowflame Legion | sl | 15/30% | 290928 | ✅ | Demonic Empowerment also shields affected demons for 15/30% of their max HP (Empowerment spine). |
+| T4 | Savage Instincts | si | 4/8/12% | 290925 | ✅ | Demon melee attack speed **and** casting frequency (caster half scales the AI recast cadence + anchor pet cast-speed). |
+| T5 | Expanded Command II | ec2 | +1 | 290932 | ✅ | +1 legionnaire slot. |
+| T5 | Blood Tithe | bt | 4/8% | 290936 | ✅ | Demons heal you for % damage dealt (doubled at 3+ demons). Requires vc@2. |
+| T5 | Warded Legion | wl | 9/18% | 290938 | ✅ | Demon spell-resist chance; R2 Fear/Charm/Poly immunity. |
+| T5 | Vicious Pact | vp | 8/16/24% | 290933 | ✅ | SP→demon AP + SP→demon spell power. Melee half is real Attack Power on the anchor pet (pet tab). Requires si@3. |
+| T6 | Demonic Rebirth | dr | 50/100% | 290940 | ✅ | On demon death, chance to instantly resummon (60s ICD). |
+| T6 | Dark Command | dc | 3 | 290942 | ✅ | Command Demon CD −5/10/15s; responders get a short haste buff. |
+| T6 | Unholy Vigor | uv | 1/2/3 | 290945 | ✅ | Demonic Empowerment +1/2/3s. |
 | T7 | Summon Felguard | sfg | 1 | 290948 | ✅ | Gates Felguard pet + legionnaire. |
-| T7 | Wrath of the Legion | wotl | 10/20/30% | 290949 | ⬜ | Firebolt chance to summon an extra wild imp. |
-| T7 | Grim Bargain | gb | 6/12% | 290952 | ⬜ | **Redesigned (Grimoire-duplicate cut) as proc synergy:** demon damage has a chance to grant YOU +6/12% damage for 8s; your damage has a chance to grant your demons the same. Proc source = existing damage hook. |
-| T7 | Fervent Standard | fs | 5/10 | 290954 | 🔶 | Pending Legion Standard decision (§12.1). |
-| T8 | Overlord's Presence | op | 2/4/6% | 290956 | ⬜ | Per commanded demon: +owner max HP & haste. Driven by `OnPoolChanged` (§8.1). |
-| T8 | Fel Conduit | fcd | 5/10% | 290959 | ⬜ | Demon attacks proc an instant/free Shadow Bolt (stacking). NOTE: these proc bolts are player damage — they do NOT charge Doombrand or Soul Harvest. |
-| T8 | Riftwalker | rw | 1 | 290961 | 🔶 | **Proposed redesign (Rend Veil cut):** your Demonic Circle: Teleport also warps all commanded demons to your side and grants them +30% move speed for 6s. Uses existing baseline spell; approve in §12.2. |
-| T8 | Cruelty of the Pit | cotp | 5/10/15% | 290962 | ⬜ | Empowered demons +damage (Empowerment spine). |
-| T9 | Bound by Blood | bbb | 15/30% | 290974 | ⬜ | On demon death: others gain damage/haste; you regain a shard ("demon deaths fund your actives" under Path B). Demon-death hook (§8.2). |
-| T9 | Beacon of Ruin | bor | 30/60% | 290969 | ⬜ | **Repurposed (Metamorphosis cut) as the greater-demon talent:** Infernal/Doomguard deal +30/60%... start lower in conf; suggest +15/30% damage and −20/40% summon CD. Natural neighbor to es. |
-| T9 | Ruinous Empowerment | re | 7/14/20% | 290966 | ⬜ | Empowerment grants leech + no-expire chance (spine). |
-| T10 | Legion Commander | lc | +1 | 290971 | ✅ | 3rd slot. |
+| T7 | Wrath of the Legion | wotl | 10/20/30% | 290949 | ✅ | Firebolt chance to spawn an extra Wild Imp (chain-capped); each bonus imp drains 5% base mana on spawn. |
+| T7 | Grim Bargain | gb | 6/12% | 290952 | ✅ | Demon↔owner damage proc synergy (redesigned off the cut Grimoire duplicate). |
+| T7 | Fervent Standard | fs | 4/8% | 290954 | ✅ | **REDESIGNED (Addendum A.3, was Legion Standard):** your Demonic Circle is the legion's banner — within 20yd, you+demons deal +4/8%, demons take −5/10%. Direct range checks vs the circle GameObject; cosmetic icon 290517 on owner+demons. |
+| T8 | Overlord's Presence | op | 2/4/6% | 290956 | ✅ | Per commanded demon: +owner max HP & haste (`OnPoolChanged`). |
+| T8 | Fel Conduit | fcd | 5/10% | 290959 | ✅ | Demon attacks proc an instant/free Shadow Bolt (3 charges). Proc bolts are player damage (don't charge Doombrand/Soul Harvest). |
+| T8 | Riftwalker | rw | 1 | 290961 | ✅ | Demonic Circle: Teleport warps all commanded demons to you + 30% move speed 6s (redesigned off cut Rend Veil). |
+| T8 | Cruelty of the Pit | cotp | 5/10/15% | 290962 | ✅ | Empowered demons +damage (Empowerment spine). |
+| T9 | Bound by Blood | bbb | 15/30% | 290974 | ✅ | On demon death: survivors gain damage/haste; you regain a shard. |
+| T9 | Ruinous Empowerment | re | 7/14/20% | 290966 | ✅ | Empowerment grants leech + no-expire chance (spine). |
+| T10 | Legion Commander | lc | +1 | 290971 | ✅ | +1 (4th) legionnaire slot. |
 | T10 | Eternal Servitude | es | 1 | 290965 | ✅ | Infernal/Doomguard permanent + 60s CD (req lc). |
-| T10 | Supreme Empowerment | se | 3/6 | 290972 | ⬜ | Empowerment affects temp demons + lasts longer (temp part largely done; needs gating/duration). |
-| T11 | Grand Warlock's Design | gwd | 1 | 290976 | ⬜ | **Reworked capstone:** grants **Doombrand** (§6) + Legion Aura rider (party +5% dmg/haste while ≥1 demon commanded; §8.1). Free-first-summon effect CUT (persistence made it vestigial). |
+| T10 | Beacon of Ruin | bor | 15/30% | 290969 | ✅ | Infernal/Doomguard +15/30% damage, −20/40% summon CD. **Moved to T10, requires Eternal Servitude** (no longer a stray inert node in a legionnaire build). |
+| T10 | Supreme Empowerment | se | 3/6 | 290972 | ✅ | Empowerment affects temp demons + lasts longer. Requires re@3. |
+| T11 | Grand Warlock's Design | gwd | 1 | 290976 | ✅ | Capstone: grants **Doombrand** (§6). |
 
 ### Summary
-- **✅ (9):** fc, sh, fa, ec, ec2, vp, sfg, lc, es
-- **🟡 (2):** cv, si
-- **⬜ approved & buildable (23):** il, rc, cm, vc, pf, fb, iwi, sl, bt, wl, dr, dc, uv,
-  wotl, gb, op, fcd, cotp, bbb, bor, re, se, gwd
-- **🔶 pending §12 (2):** fs (Legion Standard), rw (redesign approval)
-- **🔒 (0)** — no talent is blocked on an unbuilt large ability anymore.
+- **✅ All 36 nodes implemented & live.** The three former dead nodes (rc→Fel Corruption, vc,
+  fs→Fervent Standard) were redesigned per Addendum A; il and si were finished; the tree was
+  reshuffled and a FLATTEN balance pass applied. Nothing pending, nothing blocked.
+- **Baseline abilities** (§2.1): Summon Wild Imps (trainer @10) and Demonic Empowerment (trainer @50).
+- Balance: modeled Demo single-target ≈ +30% (60) / +45% (80) over the next spec; AoE weak by design.
 
 ---
 
@@ -323,12 +333,11 @@ Chance not to consume brand; expiry-splash; detonation heals demons (pairs with 
 ## 8. Shared subsystems to build once
 
 ### 8.1 `OnPoolChanged` owner-aura driver
-Currently a stub. Fires on recruit/dismiss/evict/death/login-restore with the new pool
-composition. Consumers: **op** (per-demon owner HP/haste aura), **gwd Legion Aura**
-(party +5% dmg/haste while pool ≥1), **cv owner half** (flat owner stamina — doesn't
-strictly need pool state, but implement in the same owner-aura apply/remove pass).
-Implementation: recompute a single owner aura's amounts from (talent ranks × pool
-count); party aura as a standard 40yd area aura toggled by pool ≥1.
+Built (`OwnerMods`). Fires on recruit/dismiss/evict/death/login-restore with the new pool
+composition. Consumers: **op** (per-demon owner HP/haste aura) and **cv owner half** (flat
+owner stamina — doesn't strictly need pool state, but implemented in the same owner-aura
+apply/remove pass). Implementation: recompute the owner mods' amounts from (talent ranks ×
+pool count) and apply the delta only.
 
 ### 8.2 Demon-death event hook
 One hook on owned-demon death → consumers: **dr** (chance instant resummon, 60s ICD),
@@ -352,8 +361,8 @@ model.
 into it. *Accept:* server reads conf; a value change applies without rebuild.
 
 **Phase 1 — cheap shared hooks + easy talents:**
-Demon-death hook (§8.2) → dr + bbb. `OnPoolChanged` (§8.1) → op + cv owner half +
-Legion Aura groundwork. pf in the damage hook. *Accept:* `.legion dumpstats` shows dr
+Demon-death hook (§8.2) → dr + bbb. `OnPoolChanged` (§8.1) → op + cv owner half.
+pf in the damage hook. *Accept:* `.legion dumpstats` shows dr
 ICD state, op stacks matching pool count; killing a legionnaire procs dr/bbb; pf crits
 appear flagged in logs at talent rate ±1%.
 
@@ -373,11 +382,12 @@ model it **with a fully-charged Doombrand window included** (the brand converts 
 spine multiplier into stored burst). *Accept:* spreadsheet (or conf-comment) of the
 worst-case multiplier stack; all five in conf.
 
-**Phase 5 — Doombrand (§6):**
-Accumulator, aura script, detonation, gauge, tooling. gwd rework (grant `290014` +
-Legion Aura rider on the Phase-1 `OnPoolChanged` work; delete free-summon effect).
-*Accept:* stack gauge tracks charge; death-AoE splits; evade purges without detonating;
-detonation ≈ 1.5–2× Shadow Bolt in the reference window.
+**Phase 5 — Doombrand (§6): ✅ DONE**
+Accumulator, aura script, detonation, `.legion brand` + dumpstats charge line, tooling.
+gwd rework (grants `290014`; Legion Aura rider CUT as unnecessary; free-summon effect
+gone). Charge shown in `.legion dumpstats` (no client stack gauge — SpellForge has no
+stacks field). *Accepted in playtest:* death-AoE splits within 8yd; evade/dispel purges
+without detonating; detonation reads as a real burst at `StorePct 0.50`.
 
 **Phase 6 — remaining ⬜ batches:**
 Summon economy (rc + il cast-time), wl + bt, iwi + wotl (Firebolt script), fcd
@@ -415,14 +425,11 @@ the banked spell slot.
 
 ## 12. Open decisions (do not block Phases 0–6)
 
-1. **Legion Standard** — the banked baseline-spell slot's standing candidate: planted
-   banner = stationary creature entry + area aura on existing guardian plumbing; costs
-   2 shards; unblocks **fs** as written. Decide after Command Demon + Doombrand have
-   been played (the kit may already feel complete, in which case bank the slot
-   permanently and redesign fs, e.g. onto the Legion Aura rider).
-2. **Riftwalker (rw) redesign approval** — proposed: Demonic Circle: Teleport also
-   warps commanded demons to you + demons +30% move speed 6s. Zero new spells (rides
-   baseline Demonic Circle). Approve, tweak, or propose alternative.
+1. **Legion Standard — RESOLVED (banked):** the kit feels complete; the banked baseline
+   slot is NOT spent on a planted banner. Legion Standard is dropped and **fs is to be
+   redesigned** into a smaller self-contained effect (TBD).
+2. **Riftwalker (rw) — RESOLVED (approved as proposed):** Demonic Circle: Teleport also
+   warps commanded demons to you + demons +30% move speed 6s. Building it.
 3. **Taper on/off default** (§10) — decide after first real tuning pass.
 4. **Command Demon off-GCD?** — shipping on-GCD; revisit after Doombrand windows are
    playable (off-GCD makes the opener burstier).

@@ -3,8 +3,6 @@
  */
 #include "OwnerMods.h"
 
-#include "DemonologyConfig.h"
-#include "DemonologyIds.h"
 #include "DemonologyTalents.h"
 
 #include "Player.h"
@@ -18,8 +16,8 @@ namespace Demonology::OwnerMods
     namespace
     {
         // What we currently have applied to each owner (fractions), so re-apply moves the
-        // delta only. auraOn tracks the Legion Aura toggle for Phase-5 wiring.
-        struct Applied { float health = 0.0f; float haste = 0.0f; float stamina = 0.0f; bool auraOn = false; };
+        // delta only.
+        struct Applied { float health = 0.0f; float haste = 0.0f; float stamina = 0.0f; };
         std::unordered_map<ObjectGuid, Applied> g_mods;
 
         // Move a TOTAL_PCT stat modifier from fraction cur -> want (ratio delta, like the
@@ -66,8 +64,6 @@ namespace Demonology::OwnerMods
         float const wantHealth  = OverlordsPresenceHealthPerDemon(owner) * float(commandedCount);
         float const wantHaste   = OverlordsPresenceHastePerDemon(owner) * float(commandedCount);
         float const wantStamina = CursedVitalityOwnerStamina(owner);
-        bool  const wantAura    = owner->HasTalent(SPELL_TALENT_GRAND_WARLOCKS_DESIGN, owner->GetActiveSpec())
-                               && uint32(commandedCount) >= gConfig.LegionAuraMinDemons;
 
         Applied& cur = g_mods[owner->GetGUID()];
         MoveStatPct(owner, UNIT_MOD_HEALTH,       cur.health,  wantHealth);
@@ -76,12 +72,6 @@ namespace Demonology::OwnerMods
         cur.health  = wantHealth;
         cur.stamina = wantStamina;
         cur.haste   = wantHaste;
-
-        // Legion Aura groundwork: the toggle is live so Phase 5 only has to attach the
-        // actual 40yd party area-aura here (LegionAura.DamagePct/HastePct) once Grand
-        // Warlock's Design grants its buff spell.
-        if (wantAura != cur.auraOn)
-            cur.auraOn = wantAura;
     }
 
     void Clear(ObjectGuid owner)

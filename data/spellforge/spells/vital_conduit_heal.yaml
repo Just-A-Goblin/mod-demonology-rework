@@ -1,0 +1,14 @@
+# Vital Conduit (vc) heal — the warlock's Life Tap also heals the legion. Cast by the warlock on
+# each injured commanded demon; the amount (a share of the health the Tap sacrificed) is set live
+# in C++ via CastCustomSpell(SPELLVALUE_BASE_POINT0). Cloned from Demonic Empowerment (47193) for a
+# clean, projectile-free spell; effect overridden to a direct heal. IGNORE_CASTER_MODIFIERS so the
+# heal is EXACTLY the computed amount (not inflated by the warlock's spell power).
+key: demonology.vital_conduit_heal
+clone_from: 47193
+icon: "Spell_Shadow_LifeDrain02"
+name: Vital Conduit
+description: "Healed by the warlock's sacrificed life force."
+range: 30yd
+attributes: [SPELL_ATTR3_IGNORE_CASTER_MODIFIERS]
+effects:
+  - {effect: heal, base_points: 1, target_a: unit_target_ally}

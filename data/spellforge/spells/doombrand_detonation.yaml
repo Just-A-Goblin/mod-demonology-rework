@@ -1,0 +1,18 @@
+# Doombrand detonation — the stored damage striking the target (or split among enemies at the
+# corpse on a death-detonation). Shadowflame, attributed to the warlock, fired from the sigil
+# (triggered, so no LoS/range check). The damage amount is set dynamically in C++ via
+# CastCustomSpell(SPELLVALUE_BASE_POINT0, stored) — base_points here is just a default.
+key: demonology.doombrand_detonation
+clone_from: 686
+icon: "Spell_Shadow_SeedOfDestruction"
+name: Doombrand Detonation
+description: "The fel sigil detonates in shadowflame."
+school: [shadow, fire]
+cast_time: 0s
+range: 30yd
+# ALWAYS_HIT: the stored burst never misses/resists to a whole miss. IGNORE_CASTER_MODIFIERS:
+# deal EXACTLY the stored amount — the accumulator already captured the demons' fully-scaled
+# damage, so re-applying the warlock's spell-power coefficient on top would double-dip.
+attributes: [SPELL_ATTR3_ALWAYS_HIT, SPELL_ATTR3_IGNORE_CASTER_MODIFIERS]
+effects:
+  - {effect: school_damage, base_points: 1, target_a: unit_target_enemy}

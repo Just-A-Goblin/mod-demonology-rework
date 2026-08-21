@@ -1,0 +1,22 @@
+# Doombrand debuff — the visible brand on the target (10s). A marker aura: the accumulator
+# (demon damage hook) checks HasAura(290504) to know what to charge; the detonation AuraScript
+# (spell_demonology_doombrand_debuff) fires on removal.
+#
+# Cloned from Shadow Bolt (686), NOT Concussive Shot: 5116 carries a spell-level Mechanic=11
+# (SNARE), which the yaml's per-effect `mechanic` can't clear, so snare-immune mobs rejected the
+# whole aura (the "misses very often" bug). 686 has Mechanic=0; our apply_aura/dummy override
+# turns it into the brand. ALWAYS_HIT so it can never miss/resist onto a valid target.
+key: demonology.doombrand_debuff
+clone_from: 686
+icon: "Spell_Shadow_SeedOfDestruction"
+name: Doombrand
+description: "Branded with a fel sigil — your demons' damage is charging it."
+duration: 10s
+range: 30yd
+# IGNORE_CASTER_MODIFIERS: same Shadow Bolt (686) lineage — the player-triggered apply must not
+# consume a Fel Conduit charge; the brand carries no caster-mod-scaled values anyway.
+attributes: [SPELL_ATTR3_ALWAYS_HIT, SPELL_ATTR3_IGNORE_CASTER_MODIFIERS]
+effects:
+  - {effect: apply_aura, aura: dummy, target_a: unit_target_enemy}
+server:
+  script: spell_demonology_doombrand_debuff

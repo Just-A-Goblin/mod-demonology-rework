@@ -10,3 +10,6 @@ effects:
   - {effect: dummy, target_a: unit_caster}
 server:
   script: spell_demonology_demonic_empowerment
+learn:
+  class: warlock
+  skill_line: 354   # sit in the DEMONOLOGY spellbook tab (same as the summon spells)

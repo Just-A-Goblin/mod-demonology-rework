@@ -15,8 +15,10 @@ import sys
 from pathlib import Path
 
 # Design shape (PLAN §7.1).
-NODES_PER_TIER = [4, 3, 4, 3, 4, 3, 4, 4, 3, 3, 1]
-POINTS_PER_TIER = [10, 8, 8, 7, 8, 8, 8, 9, 7, 4, 1]  # tier9/10 = 7/4 after the ES<->BBB swap (ES is 1-rank, BBB 2-rank)
+NODES_PER_TIER = [4, 3, 4, 3, 4, 3, 4, 4, 2, 4, 1]
+# tier2/3 = 7/9 after moving Soul Harvest/Cruel Master/Fel Corruption -> tier3 and Vital Conduit/
+# Pactbound Fury/Fel Blood -> tier2 (Fel Armory -> tier1). tier9/10 = 5/6 (Beacon of Ruin at tier10).
+POINTS_PER_TIER = [10, 7, 9, 7, 8, 8, 8, 9, 5, 6, 1]
 TOTAL_POINTS = 78
 
 

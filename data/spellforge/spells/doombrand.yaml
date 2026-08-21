@@ -1,0 +1,24 @@
+# Doombrand — the Phase 5 capstone, granted by Grand Warlock's Design (DESIGN_V2 §6). Instant,
+# 20s CD, 30yd, costs 1 Soul Shard (charged in C++). A thin dummy shell: the C++ SpellScript
+# applies the brand debuff (290504) and inits the accumulator. Your demons' damage to the
+# branded target charges the sigil; when the brand ends it detonates (290505) for the stored
+# amount. Cloned from Shadow Bolt (686) for enemy-target + 30yd defaults.
+key: demonology.doombrand
+clone_from: 686
+icon: "Spell_Shadow_SeedOfDestruction"
+name: Doombrand
+description: "Brand an enemy with a fel sigil for 10 sec. Your demons' damage to it charges the sigil; when the brand ends, it detonates for the stored damage. Costs 1 Soul Shard."
+cast_time: 0s
+cooldown: 20s
+range: 30yd
+# A brand must land — the dummy effect carries the whole mechanic, so a miss/resist = no brand.
+# IGNORE_CASTER_MODIFIERS: also a Shadow Bolt (686) clone, so without this Fel Conduit's spellmod
+# would burn a charge on the brand cast. No caster-mod scaling is wanted on this utility cast.
+attributes: [SPELL_ATTR3_ALWAYS_HIT, SPELL_ATTR3_IGNORE_CASTER_MODIFIERS]
+effects:
+  - {effect: dummy, target_a: unit_target_enemy}
+server:
+  script: spell_demonology_doombrand
+learn:
+  class: warlock
+  skill_line: 354   # Demonology tab (granted via hybrid-learn when Grand Warlock's Design is trained)

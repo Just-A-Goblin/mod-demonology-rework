@@ -25,6 +25,7 @@ namespace Demonology
     constexpr uint32 SPELL_SOUL_HARVEST_R2     = 290011;
     constexpr uint32 SPELL_SOUL_HARVEST_R3     = 290012;
     constexpr uint32 SPELL_COMMAND_DEMON       = 290013;  // Phase 3 baseline Command Demon button
+    constexpr uint32 SPELL_DOOMBRAND           = 290014;  // Phase 5 capstone (granted by Grand Warlock's Design)
 
     // Internal/hidden spells (290500-290899)
     constexpr uint32 SPELL_DEMONIC_EMPOWERMENT_BUFF   = 290500;
@@ -33,6 +34,21 @@ namespace Demonology
     constexpr uint32 SPELL_INFERNAL_COMMAND_PULSE     = 290503;  // Infernal greater-demon response (fire AoE)
     constexpr uint32 SPELL_VOIDWALKER_COMMAND_SHIELD  = 290506;  // Voidwalker signature owner absorb
     constexpr uint32 SPELL_VOIDWALKER_CONSUME_SHADOWS = 290507;  // Voidwalker echo self-shield
+    constexpr uint32 SPELL_DOOMBRAND_DEBUFF           = 290504;  // Doombrand marker/accumulator debuff
+    constexpr uint32 SPELL_DOOMBRAND_DETONATION       = 290505;  // Doombrand stored-damage shadowflame hit
+    constexpr uint32 SPELL_WARDED_LEGION_WARD         = 290508;  // wl demon spell-resist ward (amount set live)
+    constexpr uint32 SPELL_GRIM_BARGAIN_OWNER         = 290509;  // gb owner damage buff (8s)
+    constexpr uint32 SPELL_GRIM_BARGAIN_DEMON         = 290510;  // gb demon damage buff (8s)
+    constexpr uint32 SPELL_FEL_CONDUIT_CHARGE         = 290511;  // fcd instant/free Shadow Bolt charge (3 stacks)
+    constexpr uint32 SPELL_RIFTWALKER_HASTE           = 290512;  // rw demon move-speed burst (6s)
+    constexpr uint32 SPELL_FELGUARD_CLEAVE            = 290513;  // Felguard legionnaire signature (cleave)
+    constexpr uint32 SPELL_FELHUNTER_SHADOWBITE       = 290514;  // Felhunter legionnaire signature (shadow nuke)
+    constexpr uint32 SPELL_SUCCUBUS_LASH              = 290515;  // Succubus legionnaire signature (shadow nuke)
+    constexpr uint32 SPELL_VITAL_CONDUIT_HEAL         = 290516;  // vc: Life Tap heals the legion (dead-node redesign)
+    constexpr uint32 SPELL_FERVENT_STANDARD_ICON      = 290517;  // fs: owner-only cosmetic icon while inside the circle (no math)
+
+    // Baseline warlock spells the module reads (not ours; core IDs).
+    constexpr uint32 SPELL_DEMONIC_CIRCLE_SUMMON      = 48018;   // fs anchor: the circle GameObject; rw teleport dest
 
     // Vanilla pet/demon abilities the Command dispatcher casts (rank-1 chain anchors — the
     // TOP rank is resolved from spell_dbc at startup, never hardcoded; see CommandDemon.cpp).
@@ -42,6 +58,9 @@ namespace Demonology
     constexpr uint32 SPELL_VANILLA_SUFFERING_R1  = 17735;  // Voidwalker signature (AoE taunt)
     constexpr uint32 SPELL_VANILLA_IMP_FIREBOLT_R1 = 3110; // Imp signature (volley) + echo
     constexpr uint32 SPELL_VANILLA_GROWL_R1        = 2649;  // Voidwalker echo taunt (attack-me)
+    constexpr uint32 SPELL_VANILLA_LASH_OF_PAIN_R1 = 7814;  // Succubus Lash of Pain (Fel Blood boosts it)
+    constexpr uint32 SPELL_VANILLA_CORRUPTION_R1   = 172;   // Warlock Corruption (Fel Blood refreshes it on a demon kill)
+    constexpr uint32 SPELL_VANILLA_LIFE_TAP_R1     = 1454;  // Warlock Life Tap (Vital Conduit heals demons off the sacrificed health)
 
     // Pet ability spells (290900-291199)
     constexpr uint32 SPELL_WILD_IMP_FIREBOLT = 290900;
@@ -58,10 +77,10 @@ namespace Demonology
 
     // Demon-scaling talent markers (rank-1 spell; a node's ranks are CONSECUTIVE ids, so
     // TalentRank(owner, rank1, maxRank) reads the trained rank). All read via HasTalent.
-    constexpr uint32 SPELL_TALENT_IMPROVED_LEGION  = 290902;  // il legionnaire summons faster (Ph6) + Wild Imps cost -1 (Ph2)
+    constexpr uint32 SPELL_TALENT_IMPROVED_LEGION  = 290902;  // il Wild Imps cost -1 shard (single-effect; cast-time half removed A.4)
     constexpr uint32 SPELL_TALENT_CRUEL_MASTER     = 290915;  // cm demon crits accelerate Soul Harvest (2 ranks)
     constexpr uint32 SPELL_TALENT_FEL_CONDITIONING = 290904;  // fc [5,10,15]% demon health
-    constexpr uint32 SPELL_TALENT_CURSED_VITALITY  = 290907;  // cv demons +[6,12]% stamina (~health); owner part TODO
+    constexpr uint32 SPELL_TALENT_CURSED_VITALITY  = 290907;  // cv demons +[6,12]% stamina (~health) + owner +[3,6]% stamina (OwnerMods)
     constexpr uint32 SPELL_TALENT_FEL_ARMORY       = 290912;  // fa [5,10,15]% demon damage while Fel Armor up
     constexpr uint32 SPELL_TALENT_SAVAGE_INSTINCTS = 290925;  // si [4,8,12]% demon attack speed
     constexpr uint32 SPELL_TALENT_VICIOUS_PACT     = 290933;  // vp [8,16,24]% SP->melee, [5,10,15]% SP->spell
@@ -74,7 +93,21 @@ namespace Demonology
     constexpr uint32 SPELL_TALENT_DARK_COMMAND          = 290942;  // dc  Command Demon CD -5/10/15s + responder haste
     constexpr uint32 SPELL_TALENT_OVERLORDS_PRESENCE    = 290956;  // op  per commanded demon: owner +HP/+haste
     constexpr uint32 SPELL_TALENT_BOUND_BY_BLOOD        = 290974;  // bbb on demon death: survivors +dmg/haste, refund 1 shard
-    constexpr uint32 SPELL_TALENT_GRAND_WARLOCKS_DESIGN = 290976;  // gwd capstone (Legion Aura groundwork here; full rider Phase 5)
+    constexpr uint32 SPELL_TALENT_GRAND_WARLOCKS_DESIGN = 290976;  // gwd capstone — grants Doombrand (290014)
+
+    // Phase 6 talent markers (rank-1 spell ids; ranks are consecutive; read via HasTalent).
+    constexpr uint32 SPELL_TALENT_RAPID_CONJURATION   = 290909;  // rc   summon cast -1.5/3/4.5s; R3 move-cast
+    constexpr uint32 SPELL_TALENT_FEL_BLOOD           = 290920;  // fb   Lash of Pain +dmg; killing blow refreshes Corruption
+    constexpr uint32 SPELL_TALENT_VITAL_CONDUIT       = 290923;  // vc   Health Funnel +efficiency, no self-damage
+    constexpr uint32 SPELL_TALENT_IMPROVED_WILD_IMPS  = 290930;  // iwi  Wild Imps +duration; Firebolt 2nd target
+    constexpr uint32 SPELL_TALENT_BLOOD_TITHE         = 290936;  // bt   demon damage heals owner (doubled at 3+ demons)
+    constexpr uint32 SPELL_TALENT_WARDED_LEGION       = 290938;  // wl   demon spell resist chance; R2 Fear/Charm/Poly immune
+    constexpr uint32 SPELL_TALENT_WRATH_OF_THE_LEGION = 290949;  // wotl Firebolt chance to spawn an extra Wild Imp
+    constexpr uint32 SPELL_TALENT_GRIM_BARGAIN        = 290952;  // gb   demon<->owner damage proc synergy
+    constexpr uint32 SPELL_TALENT_FEL_CONDUIT         = 290959;  // fcd  demon attacks proc instant/free Shadow Bolt
+    constexpr uint32 SPELL_TALENT_BEACON_OF_RUIN      = 290969;  // bor  Infernal/Doomguard +dmg / -summon CD
+    constexpr uint32 SPELL_TALENT_RIFTWALKER          = 290961;  // rw   Demonic Circle: Teleport warps demons + speed
+    constexpr uint32 SPELL_TALENT_FERVENT_STANDARD    = 290954;  // fs   Demonic Circle = legion banner: +dmg / demons -dmg taken in radius
 
     // Phase 4 — Demonic Empowerment spine (all enhance the 290000/290500 empowerment).
     constexpr uint32 SPELL_TALENT_SHADOWFLAME_LEGION    = 290928;  // sl   Empowerment also shields demons ([15,30]% max HP)

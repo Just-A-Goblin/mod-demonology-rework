@@ -12,12 +12,15 @@
 #include "Pet.h"
 #include "Player.h"
 #include "SharedDefines.h"
+#include "SpellAuraEffects.h"
+#include "SpellAuras.h"
 #include "Unit.h"
 
 #include <algorithm>
 #include <cmath>
 #include <list>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace Demonology::PetScaling
 {
@@ -35,6 +38,45 @@ namespace Demonology::PetScaling
             if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
                 haste += pool->LegionBuffHaste();
             return uint32(float(baseTime) / (1.0f + haste));
+        }
+
+        // Warded Legion CC-immunity bookkeeping: demons we've applied Fear/Charm/Poly immunity
+        // to (ApplySpellImmune stacks entries on repeat, so track and only toggle on change).
+        std::unordered_set<ObjectGuid> g_wlCcImmune;
+
+        // Warded Legion (wl): apply the demon spell-resist ward (amount live per rank) and, at
+        // rank 2, Fear/Charm/Polymorph immunity. Called every mirror tick for the anchor pet, so
+        // it must be a NO-OP when nothing changed — re-casting the ward each tick replays the
+        // clone's cast visual (the "continuous casting / purple skull" bug). Only (re)cast when
+        // the ward is missing or its amount changed (rank change).
+        void ApplyWardedLegion(Player* owner, Creature* demon)
+        {
+            float const resist = WardedLegionResist(owner);
+            if (resist > 0.0f)
+            {
+                int32 const want = -int32(resist * 100.0f);
+                Aura* a = demon->GetAura(SPELL_WARDED_LEGION_WARD);
+                AuraEffect* eff = a ? a->GetEffect(EFFECT_0) : nullptr;
+                if (!eff || eff->GetAmount() != want)
+                    demon->CastCustomSpell(SPELL_WARDED_LEGION_WARD, SPELLVALUE_BASE_POINT0, want, demon, true);
+            }
+            else if (demon->HasAura(SPELL_WARDED_LEGION_WARD))
+                demon->RemoveAurasDueToSpell(SPELL_WARDED_LEGION_WARD);
+
+            bool const wantCc = WardedLegionCcImmune(owner);
+            bool const hasCc  = g_wlCcImmune.count(demon->GetGUID()) > 0;
+            if (wantCc && !hasCc)
+            {
+                for (uint32 m : { uint32(MECHANIC_FEAR), uint32(MECHANIC_CHARM), uint32(MECHANIC_POLYMORPH) })
+                    demon->ApplySpellImmune(SPELL_WARDED_LEGION_WARD, IMMUNITY_MECHANIC, m, true);
+                g_wlCcImmune.insert(demon->GetGUID());
+            }
+            else if (!wantCc && hasCc)
+            {
+                for (uint32 m : { uint32(MECHANIC_FEAR), uint32(MECHANIC_CHARM), uint32(MECHANIC_POLYMORPH) })
+                    demon->ApplySpellImmune(SPELL_WARDED_LEGION_WARD, IMMUNITY_MECHANIC, m, false);
+                g_wlCcImmune.erase(demon->GetGUID());
+            }
         }
     }
 
@@ -94,6 +136,9 @@ namespace Demonology::PetScaling
         // spell-side match to the melee crit hook. Absolute set (base + pf) so it never
         // compounds; re-applied on summon / SP change / respec. (Needs core patch 01.) ---
         demon->SetBaseSpellCritChance(5 + int32(PactboundFuryCritChance(owner) * 100.0f));
+
+        // Warded Legion (wl): spell-resist ward + rank-2 CC immunity.
+        ApplyWardedLegion(owner, demon);
     }
 
     // ---- Anchor pet (core Pet) talent buffs ----
@@ -104,7 +149,7 @@ namespace Demonology::PetScaling
     // other buffs). Its DAMAGE is handled by the demon_damage UnitScript like the rest.
     namespace
     {
-        struct AppliedPetMods { ObjectGuid petGuid; float healthMult = 1.0f; };
+        struct AppliedPetMods { ObjectGuid petGuid; float healthMult = 1.0f; float meleeDmgMult = 1.0f; float castHastePct = 0.0f; };
         std::unordered_map<ObjectGuid, AppliedPetMods> g_petMods;   // keyed by OWNER guid
     }
 
@@ -130,10 +175,44 @@ namespace Demonology::PetScaling
             cur.healthMult = wantHealth;
         }
 
+        // Vicious Pact + Fel Armory (melee halves): a real PERCENT damage modifier on the pet's
+        // mainhand, so the FULL % shows in the pet tab's DPS and matches the tooltip ("X% increased
+        // damage") — NOT the old SP->AP flat value, which was tiny at low spell power. Delta-ratio
+        // bookkeeping (like health) so it never compounds/drifts and preserves the pet's other damage
+        // mods; tracks rank/respec/armor-up changes each Mirror tick. EXCLUDED from the swing-time
+        // multiplier (DemonDamageMult anchorPet=true) so it isn't counted twice; spell halves stay
+        // swing-time (this modifier is melee-only).
+        float const wantMeleeMult = 1.0f + Demonology::AnchorPetMeleeDamagePct(owner);
+        if (std::fabs(wantMeleeMult - cur.meleeDmgMult) > 0.001f)
+        {
+            pet->ApplyStatPctModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, (wantMeleeMult / cur.meleeDmgMult - 1.0f) * 100.0f);
+            cur.meleeDmgMult = wantMeleeMult;
+        }
+
         // Attack speed (Savage Instincts + transient Bound by Blood): set the base attack
         // time from the template, re-derived each call so it never compounds and shows in
         // GetAttackTime (same as legionnaires). Haste auras still multiply on top.
         pet->SetAttackTime(BASE_ATTACK, DerivedAttackTime(owner, pet));
+
+        // Savage Instincts CASTER half for the ANCHOR pet: the guardian imps/Doomguard get their
+        // recast timers hastened in GuardianAttackerAI, but the anchor pet is core-managed (PetAI), so
+        // instead speed its SPELL CASTS via cast-speed haste — same si + Bound-by-Blood value as melee.
+        // Keeps an anchor Imp's Firebolt consistent with Wild Imp / Imp legionnaire Firebolts. Delta-
+        // applied (remove old %, apply new %) so it never compounds and preserves other haste sources.
+        float wantCastHastePct = DemonHastePct(owner);                         // si, as a percent
+        if (CommandPool* pool = sCommandPoolMgr->Find(owner->GetGUID()))
+            wantCastHastePct += pool->LegionBuffHaste() * 100.0f;             // bbb, fraction -> percent
+        if (std::fabs(wantCastHastePct - cur.castHastePct) > 0.01f)
+        {
+            if (cur.castHastePct > 0.0f)
+                pet->ApplyCastTimePercentMod(cur.castHastePct, false);        // remove previous contribution
+            if (wantCastHastePct > 0.0f)
+                pet->ApplyCastTimePercentMod(wantCastHastePct, true);         // apply current (faster casts)
+            cur.castHastePct = wantCastHastePct;
+        }
+
+        // Warded Legion (wl): spell-resist ward + rank-2 CC immunity (same as legionnaires).
+        ApplyWardedLegion(owner, pet);
     }
 
     void ForgetPet(ObjectGuid owner)

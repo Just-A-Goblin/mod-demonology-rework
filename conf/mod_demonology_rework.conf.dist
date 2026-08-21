@@ -45,23 +45,33 @@ Demonology.SavageInstincts.HastePct = 4, 8, 12
 # --- Wild Imps ---
 Demonology.WildImp.Count = 3
 Demonology.WildImp.DurationMs = 20000
-Demonology.WildImp.SPCoefficient = 0.28
-# Path B: Summon Wild Imps costs this many Soul Shards; Improved Legion trims it.
-Demonology.WildImp.ShardCost = 2
-Demonology.ImprovedLegion.WildImpShardReduction = 1
+# Firebolt SP coefficient for the TEMPORARY Wild Imps (Summon Wild Imps). FLATTEN pass 2026-08-20
+# lowered it 0.16 -> 0.11 (paired with a raised flat firebolt base) to flatten the 60->80 scaling.
+Demonology.WildImp.SPCoefficient = 0.11
+# Firebolt SP coefficient for the PERMANENT Imp legionnaires — DECOUPLED from Wild Imps so the two
+# can be tuned independently (the Imp legionnaire is your "caster" legionnaire identity). FLATTEN pass
+# lowered it 0.30 -> 0.20 (the imp army was the level-80 single-target outlier). See docs/balance_model.py.
+Demonology.ImpLegionnaire.SPCoefficient = 0.20
+# Path B: Summon Wild Imps costs this many Soul Shards (fixed). Its 30% base-mana cost and Improved
+# Legion's -15/-30% reduction are now DBC (real spell cost + SPELLMOD_COST), tuned in content, not here.
+Demonology.WildImp.ShardCost = 1
 
 # --- Greater demons (Infernal / Doomguard): temporary cooldown guardians ---
 # How long each fights before despawning, in ms. Cooldown is on the spell (180s).
 Demonology.Infernal.DurationMs = 60000
 Demonology.Doomguard.DurationMs = 60000
-# Doomguard Doom Bolt damage as a fraction of owner spell power (SP -> nuke).
-Demonology.Doomguard.DoomBoltSPCoefficient = 0.64
-# Doom Bolt SINGLE-TARGET base damage (the bigger hit; overrides the cloned base).
-Demonology.Doomguard.DoomBoltBaseDamage = 850
-# Doom Blast (40878) is the AOE second hit Doom Bolt triggers — kept BELOW the
-# single-target bolt so the cleave isn't the stronger effect.
-Demonology.Doomguard.DoomBlastBaseDamage = 300
-Demonology.Doomguard.DoomBlastSPCoefficient = 0.50
+# ROLE DIFFERENTIATION (docs/slot_comparison.py): Doomguard = SINGLE-TARGET nuke, Infernal = AoE/tank.
+# Doom Bolt is the Doomguard's ST nuke. FLATTEN pass 2026-08-20 set base 220 / coef 0.55 (was 80/1.00):
+# more flat base + lower coef flattens the 60->80 curve and cuts the Doomguard's per-slot dominance.
+Demonology.Doomguard.DoomBoltSPCoefficient = 0.55
+Demonology.Doomguard.DoomBoltBaseDamage = 220
+# Doom Blast is now just a TOKEN cleave — the Doomguard is deliberately ST-focused (its AoE was the
+# single biggest AoE source in the kit; Infernal is the AoE demon now).
+Demonology.Doomguard.DoomBlastBaseDamage = 0
+Demonology.Doomguard.DoomBlastSPCoefficient = 0.10
+# Infernal AoE identity: it casts its fire nova (Command Pulse, 8yd source-area) this often, in
+# addition to on a Command Demon press — its periodic AoE. (Nova SP coef = InfernalCommandPulse below.)
+Demonology.Infernal.PulseCooldownMs = 5000
 # Infernal model scale (1.0 = model default, which is very large; lower = smaller).
 Demonology.Infernal.Scale = 0.70
 # Command slots a greater demon occupies while active (it crowds out legionnaires, so it
@@ -97,6 +107,80 @@ Demonology.SupremeEmpowerment.DurationMsPerRank = 3000
 # Shadowflame Legion (sl): Empowerment also shields each demon for this fraction of its max HP.
 Demonology.ShadowflameLegion.AbsorbPct = 0.15, 0.30
 
+# --- Phase 5: Doombrand (§6) — the Grand Warlock's Design capstone ---
+# Fraction of your demons' damage to the branded target that the sigil stores.
+# Playtest raised this to 0.50 for detonation feel; the balance pass trimmed it to 0.35 (the
+# army, not Doombrand, was the overshoot — so this is a light touch that keeps most of the feel).
+Demonology.Doombrand.StorePct = 0.35
+# Stored-damage cap = this coefficient * owner spell power (keeps a long window from
+# storing unbounded burst). Cut 6.0 -> 5.0 in the balance pass.
+Demonology.Doombrand.CapSPCoef = 5.0
+Demonology.Doombrand.ShardCost = 1
+# Death-detonation: if the branded target DIES, the stored damage is split evenly among
+# enemies within this radius of the corpse (an expire-detonation instead hits just the target).
+Demonology.Doombrand.AoeRadius = 8.0
+
+# --- Phase 6 talents ---
+# Blood Tithe (bt): demons heal you for this fraction of the damage they deal, DOUBLED once
+# you command DoubleAtDemons or more demons.
+Demonology.BloodTithe.HealPct = 0.04, 0.08
+Demonology.BloodTithe.DoubleAtDemons = 3
+# Beacon of Ruin (bor): Infernal/Doomguard deal +damage and their summon cooldown is cut by
+# this fraction (shipped low per DESIGN_V2 §4 — buff later).
+Demonology.BeaconOfRuin.DamagePct = 0.15, 0.30
+Demonology.BeaconOfRuin.CdReductionPct = 0.20, 0.40
+# Fel Corruption (rc, REDESIGNED): your Corruption ticks count as demon damage for Soul Harvest +
+# Doombrand at this per-rank effectiveness. DoombrandStoreMult = half-weight on the brand charge.
+Demonology.FelCorruption.RankEffectiveness = 0.33, 0.66, 1.00
+Demonology.FelCorruption.DoombrandStoreMult = 0.50
+# Improved Wild Imps (iwi): Wild Imp duration bonus per rank (ms); Firebolt 2nd-target chance.
+Demonology.ImprovedWildImps.DurationMsPerRank = 5000
+Demonology.ImprovedWildImps.SecondTargetPct = 0.10, 0.20
+# Wrath of the Legion (wotl): Firebolt chance per rank to spawn an extra Wild Imp; cap/cast.
+Demonology.WrathOfTheLegion.SpawnPct = 0.10, 0.20, 0.30
+Demonology.WrathOfTheLegion.MaxChainsPerCast = 2
+# Each bonus imp spawned by a Firebolt proc drains this % of the owner's BASE mana on spawn (no
+# mana, no bonus imp) — a throttle so the proc chain can't snowball for free.
+Demonology.WrathOfTheLegion.ManaCostPct = 5.0
+# Warded Legion (wl): demon full-spell-resist chance per rank; rank 2 also grants Fear/Charm/Poly immunity.
+Demonology.WardedLegion.ResistPct = 0.09, 0.18
+# Vital Conduit (vc, REDESIGNED): Life Tap also heals your commanded demons for this fraction of the
+# health sacrificed, split among them; overheal allowed (Wild Imps excluded).
+Demonology.VitalConduit.HealPct = 0.50, 1.00
+# Fel Conduit (fcd): demon attacks proc a Conduit stack (next Shadow Bolt instant + free) per rank.
+Demonology.FelConduit.ProcPct = 0.05, 0.10
+# Grim Bargain (gb): demon<->owner damage proc synergy — buff amount per rank + proc chance.
+Demonology.GrimBargain.DamagePct = 0.06, 0.12
+Demonology.GrimBargain.ProcPct = 0.15
+# Fel Blood (fb): Lash of Pain damage bonus per rank (the Corruption-refresh half has no number).
+Demonology.FelBlood.LashPct = 0.15, 0.30
+# Riftwalker (rw): Demonic Circle: Teleport warps your commanded demons to you and grants them
+# this much move speed for the duration below.
+Demonology.Riftwalker.MoveSpeedPct = 30
+Demonology.Riftwalker.DurationMs = 6000
+# Fervent Standard (fs): your Demonic Circle is the legion's banner. Within Radius yards of it, you
+# and your commanded demons deal +DamagePct damage, and your demons take -MitigationPct damage.
+# Offense is kept low (demon half enters the multiplier stack); mitigation (demons only) carries
+# the node since it can't compound with the Empowerment spine.
+Demonology.FerventStandard.Radius = 20.0
+Demonology.FerventStandard.DamagePct = 0.04, 0.08
+Demonology.FerventStandard.MitigationPct = 0.05, 0.10
+# Anchor Imp pet damage bonus — applies to ALL warlock specs (not a talent). Brings the anchor
+# Imp's Firebolt up toward Felhunter tier, since the Imp lacks Succubus/Voidwalker CC/tank utility.
+# ONLY affects the anchor Imp PET (entry 416); Wild Imps / Imp legionnaires (WildImp.SPCoefficient)
+# are untouched. Tune to taste — verify Imp vs Felhunter anchor DPS in a parse and adjust.
+Demonology.ImpAnchor.DamageBonusPct = 0.30
+
+# Per-type legionnaire SIGNATURES — periodic instant ability so each melee demon has a damage
+# identity (not a plain-melee clone). SP coefficient (of owner SP, added live) + cooldown (ms).
+# Imp keeps Firebolt (WildImp path); Voidwalker stays a pure-melee off-tank (no damage signature).
+Demonology.FelguardCleave.SPCoefficient = 0.15
+Demonology.FelguardCleave.CooldownMs = 6000
+Demonology.FelhunterShadowBite.SPCoefficient = 0.35
+Demonology.FelhunterShadowBite.CooldownMs = 6000
+Demonology.SuccubusLash.SPCoefficient = 0.25
+Demonology.SuccubusLash.CooldownMs = 5000
+
 # --- Command Pool (Phase 1 + Phase 5 Command talents) ---
 # Legionnaire slots before talents (pool slots 1..N; the anchor pet is slot 0).
 # Design: base 0 — with no talents you command no legionnaires. The Command talent
@@ -119,8 +203,6 @@ Demonology.Inherit.MeleeDamagePerSP = 0.15
 # --- Misc effects ---
 Demonology.LegionStandard.HealthPctOfOwner = 0.40
 Demonology.Threat.NonAnchorMultiplier = 0.50
-Demonology.LegionAura.DamagePct = 0.05
-Demonology.LegionAura.HastePct = 0.05
 Demonology.Beacon.DemonDamagePct = 0.50
 
 # --- Phase 1 talents ---
@@ -144,8 +226,6 @@ Demonology.OverlordsPresence.HealthPct = 0.02, 0.04, 0.06
 Demonology.OverlordsPresence.HastePct = 0.015, 0.03, 0.045
 # Cursed Vitality (cv, T1) owner half: +owner stamina (the demon-health half is separate).
 Demonology.CursedVitality.OwnerStaminaPct = 0.03, 0.06
-# Legion Aura (Grand Warlock's Design groundwork): party aura toggles on at this pool size.
-Demonology.LegionAura.MinDemons = 1
 
 # --- Command Demon (Phase 3, §5) ---
 Demonology.CommandDemon.CooldownMs = 45000

@@ -8,5 +8,10 @@ name: Firebolt
 description: "Hurls a fiery bolt at the enemy."
 cast_time: 2s
 range: 30yd
+# Flat base raised ~7 -> 25 (balance pass 2026-08-20 FLATTEN): more flat base + lower SP coefficients
+# flattens the 60->80 scaling. The C++ script still ADDS owner_SP * (WildImp|ImpLegionnaire).SPCoef on
+# top. Effect 0 stays school_damage (the script hooks it); school/visual are inherited from clone 3110.
+effects:
+  - {effect: school_damage, base_points: 25, target_a: unit_target_enemy}
 server:
   script: spell_demonology_wild_imp_firebolt

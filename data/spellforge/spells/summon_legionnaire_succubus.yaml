@@ -10,6 +10,10 @@ description: "Summons a Succubus to serve in your legion, fighting alongside you
 cast_time: 1.5s
 cooldown: 0s
 range: 0yd
+# Mimics the anchor pet summon: mana + cast time + Soul Shard reagent (native tooltip/consume).
+# Mana = 75% of Summon Succubus (80% -> 60% base).
+power: {type: mana, percent_of_base: 60}
+reagents: [{item: 6265, count: 1}]   # Soul Shard
 effects:
   - {effect: dummy, target_a: unit_caster}
 server:

@@ -62,15 +62,16 @@ public:
         LoadFloatList("Demonology.SavageInstincts.HastePct",     gConfig.SiHastePct,       3);
         gConfig.WildImpCount                 = sConfigMgr->GetOption<uint32>("Demonology.WildImp.Count", 3);
         gConfig.WildImpDurationMs            = sConfigMgr->GetOption<uint32>("Demonology.WildImp.DurationMs", 20000);
-        gConfig.WildImpSPCoefficient         = sConfigMgr->GetOption<float>("Demonology.WildImp.SPCoefficient", 0.28f);
-        gConfig.WildImpShardCost             = sConfigMgr->GetOption<uint32>("Demonology.WildImp.ShardCost", 2);
-        gConfig.ImprovedLegionWildImpShardReduction = sConfigMgr->GetOption<uint32>("Demonology.ImprovedLegion.WildImpShardReduction", 1);
+        gConfig.WildImpSPCoefficient         = sConfigMgr->GetOption<float>("Demonology.WildImp.SPCoefficient", 0.11f);
+        gConfig.ImpLegionnaireSPCoefficient  = sConfigMgr->GetOption<float>("Demonology.ImpLegionnaire.SPCoefficient", 0.20f);
+        gConfig.WildImpShardCost             = sConfigMgr->GetOption<uint32>("Demonology.WildImp.ShardCost", 1);
         gConfig.InfernalDurationMs           = sConfigMgr->GetOption<uint32>("Demonology.Infernal.DurationMs", 60000);
         gConfig.DoomguardDurationMs          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DurationMs", 60000);
-        gConfig.DoomBoltSPCoefficient        = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBoltSPCoefficient", 0.64f);
-        gConfig.DoomBoltBaseDamage           = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBoltBaseDamage", 850);
-        gConfig.DoomBlastBaseDamage          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBlastBaseDamage", 300);
-        gConfig.DoomBlastSPCoefficient       = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBlastSPCoefficient", 0.50f);
+        gConfig.DoomBoltSPCoefficient        = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBoltSPCoefficient", 0.55f);
+        gConfig.DoomBoltBaseDamage           = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBoltBaseDamage", 220);
+        gConfig.DoomBlastBaseDamage          = sConfigMgr->GetOption<uint32>("Demonology.Doomguard.DoomBlastBaseDamage", 0);
+        gConfig.DoomBlastSPCoefficient       = sConfigMgr->GetOption<float>("Demonology.Doomguard.DoomBlastSPCoefficient", 0.10f);
+        gConfig.InfernalPulseCooldownMs      = sConfigMgr->GetOption<uint32>("Demonology.Infernal.PulseCooldownMs", 5000);
         gConfig.InfernalScale                = sConfigMgr->GetOption<float>("Demonology.Infernal.Scale", 0.70f);
         gConfig.InfernalCommandSlots         = uint8(sConfigMgr->GetOption<uint32>("Demonology.Infernal.CommandSlots", 2));
         gConfig.DoomguardCommandSlots        = uint8(sConfigMgr->GetOption<uint32>("Demonology.Doomguard.CommandSlots", 3));
@@ -84,6 +85,41 @@ public:
         LoadFloatList("Demonology.RuinousEmpowerment.NoExpirePct", gConfig.RuinousEmpowermentNoExpirePct, 3);
         gConfig.SupremeEmpowermentDurationMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.SupremeEmpowerment.DurationMsPerRank", 3000);
         LoadFloatList("Demonology.ShadowflameLegion.AbsorbPct",    gConfig.ShadowflameLegionAbsorbPct,    2);
+        // --- Phase 5: Doombrand ---
+        gConfig.DoombrandStorePct  = sConfigMgr->GetOption<float>("Demonology.Doombrand.StorePct", 0.15f);
+        gConfig.DoombrandCapSPCoef = sConfigMgr->GetOption<float>("Demonology.Doombrand.CapSPCoef", 6.0f);
+        gConfig.DoombrandShardCost = sConfigMgr->GetOption<uint32>("Demonology.Doombrand.ShardCost", 1);
+        gConfig.DoombrandAoeRadius = sConfigMgr->GetOption<float>("Demonology.Doombrand.AoeRadius", 8.0f);
+        // --- Phase 6 talents ---
+        LoadFloatList("Demonology.BloodTithe.HealPct", gConfig.BloodTitheHealPct, 2);
+        gConfig.BloodTitheDoubleAtDemons = uint8(sConfigMgr->GetOption<uint32>("Demonology.BloodTithe.DoubleAtDemons", 3));
+        LoadFloatList("Demonology.BeaconOfRuin.DamagePct",      gConfig.BeaconOfRuinDamagePct,      2);
+        LoadFloatList("Demonology.BeaconOfRuin.CdReductionPct", gConfig.BeaconOfRuinCdReductionPct, 2);
+        LoadFloatList("Demonology.FelCorruption.RankEffectiveness", gConfig.FelCorruptionRankEffectiveness, 3);
+        gConfig.FelCorruptionDoombrandStoreMult = sConfigMgr->GetOption<float>("Demonology.FelCorruption.DoombrandStoreMult", 0.50f);
+        gConfig.ImprovedWildImpsDurationMsPerRank = sConfigMgr->GetOption<uint32>("Demonology.ImprovedWildImps.DurationMsPerRank", 5000);
+        LoadFloatList("Demonology.ImprovedWildImps.SecondTargetPct", gConfig.ImprovedWildImpsSecondTargetPct, 2);
+        LoadFloatList("Demonology.WrathOfTheLegion.SpawnPct", gConfig.WrathOfTheLegionSpawnPct, 3);
+        gConfig.WrathOfTheLegionMaxChainsPerCast = uint8(sConfigMgr->GetOption<uint32>("Demonology.WrathOfTheLegion.MaxChainsPerCast", 2));
+        gConfig.WrathOfTheLegionManaCostPct = sConfigMgr->GetOption<float>("Demonology.WrathOfTheLegion.ManaCostPct", 5.0f);
+        LoadFloatList("Demonology.WardedLegion.ResistPct", gConfig.WardedLegionResistPct, 2);
+        LoadFloatList("Demonology.VitalConduit.HealPct", gConfig.VitalConduitHealPct, 2);
+        LoadFloatList("Demonology.FelConduit.ProcPct", gConfig.FelConduitProcPct, 2);
+        LoadFloatList("Demonology.GrimBargain.DamagePct", gConfig.GrimBargainDamagePct, 2);
+        gConfig.GrimBargainProcPct = sConfigMgr->GetOption<float>("Demonology.GrimBargain.ProcPct", 0.15f);
+        LoadFloatList("Demonology.FelBlood.LashPct", gConfig.FelBloodLashPct, 2);
+        gConfig.RiftwalkerMoveSpeedPct = sConfigMgr->GetOption<int32>("Demonology.Riftwalker.MoveSpeedPct", 30);
+        gConfig.RiftwalkerDurationMs   = sConfigMgr->GetOption<uint32>("Demonology.Riftwalker.DurationMs", 6000);
+        gConfig.FerventStandardRadius = sConfigMgr->GetOption<float>("Demonology.FerventStandard.Radius", 20.0f);
+        LoadFloatList("Demonology.FerventStandard.DamagePct",     gConfig.FerventStandardDamagePct,     2);
+        LoadFloatList("Demonology.FerventStandard.MitigationPct", gConfig.FerventStandardMitigationPct, 2);
+        gConfig.ImpAnchorDamageBonusPct = sConfigMgr->GetOption<float>("Demonology.ImpAnchor.DamageBonusPct", 0.30f);
+        gConfig.FelguardCleaveSPCoef      = sConfigMgr->GetOption<float>("Demonology.FelguardCleave.SPCoefficient", 0.15f);
+        gConfig.FelguardCleaveCooldownMs  = sConfigMgr->GetOption<uint32>("Demonology.FelguardCleave.CooldownMs", 6000);
+        gConfig.FelhunterShadowBiteSPCoef = sConfigMgr->GetOption<float>("Demonology.FelhunterShadowBite.SPCoefficient", 0.35f);
+        gConfig.FelhunterShadowBiteCooldownMs = sConfigMgr->GetOption<uint32>("Demonology.FelhunterShadowBite.CooldownMs", 6000);
+        gConfig.SuccubusLashSPCoef        = sConfigMgr->GetOption<float>("Demonology.SuccubusLash.SPCoefficient", 0.25f);
+        gConfig.SuccubusLashCooldownMs    = sConfigMgr->GetOption<uint32>("Demonology.SuccubusLash.CooldownMs", 5000);
         gConfig.PoolBaseLegionnaires         = uint8(sConfigMgr->GetOption<uint32>("Demonology.Pool.BaseLegionnaires", 0));
         gConfig.PoolMaxLegionnaires          = uint8(sConfigMgr->GetOption<uint32>("Demonology.Pool.MaxLegionnaires", 4));
         gConfig.SummonLegionnaireShardCost   = sConfigMgr->GetOption<uint32>("Demonology.SummonLegionnaire.ShardCost", 1);
@@ -91,8 +127,6 @@ public:
         gConfig.InheritMeleeDamagePerSP      = sConfigMgr->GetOption<float>("Demonology.Inherit.MeleeDamagePerSP", 0.15f);
         gConfig.LegionStandardHealthPctOfOwner = sConfigMgr->GetOption<float>("Demonology.LegionStandard.HealthPctOfOwner", 0.40f);
         gConfig.ThreatNonAnchorMultiplier    = sConfigMgr->GetOption<float>("Demonology.Threat.NonAnchorMultiplier", 0.50f);
-        gConfig.LegionAuraDamagePct          = sConfigMgr->GetOption<float>("Demonology.LegionAura.DamagePct", 0.05f);
-        gConfig.LegionAuraHastePct           = sConfigMgr->GetOption<float>("Demonology.LegionAura.HastePct", 0.05f);
         gConfig.BeaconDemonDamagePct         = sConfigMgr->GetOption<float>("Demonology.Beacon.DemonDamagePct", 0.50f);
         // --- Phase 1 talents ---
         LoadFloatList("Demonology.PactboundFury.CritChancePct", gConfig.PactboundFuryCritChancePct, 3);
@@ -106,7 +140,6 @@ public:
         LoadFloatList("Demonology.OverlordsPresence.HealthPct", gConfig.OverlordsPresenceHealthPct, 3);
         LoadFloatList("Demonology.OverlordsPresence.HastePct",  gConfig.OverlordsPresenceHastePct,  3);
         LoadFloatList("Demonology.CursedVitality.OwnerStaminaPct", gConfig.CursedVitalityOwnerStaminaPct, 2);
-        gConfig.LegionAuraMinDemons          = sConfigMgr->GetOption<uint32>("Demonology.LegionAura.MinDemons", 1);
         // --- Command Demon (Phase 3) ---
         gConfig.CommandDemonCooldownMs       = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.CooldownMs", 45000);
         gConfig.CommandDemonShardCost        = sConfigMgr->GetOption<uint32>("Demonology.CommandDemon.ShardCost", 1);

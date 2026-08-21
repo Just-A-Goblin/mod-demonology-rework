@@ -4,7 +4,7 @@ A Demonology warlock rework for AzerothCore 3.3.5a (Playerbot fork) — "Master 
 the Legion." Command an anchor pet + mirroring legionnaires as one unit, fed by a
 soul-shard economy and a custom 78-point talent tree.
 
-**The full plan is [`PLAN_demonology_legion_module.md`](PLAN_demonology_legion_module.md).**
+**Governing design:** [`DEMONOLOGY_DESIGN_V2.md`](DEMONOLOGY_DESIGN_V2.md) · **current-state audit:** [`DEMONOLOGY_STATUS.md`](DEMONOLOGY_STATUS.md) · **balance:** `docs/balance_model.py`.
 
 ## Design principle: self-contained + archivable
 
@@ -34,19 +34,60 @@ The client patch is a separate, SpellForge-driven step because on a modded 3.3.5
 client our DBCs must be *merged into* the highest-priority patch in place — that
 merge reads the target client's MPQ and so can't be pre-baked offline.
 
+## Build & deploy — full workflow
+
+Three kinds of change need different steps. Do the ones your change touched, in order.
+
+**1. Author content** (talents, spells, icons, tooltips, spell costs, tree layout — anything in
+`data/spellforge/`):
+```
+./build.sh                       # validate YAML → sf build → vendor DBC/SQL/MPQ into dist/
+```
+
+**2. Compile the C++ module** (anything in `src/` — pool, AI, scaling, scripts):
+```
+cd /home/leo/wow/build
+cmake .                          # ONLY when a NEW .cpp was added (re-globs sources); skip otherwise
+make -j$(nproc) && make install  # builds + installs the worldserver
+```
+
+**3. Deploy to server + client:**
+```
+./install.sh --apply             # core patches, link module, DBCs→server, SQL→world/characters, seed live .conf, addon
+./deploy_client.sh --apply       # rebuild the MERGED client patch (patch-V.mpq) and copy to the client
+```
+- `install.sh` verifies/backs up before copying. It does **not** compile — do step 2 first for C++ changes.
+- Hand-written base SQL in `data/sql/db-world/base/*.sql` (script bindings, trainer rows) is applied by
+  `install.sh` and also auto-applied by the server's DB updater on boot.
+
+**4. Restart / reload:**
+```
+# find + SIGINT the running worldserver, wait for port 8085 to free, relaunch. The live server runs from
+#   /home/leo/WOW-BACKUP-8-11-26/wow/server/bin/worldserver  (the /home/leo/wow symlink resolves here);
+# find it by its listening port, NOT a process-name grep:
+#   SRVPID=$( (ss -ltnp||netstat -ltnp) | grep ':8085' | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2)
+```
+- **DBC / SQL / C++ changes require a worldserver restart** (the server caches DBC + SpellInfo at boot).
+- **conf-only tweaks** (a value in the live `.conf`) need only `.reload config` in the server console — no
+  restart, no rebuild.
+- After a client-patch deploy, **fully relaunch the WoW client** (not `/reload`) to load the new `patch-V.mpq`.
+
+> **Gotcha (talent-tab edits):** any Talent.dbc change that removes/renames a warlock-tab talent must clear
+> orphaned `character_talent` rows before boot or the server crash-loops on load. Simply *moving* a talent
+> (same rank spells) is safe. See the talent-tree memory / `DEMONOLOGY_STATUS.md`.
+
 ## Status
 
-**Phase 0 vertical slice ✅ verified in-game.** On top of the skeleton (config
-WorldScript + `.legion` GM namespace), the slice adds Soul Harvest 3/3, Summon
-Wild Imps, and Demonic Empowerment — 7 spells authored through SpellForge (in
-`Spell.dbc`, +7 records) at pinned IDs 290000–290900, a Wild Imp creature (600000),
-and the C++ behavior (shard proc, summon, empowerment). Deployed to the live realm
-and confirmed working on a test character. This proves the whole pipeline:
-SpellForge authoring → DBC → server + merged client patch → static C++ module → live gameplay.
+**COMPLETE & LIVE (2026-08-20).** All 36 talent nodes, both baseline abilities (Summon Wild Imps,
+Demonic Empowerment), the Command Demon + Doombrand capstones, the shard economy, stat inheritance,
+mirroring demon AI, and the full Command Pool are built, deployed, and playtested. The three original
+dead nodes were redesigned (Fel Corruption, Vital Conduit, Fervent Standard), the two partials finished
+(Improved Legion, Savage Instincts), the tree reshuffled, and a balance pass (FLATTEN) applied. Baseline
+abilities are trainer-taught (Summon Wild Imps @10, Demonic Empowerment @50); the rest is trainer/talent.
 
-**Next:** Phase 1 — the Command Pool + mirroring demon AI (so demons follow what
-the anchor fights) and the core patches (PLAN §3.2). Stat inheritance and the full
-talent tree follow. See PLAN §12 for sequencing.
+**Remaining work is validation only:** replace the ±20% expected-value balance model
+(`docs/balance_model.py`) with real level-60/80 combat parses. See `DEMONOLOGY_STATUS.md` for the live
+node audit and the balance-model notes for tuning history.
 
 ## Prerequisites (author machine)
 

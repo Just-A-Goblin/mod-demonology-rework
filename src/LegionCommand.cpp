@@ -29,6 +29,9 @@
 
 using namespace Acore::ChatCommands;
 
+// Last Vital Conduit Life Tap summary (defined in VitalConduit.cpp).
+std::string Demonology_GetLastVcTap(ObjectGuid owner);
+
 namespace
 {
     constexpr uint32 SOUL_SHARD_ITEM = 6265;
@@ -50,6 +53,7 @@ public:
             { "shards",    HandleShardsCommand,    SEC_GAMEMASTER, Console::No },
             { "dumpstats", HandleDumpStatsCommand, SEC_GAMEMASTER, Console::No },
             { "command",   HandleCommandCommand,   SEC_GAMEMASTER, Console::No },
+            { "brand",     HandleBrandCommand,     SEC_GAMEMASTER, Console::No },
         };
 
         static ChatCommandTable commandTable =
@@ -204,6 +208,10 @@ public:
             uint32(Demonology::TalentRank(player, Demonology::SPELL_TALENT_FEL_ARMORY, 3)),
             uint32(Demonology::OwnerHasFelArmor(player)),
             meleeMult, spellMult);
+        // dmgMult melee above is the GUARDIAN value; the anchor pet instead gets Vicious Pact's +
+        // (armor-up) Fel Armory melee halves as a real % damage modifier (shows in the pet tab DPS).
+        handler->PSendSysMessage("[legion] anchor-pet melee bonus (Vicious Pact + Fel Armory) = +{:.0f}%",
+            Demonology::AnchorPetMeleeDamagePct(player) * 100.0f);
         // Live per-cast spell bonus these demons add from owner SP (same as the cast scripts).
         handler->PSendSysMessage("[legion] spell bonus vs SP {}: firebolt +{:.0f}, doombolt +{:.0f}",
             sp, float(sp) * Demonology::gConfig.WildImpSPCoefficient * spellMult,
@@ -330,6 +338,75 @@ public:
             Demonology::SupremeEmpowermentTrained(player) ? " (temps too)" : " (permanent demons only)",
             Demonology::RuinousEmpowermentLeech(player) * 100.0f,
             Demonology::RuinousEmpowermentNoExpire(player) * 100.0f);
+
+        // Phase 5 Doombrand — capstone known-state + the live accumulator (there's no client
+        // charge gauge, so the sigil's stored damage is surfaced here, per §6.5).
+        bool const gwd = player->HasTalent(Demonology::SPELL_TALENT_GRAND_WARLOCKS_DESIGN, player->GetActiveSpec());
+        float const brandCap = Demonology::gConfig.DoombrandCapSPCoef * float(sp);
+        handler->PSendSysMessage("[legion] Doombrand: {} — store {:.0f}% of demon damage, cap {:.0f} (={:.1f} x SP), cost {} shard",
+            gwd ? "TRAINED (Grand Warlock's Design)" : "not trained",
+            Demonology::gConfig.DoombrandStorePct * 100.0f, brandCap,
+            Demonology::gConfig.DoombrandCapSPCoef, Demonology::gConfig.DoombrandShardCost);
+        if (Demonology::CommandPool* pool = sCommandPoolMgr->Find(player->GetGUID()))
+        {
+            if (!pool->BrandTarget().IsEmpty())
+            {
+                Unit* bt = ObjectAccessor::GetUnit(*player, pool->BrandTarget());
+                handler->PSendSysMessage("[legion]   ACTIVE brand on {} — stored {:.0f} / {:.0f} ({:.0f}%){}",
+                    bt ? bt->GetName() : "<gone>", pool->BrandStored(), brandCap,
+                    brandCap > 0.0f ? (pool->BrandStored() / brandCap * 100.0f) : 0.0f,
+                    pool->BrandStored() >= brandCap && brandCap > 0.0f ? " [AT CAP]" : "");
+            }
+            else
+                handler->PSendSysMessage("[legion]   no active brand");
+        }
+
+        // Phase 6 talents (batch A: Blood Tithe + Beacon of Ruin).
+        {
+            uint8 const commanded = sCommandPoolMgr->Find(player->GetGUID())
+                ? sCommandPoolMgr->Find(player->GetGUID())->CommandedDemonCount(player) : 0;
+            handler->PSendSysMessage("[legion] Blood Tithe: heal {:.0f}% of demon damage ({} demons -> {})",
+                Demonology::BloodTitheHeal(player, commanded) * 100.0f, commanded,
+                commanded >= Demonology::gConfig.BloodTitheDoubleAtDemons ? "DOUBLED" : "base");
+            uint8 const bor = Demonology::TalentRank(player, Demonology::SPELL_TALENT_BEACON_OF_RUIN, 2);
+            handler->PSendSysMessage("[legion] Beacon of Ruin: rank {} -> greater demons +{:.0f}% damage, summon CD -{:.0f}%",
+                uint32(bor), (bor ? Demonology::gConfig.BeaconOfRuinDamagePct[bor - 1] : 0.0f) * 100.0f,
+                Demonology::BeaconOfRuinCdReduction(player) * 100.0f);
+            handler->PSendSysMessage("[legion] Improved Wild Imps: +{}s duration, {:.0f}% Firebolt 2nd-target  |  Wrath of the Legion: {:.0f}% spawn (max {}/cast)",
+                Demonology::ImprovedWildImpsDurationMs(player) / 1000,
+                Demonology::ImprovedWildImpsSecondTargetChance(player) * 100.0f,
+                Demonology::WrathOfTheLegionSpawnChance(player) * 100.0f,
+                uint32(Demonology::gConfig.WrathOfTheLegionMaxChainsPerCast));
+            handler->PSendSysMessage("[legion] Warded Legion: {:.0f}% spell resist{}  |  Grim Bargain: {:.0f}% chance -> +{:.0f}% dmg  |  Fel Conduit: {:.0f}% proc  |  Fel Blood: Lash +{:.0f}%",
+                Demonology::WardedLegionResist(player) * 100.0f,
+                Demonology::WardedLegionCcImmune(player) ? " + Fear/Charm/Poly immune" : "",
+                Demonology::GrimBargainProcChance(player) * 100.0f, Demonology::GrimBargainDamage(player) * 100.0f,
+                Demonology::FelConduitProc(player) * 100.0f,
+                Demonology::FelBloodLash(player) * 100.0f);
+            handler->PSendSysMessage("[legion] Riftwalker: {} (Demonic Circle: Teleport warps demons + {}% speed {}s)",
+                Demonology::RiftwalkerTrained(player) ? "TRAINED" : "not trained",
+                Demonology::gConfig.RiftwalkerMoveSpeedPct, Demonology::gConfig.RiftwalkerDurationMs / 1000);
+            handler->PSendSysMessage("[legion] Vital Conduit: Life Tap heals demons for {:.0f}% of health paid  |  last Tap: {}",
+                Demonology::VitalConduitHeal(player) * 100.0f, Demonology_GetLastVcTap(player->GetGUID()));
+        }
+        return true;
+    }
+
+    // `.legion brand` — cast Doombrand on the current selection (test tooling; the real cast
+    // is the 290014 button granted by Grand Warlock's Design).
+    static bool HandleBrandCommand(ChatHandler* handler)
+    {
+        Player* player = handler->GetSession()->GetPlayer();
+        if (!player)
+            return false;
+        Unit* target = handler->getSelectedUnit();
+        if (!target || target == player || player->IsFriendlyTo(target))
+        {
+            handler->PSendSysMessage("[legion] Select a hostile target to brand.");
+            return true;
+        }
+        player->CastSpell(target, Demonology::SPELL_DOOMBRAND, true);
+        handler->PSendSysMessage("[legion] Doombrand cast on {}.", target->GetName());
         return true;
     }
 };

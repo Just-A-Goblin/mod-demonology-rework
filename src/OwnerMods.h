@@ -5,8 +5,7 @@
  * (talent ranks x commanded-demon count) and applies only the delta, with per-owner
  * bookkeeping so it never drifts and coexists with other buffs. Consumers:
  *   - Overlord's Presence (op): per commanded demon, +owner max health & haste,
- *   - Cursed Vitality (cv): the owner-stamina half (demon half is in DemonHealthMult),
- *   - Grand Warlock's Design Legion Aura: toggle groundwork (party aura ships in Phase 5).
+ *   - Cursed Vitality (cv): the owner-stamina half (demon half is in DemonHealthMult).
  */
 #ifndef MOD_DEMONOLOGY_REWORK_OWNER_MODS_H
 #define MOD_DEMONOLOGY_REWORK_OWNER_MODS_H

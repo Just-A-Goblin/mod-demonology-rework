@@ -1,0 +1,14 @@
+# Felguard legionnaire signature — Cleave. A periodic instant melee strike that hits the target
+# plus nearby enemies (the Felguard's AoE identity). Cloned from Felguard Cleave (30213) for the
+# look; effect overridden to school_damage (physical) so our C++ can add owner-SP scaling. Damage
+# = small base + SPCoef x owner SP (set live in spell_demonology_legion_signature), x demon mults.
+key: demonology.felguard_cleave
+clone_from: 30213
+name: Felguard Cleave
+description: "A sweeping strike that cleaves the target and nearby foes."
+cast_time: 0s
+school: [normal]
+effects:
+  - {effect: school_damage, base_points: 1, target_a: unit_target_enemy, chain_targets: 3}
+server:
+  script: spell_demonology_legion_signature

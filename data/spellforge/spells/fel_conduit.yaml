@@ -1,0 +1,20 @@
+# Fel Conduit (fcd) — the Conduit buff (Molten Core-style). A demon attack has a chance (C++
+# proc, per rank) to grant the WARLOCK this buff, up to 3 charges. Each charge makes your next
+# Shadow Bolt instant and free via spell modifiers, then is consumed. It does NOT change Shadow
+# Bolt's damage, and the proc'd bolts are PLAYER damage (they don't charge Doombrand/Soul Harvest).
+#
+# Cloned from Molten Core (71165): that buff already has ProcCharges=3 (one consumed per modified
+# cast, exactly the mechanic we want) + warlock SpellFamilyName + the instant-cast spellmod shape.
+# We retarget its modifier effects to Shadow Bolt (family flag 0x1). class_mask [1,0,0] = Shadow Bolt.
+# Two ADD_PCT_MODIFIER effects: misc 10 = SPELLMOD_CASTING_TIME (-100% = instant), misc 14 =
+# SPELLMOD_COST (-100% = free).
+key: demonology.fel_conduit
+clone_from: 71165
+icon: "Spell_Fire_FelImmolation"
+name: Fel Conduit
+description: "Your next Shadow Bolt is instant and free."
+duration: 15s
+family: warlock
+effects:
+  - {effect: apply_aura, aura: add_pct_modifier, base_points: -100, target_a: unit_caster, misc: 10, class_mask: [1, 0, 0]}
+  - {effect: apply_aura, aura: add_pct_modifier, base_points: -100, target_a: unit_caster, misc: 14, class_mask: [1, 0, 0]}

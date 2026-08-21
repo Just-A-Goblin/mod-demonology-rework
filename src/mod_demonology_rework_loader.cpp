@@ -25,6 +25,21 @@ void AddSC_demonology_command_pool();
 // Phase 3 — Command Demon
 void AddSC_demonology_command_demon();
 
+// Phase 5 — Doombrand capstone
+void AddSC_demonology_doombrand();
+
+// Phase 6 — Riftwalker
+void AddSC_demonology_riftwalker();
+
+// Dead-node redesigns — Vital Conduit (Life Tap heals the legion)
+void AddSC_demonology_vital_conduit();
+
+// Dead-node redesigns — Fel Corruption (Corruption ticks feed the economy)
+void AddSC_demonology_fel_corruption();
+
+// Dead-node redesigns — Fervent Standard (Demonic Circle = legion banner)
+void AddSC_demonology_fervent_standard();
+
 void Addmod_demonology_reworkScripts()
 {
     AddSC_demonology_config();
@@ -37,4 +52,14 @@ void Addmod_demonology_reworkScripts()
     AddSC_demonology_command_pool();
 
     AddSC_demonology_command_demon();
+
+    AddSC_demonology_doombrand();
+
+    AddSC_demonology_riftwalker();
+
+    AddSC_demonology_vital_conduit();
+
+    AddSC_demonology_fel_corruption();
+
+    AddSC_demonology_fervent_standard();
 }

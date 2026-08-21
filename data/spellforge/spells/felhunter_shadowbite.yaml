@@ -1,0 +1,13 @@
+# Felhunter legionnaire signature — Shadow Bite. A periodic instant single-target shadow nuke
+# (the Felhunter's burst identity). Cloned from Shadow Bite (54049); damage = small base + SPCoef
+# x owner SP (set in spell_demonology_legion_signature), x demon mults.
+key: demonology.felhunter_shadowbite
+clone_from: 54049
+name: Shadow Bite
+description: "A savage bite wreathed in shadow."
+cast_time: 0s
+school: [shadow]
+effects:
+  - {effect: school_damage, base_points: 1, target_a: unit_target_enemy}
+server:
+  script: spell_demonology_legion_signature

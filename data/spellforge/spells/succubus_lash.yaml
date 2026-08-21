@@ -1,0 +1,16 @@
+# Succubus legionnaire signature — Lash of Pain. A periodic instant single-target shadow nuke
+# (the Succubus's burst identity; synergizes with Fel Blood, which boosts Lash of Pain). Cloned
+# from Lash of Pain (7814); damage = small base + SPCoef x owner SP + demon mults. NOTE: Fel Blood
+# keys off the 7814 chain / 290502 echo, so to get the fb bonus this uses its OWN coefficient here
+# and the fb boost is applied to the succubus Command echo (290502), not this periodic — keep the
+# two consistent when tuning.
+key: demonology.succubus_lash
+clone_from: 7814
+name: Lash of Pain
+description: "A vicious lash that sears with shadow."
+cast_time: 0s
+school: [shadow]
+effects:
+  - {effect: school_damage, base_points: 1, target_a: unit_target_enemy}
+server:
+  script: spell_demonology_legion_signature

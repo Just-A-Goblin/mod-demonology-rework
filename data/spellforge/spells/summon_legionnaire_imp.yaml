@@ -11,6 +11,10 @@ description: "Summons an Imp to serve in your legion, fighting alongside your ot
 cast_time: 1.5s
 cooldown: 0s
 range: 0yd
+# Mimics the anchor pet summon pattern: mana cost + cast time + a Soul Shard reagent (all native,
+# shown in the tooltip; the core checks/consumes them). Mana = 75% of Summon Imp (64% -> 48% base).
+power: {type: mana, percent_of_base: 48}
+reagents: [{item: 6265, count: 1}]   # Soul Shard
 effects:
   - {effect: dummy, target_a: unit_caster}
 server:

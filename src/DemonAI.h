@@ -19,6 +19,7 @@
 
 #include "CommandPool.h"
 #include "Define.h"
+#include "DemonologyTalents.h"   // DemonHastePct — Savage Instincts scales the recast cadence
 #include "MotionMaster.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
@@ -28,9 +29,11 @@ namespace Demonology
     struct GuardianAttackerAI : public ScriptedAI
     {
         explicit GuardianAttackerAI(Creature* creature, bool autoAssist = false,
-                                    uint32 castSpellId = 0, uint32 castCooldownMs = 2000)
+                                    uint32 castSpellId = 0, uint32 castCooldownMs = 2000,
+                                    uint32 signatureSpellId = 0, uint32 signatureCooldownMs = 6000)
             : ScriptedAI(creature), _autoAssist(autoAssist),
-              _castSpellId(castSpellId), _castCooldownMs(castCooldownMs) { }
+              _castSpellId(castSpellId), _castCooldownMs(castCooldownMs),
+              _signatureSpellId(signatureSpellId), _signatureCooldownMs(signatureCooldownMs) { }
 
         void EnterEvadeMode(EvadeReason /*why*/) override { }   // never reset to spawn
         void MoveInLineOfSight(Unit* /*who*/) override { }       // never auto-aggro (no self-fight)
@@ -105,9 +108,23 @@ namespace Demonology
                     if (_castTimer == 0 && me->IsWithinLOSInMap(target))
                     {
                         me->CastSpell(target, _castSpellId, false);
-                        _castTimer = _castCooldownMs;
+                        _castTimer = HastenedCadence(_castCooldownMs);   // Savage Instincts (caster half) speeds the recast
                     }
                     return;                     // never melee — casters cast
+                }
+
+                // Melee demons with a per-type SIGNATURE (Felguard Cleave, Felhunter Shadow Bite,
+                // Succubus Lash of Pain): keep meleeing, but fire the instant signature on cooldown
+                // so each demon type has a damage identity instead of being a melee clone.
+                if (_signatureSpellId)
+                {
+                    _signatureTimer = (_signatureTimer > diff) ? _signatureTimer - diff : 0;
+                    if (_signatureTimer == 0 && !me->HasUnitState(UNIT_STATE_CASTING)
+                        && me->IsWithinMeleeRange(target))
+                    {
+                        me->CastSpell(target, _signatureSpellId, false);
+                        _signatureTimer = HastenedCadence(_signatureCooldownMs);   // si (caster half) speeds signatures too
+                    }
                 }
                 DoMeleeAttackIfReady();
                 return;
@@ -127,12 +144,32 @@ namespace Demonology
         }
 
     private:
+        // Savage Instincts' caster half: casting demons run on fixed AI recast timers (Firebolt 2s,
+        // Doom Bolt 3s, melee signatures) that a melee-attack-speed haste can't touch. Scale those
+        // timers by the SAME manual demon haste the melee side uses (si + transient Bound by Blood),
+        // so si speeds casts too. Empowerment haste stays aura-driven (melee) as before.
+        uint32 HastenedCadence(uint32 baseMs) const
+        {
+            float haste = 0.0f;
+            if (Unit* o = me->GetOwner())
+                if (Player* p = o->ToPlayer())
+                {
+                    haste = Demonology::DemonHastePct(p) / 100.0f;
+                    if (CommandPool* pool = sCommandPoolMgr->Find(p->GetGUID()))
+                        haste += pool->LegionBuffHaste();
+                }
+            return haste > 0.0f ? uint32(float(baseMs) / (1.0f + haste)) : baseMs;
+        }
+
         static constexpr float CAST_RANGE = 25.0f;   // hold distance for ranged casters (< spell range)
 
         bool _autoAssist;
         uint32 _castSpellId;
         uint32 _castCooldownMs;
         uint32 _castTimer = 0;                        // 0 == ready to cast
+        uint32 _signatureSpellId;                     // melee demon's per-type signature (0 = none)
+        uint32 _signatureCooldownMs;
+        uint32 _signatureTimer = 0;
     };
 }
 
